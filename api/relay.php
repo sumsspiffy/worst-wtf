@@ -1,0 +1,89 @@
+<?php
+$ini = parse_ini_file('config.ini');
+$link = mysqli_connect($ini['db_host'], $ini['db_user'], $ini['db_password']);
+$database = mysqli_select_db($link, $ini['db_name']);
+$tables = $ini['mybb_usertable'];
+
+$ip_address = $_SERVER[REMOTE_ADDR];
+$time = date('H:i:sa');
+$username = $_POST['username'];
+$steam_id = $_POST['steam_id'];
+$steam_name = $_POST['steam_name'];
+$server_name = $_POST['server_name'];
+$server_ip = $_POST['server_ip'];
+
+$blacklisted;
+$group_checked;
+$check;
+
+$blacklist = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_blacklist');
+if ((strpos($blacklist, $username) !== false) || (strpos($blacklist, $steam_id) !== false) || (strpos($blacklist, $ip_address) !== false)) { $blacklisted=true; } 
+else { $blacklisted=false; }
+
+$sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $username) ."'" ;
+$results = $link->query($sql);
+
+if ($results->num_rows > 0) { 
+    while($row = $results->fetch_assoc()) { 
+        $group = $row['usergroup'].$row['additionalgroups'];
+        
+        switch($group) { 
+            case 2: $group_checked=1; break; // registered 
+            case 3: $group_checked=1; break; // super-moderator
+            case 4: $group_checked=1; break; // administrator
+            case 5: $group_checked=2; break; // awaiting activation
+            case 6: $group_checked=1; break; // moderator
+            case 7: $group_checked=0; break; // banned member
+        }
+    }
+} else { $group_checked=2; } // username-incorrect
+
+$webhook="https://discord.com/api/webhooks/792498983997276191/PQ4t15hYAeRJbqSkpOYLgyfjXnvP_6d-CYIBjcrsFxuCSfjESXXrYAAzuYnM-fQs0QNi";
+$timestamp=date("c", strtotime("now"));
+
+$curl=curl_init($webhook);
+curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+curl_setopt($curl, CURLOPT_POST, 1);
+curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+curl_setopt($curl, CURLOPT_HEADER, 0);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+$lua_relay = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_relay', "a");
+$lua_blacklist = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_blacklist', "a");
+if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") { 
+    if (!$blacklisted and $group_checked==1) { 
+        fwrite($lua_relay, "RELAY: $username:$ip_address - $steam_name:$steam_id - $server_name:$server_name - $time\n"); 
+        $check="Nothing";
+    }
+
+    elseif($blacklisted or $group_checked==0) { 
+        fwrite($lua_relay, "BLACKLISTED USER: $username:$steam_id:$ip_address - $server_name:$server_ip - $time\n"); 
+        fwrite($lua_blacklist, "$username:$steam_id:$ip_address - $time\n");
+        $check="User's Blacklisted";
+        echo a4dF91aE25c2BFD11F879e42; 
+    }
+
+    $json_data = json_encode([
+        "embeds" => [
+            [
+                "title" => "W0RST-PROJECT",
+                "color" => hexdec("#86ffba"),
+                "timestamp" => $timestamp,
+                "description" => "```Check Detected $check\nUsername:$username | Ip-Address:$ip_address\nSteam-Name:$steam_name | Steam-Id:$steam_id\nServer-Name:$server_name | Server-Ip:$server_ip```",
+                "footer" => [ 
+                    "text" => "Lua-Relay",
+                ]
+            ]
+        ]
+    ]);
+
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
+    curl_exec($curl);
+}
+else { 
+    echo fuckoff;
+}
+
+$fclose($lua_relay);
+$fclose($lua_blacklist);
+?>
