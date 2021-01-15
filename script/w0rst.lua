@@ -13,7 +13,7 @@ local relay_hook = wtf.gString(math.random(10, 220))
 
 local tracer_enable, distance_enable, name_enable, weapon_enable, box_2d_enable, box_3d_enable, chams_enable = false, false, false, false, false, false, false
 local wallhack_enable, freecam_enable, bhop_enable, is_key_down, use_spam_enable, flash_spam_enable = false, false, false, false, false, false
-local rainbow_enable, skeleton_enable, rgb_physgun_enable = false, false, false
+local rainbow_enable, skeleton_enable, rgb_physgun_enable, lbybreak_enabled = false, false, false, false
 
 local aimbot_enable, autoshoot_enable, aimbot_hook = false, false, wtf.gString(math.random(10, 220))
 local entity_list, entity_enable = {}, false
@@ -708,7 +708,42 @@ end
 
 hook.Add("CreateMove", FC.Hook, FC.CreateMove)
 
-local function GetEntityPos(Ent)
+local silentangles, nextlby = nil, -1
+local silentangle_hook = wtf.gString(math.random(10, 220))
+local breaklby_hook = wtf.gString(math.random(10, 220))
+local function lbybreaker()
+    hook.Add("CalcView", silentangle_hook, function(_, pos, angles, fov)
+        local view = {}
+        
+        view.origin = pos
+        view.angles = silentangles
+        view.fov = fov
+        view.drawviewer = false
+        
+        return view
+    end)
+    
+    hook.Add("CreateMove", breaklby_hook, function(cmd)
+        silentangles = (silentangles or cmd:GetViewAngles()) + Angle(cmd:GetMouseY() * .023, cmd:GetMouseX() * -.023, 0)
+        silentangles.p = math.Clamp(silentangles.p, -89, 89)
+        if cmd:CommandNumber() == 0 then return end
+        
+        if CurTime() > nextlby then
+            cmd:SetViewAngles(silentangles - Angle(0, 120, 0))
+            
+            local moving = LocalPlayer():GetVelocity():Length2D() > 0.1
+            if moving then
+                nextlby = CurTime() + 0.22
+            else
+                nextlby = CurTime() + 1.1
+            end
+        else
+            cmd:SetViewAngles(silentangles)
+        end
+    end)
+end
+
+local function get_ent_pos(Ent)
     if Ent:IsValid() then
         local MaxX, MaxY, MinX, MinY
         local V1, V2, V3, V4, V5, V6, V7, V8
@@ -854,7 +889,7 @@ hook.Add("HUDPaint", esp_hook, function()
                 end
 
                 if box_3d_enable then
-                    local MaxX, MaxY, MinX, MinY, V1, V2, V3, V4, V5, V6, V7, V8 = GetEntityPos(Ent)
+                    local MaxX, MaxY, MinX, MinY, V1, V2, V3, V4, V5, V6, V7, V8 = get_ent_pos(Ent)
                     surface.SetDrawColor(Color(box_3d_color.r, box_3d_color.g, box_3d_color.b))
                     surface.DrawLine( V4.x, V4.y, V6.x, V6.y); surface.DrawLine( V1.x, V1.y, V8.x, V8.y)
                     surface.DrawLine( V6.x, V6.y, V8.x, V8.y); surface.DrawLine( V4.x, V4.y, V1.x, V1.y)
@@ -1793,6 +1828,18 @@ create_checkbox("Auto Shoot", tab_misc, 126, 70, function()
         wtf.log("Auto Shoot Disabled")
     elseif(autoshoot_enable == true) then
         wtf.log("Auto Shoot Enabled")
+    end
+end)
+
+create_checkbox("LBY-Breaker", tab_misc, 236, 70, function()
+    lbybreak_enabled = not lbybreak_enabled
+    if (lbybreak_enabled == true) then 
+        lbybreaker()
+        wtf.log("LBY Breaker Enabled")
+    elseif (lbybreak_enabled == false) then
+        wtf.log("LBY Breaker Disabled")
+        hook.Remove("CalcView", silentangle_hook)
+        hook.Remove("CreateMove", breaklby_hook)
     end
 end)
 
