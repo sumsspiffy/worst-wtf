@@ -436,7 +436,8 @@ local sounds = {
     "Hex https://w0rst.xyz/script/sounds/80purp-hex.mp3",
     "DownBad https://w0rst.xyz/script/sounds/jcole-downbad.mp3",
     "JustTheTwoOfUs https://w0rst.xyz/script/sounds/groverwashington-justthetwoofus.mp3",
-    "StillCreeping https://w0rst.xyz/script/sounds/chuuwee-still-creeping.mp3"
+    "StillCreeping https://w0rst.xyz/script/sounds/chuuwee-still-creeping.mp3",
+    "BeLazy https://w0rst.xyz/script/sounds/skizzymars-be-lazy.mp3"
 }
 
 local btn_sound_posX,btn_sound_posY=17,10
