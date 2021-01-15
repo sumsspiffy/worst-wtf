@@ -424,26 +424,47 @@ local function create_backdoor_client(name, func)
     bd_client_posY = bd_client_posY + 35
 end
 
+local sounds = { 
+    "Velvet https://w0rst.xyz/script/sounds/egovert-velvet.mp3",
+    "MrMoney https://w0rst.xyz/script/sounds/shotgunwilly-mrmoney.mp3",
+    "GoLoko https://w0rst.xyz/script/sounds/tyga-goloko.mp3",
+    "BadBoy https://w0rst.xyz/script/sounds/yungbae-badboy.mp3",
+    "RooDoo https://w0rst.xyz/script/sounds/bbno$-roodoo.mp3",
+    "SingleSummer https://w0rst.xyz/script/sounds/gyyps-singleforthesummer.mp3",
+    "Quiting https://w0rst.xyz/script/sounds/khary-quitting.mp3",
+    "DoubtIt https://w0rst.xyz/script/sounds/kyle-doubtit.mp3",
+    "Hex https://w0rst.xyz/script/sounds/80purp-hex.mp3",
+    "DownBad https://w0rst.xyz/script/sounds/jcole-downbad.mp3",
+    "JustTheTwoOfUs https://w0rst.xyz/script/sounds/groverwashington-justthetwoofus.mp3",
+    "StillCreeping https://w0rst.xyz/script/sounds/chuuwee-still-creeping.mp3"
+}
+
 local btn_sound_posX,btn_sound_posY=17,10
-local function create_sound_button(name, sound)
-    local btn=vgui.Create("DButton", sounds_panel[1])
-    btn:SetSize(130,80)
-    btn:SetText(name)
-    btn:SetPos(btn_sound_posX, btn_sound_posY)
-    btn.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-        self:SetTextColor(Color(255,255,255))
-    end
-    btn.DoClick = function()
-        wtf.sendlua([[BroadcastLua("sound.PlayURL(']]..sound..[[','mono',function(station) station:Play() end)")]])
-        wtf.log("Sent Sound: "..name); wtf.conoutRGB("PLAYED SOUND: "..name)
-    end
-    btn_sound_posX=btn_sound_posX+140
-    if btn_sound_posX==437 then
-        btn_sound_posX=17
-        btn_sound_posY=btn_sound_posY+90
+local function create_sound_buttons()
+    local loop = table.Count(sounds)
+    for i = 1, loop do 
+        local song = string.Split(sounds[i], " ") --/ split the name & url
+        local btn=vgui.Create("DButton", sounds_panel[1])
+        btn:SetSize(130,80)
+        btn:SetText(song[1])
+        btn:SetFont("Font2")
+        btn:SetPos(btn_sound_posX, btn_sound_posY)
+        btn.Paint = function(self, w,h)
+            draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
+            surface.SetDrawColor(40, 40, 40, 255)
+            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+            self:SetTextColor(Color(155,155,155))
+        end
+        btn.DoClick = function()
+            wtf.sendlua([[BroadcastLua("sound.PlayURL(']]..song[2]..[[','mono',function(station) station:Play() end)")]])
+            wtf.log("Sent Sound: "..song[1]); wtf.conoutRGB("PLAYED SOUND: "..song[1])
+        end
+
+        btn_sound_posX=btn_sound_posX+140
+        if btn_sound_posX==437 then
+            btn_sound_posX=17
+            btn_sound_posY=btn_sound_posY+90
+        end
     end
 end
 
@@ -593,9 +614,7 @@ entonlist:SetSize( 220, 298 )
 entonlist:SetMultiSelect(false)
 entonlist:AddColumn("Whitelisted Entities")
 entonlist:SetHideHeaders(true)
-entonlist:DisableScrollbar()
 entonlist.Paint = function(self,w,h)
-    surface.SetTextColor(255,255,255,255)
     surface.SetDrawColor(Color(0,0,0,0))
     surface.DrawOutlinedRect(0,0,w,h)
 end
@@ -605,12 +624,10 @@ entofflist:SetPos( 0, 0 )
 entofflist:SetSize( 220, 298 )
 entofflist:SetMultiSelect(false)
 entofflist:SetHideHeaders(true)
-entofflist:DisableScrollbar()
 entofflist:AddColumn("Whitelist Entities")
 entofflist.Paint = function(self,w,h)
-    surface.SetTextColor(255,255,255,255)
-    surface.SetDrawColor(Color(0,0,0,0))
-    surface.DrawOutlinedRect(0,0,w,h)
+  surface.SetDrawColor(Color(0,0,0,0))
+  surface.DrawOutlinedRect(0,0,w,h)
 end
 function entofflist:DoDoubleClick()
     table.insert( entity_list, entofflist:GetLine(entofflist:GetSelectedLine()):GetValue(1) )
@@ -760,8 +777,8 @@ hook.Add("HUDPaint", esp_hook, function()
                     if v == ent:GetClass() and ent:GetOwner() ~= LocalPlayer() then
                         local name = ent:GetClass()
                         local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
-                        local Position = (ent:GetPos() + Vector(0,0,90)):ToScreen()
-                        draw.SimpleText(name.." "..distance, "Default", Position.x,Position.y,Color(entity_color.r, entity_color.g, entity_color.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                        local position = (ent:GetPos() + Vector(0,0,5)):ToScreen()
+                        draw.SimpleText(name.." ["..distance.."]", "Default", position.x,position.y,Color(entity_color.r, entity_color.g, entity_color.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
                     end
                 end
             end
@@ -778,14 +795,14 @@ hook.Add("HUDPaint", esp_hook, function()
                 end
 
                 if distance_enable then
-                    local Position = (v:GetPos() + Vector(0,0,90)):ToScreen()
-                    local Distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                    draw.SimpleText(Distance,"Default", Position.x,Position.y,Color(distance_color.r, distance_color.g, distance_color.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                    local position = (v:GetPos() + Vector(0,0,90)):ToScreen()
+                    local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
+                    draw.SimpleText(distance,"Default", position.x,position.y,Color(distance_color.r, distance_color.g, distance_color.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
                 end
 
                 if name_enable then
-                    local Position = ( v:GetPos() + Vector( 0,0,80 ) ):ToScreen()
-                    draw.SimpleText(v:Nick(),"Default",Position.x,Position.y,Color(name_color.r, name_color.g, name_color.b),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                    local position = ( v:GetPos() + Vector( 0,0,80 ) ):ToScreen()
+                    draw.SimpleText(v:Nick(),"Default",position.x,position.y,Color(name_color.r, name_color.g, name_color.b),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
                 end
 
                 if weapon_enable then
@@ -1792,17 +1809,7 @@ create_button("Wipe/Populate Players-Pannel", tab_players, 445, 20, 10, 455, fun
     populate_players() --/ populate | add all players
 end)
 
-create_sound_button("Velvet", "https://w0rst.xyz/script/sounds/egovert-velvet.mp3")
-create_sound_button("Mr. Money", "https://w0rst.xyz/script/sounds/shotgunwilly-mrmoney.mp3")
-create_sound_button("Go Loko", "https://w0rst.xyz/script/sounds/tyga-goloko.mp3")
-create_sound_button("Bad Boy", "https://w0rst.xyz/script/sounds/yungbae-badboy.mp3")
-create_sound_button("Roo Doo", "https://w0rst.xyz/script/sounds/bbno$-roodoo.mp3")
-create_sound_button("Single-Summer", "https://w0rst.xyz/script/sounds/gyyps-singleforthesummer.mp3")
-create_sound_button("Quiting", "https://w0rst.xyz/script/sounds/khary-quitting.mp3")
-create_sound_button("Doubt It", "https://w0rst.xyz/script/sounds/kyle-doubtit.mp3")
-create_sound_button("Hex", "https://w0rst.xyz/script/sounds/80purp-hex.mp3")
-create_sound_button("Down Bad", "https://w0rst.xyz/script/sounds/jcole-downbad.mp3")
-create_sound_button("Just The Two Of Us", "https://w0rst.xyz/script/sounds/groverwashington-justthetwoofus.mp3")
+create_sound_buttons() --/ creates all sound buttons
 
 --## NOTES
 --## New Pasted backdoor features
