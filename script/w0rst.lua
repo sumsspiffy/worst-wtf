@@ -457,7 +457,7 @@ local function create_sound_buttons()
             self:SetTextColor(Color(155,155,155))
         end
         btn.DoClick = function()
-            if selected_net ~= nil then 
+            if wtf.check(selected_net) then
                 wtf.sendlua([[BroadcastLua("sound.PlayURL(']]..song[2]..[[','mono',function(station) station:Play() end)")]])
                 wtf.log("Sent Sound: "..song[1]); wtf.conoutRGB("PLAYED SOUND: "..song[1])
             else
