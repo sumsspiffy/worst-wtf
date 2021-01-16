@@ -1,4 +1,5 @@
-bin/
-api/config.ini
-backup.lua
 complete-backup.rar
+script/sounds/
+script/images/
+api/config.ini
+bin/
