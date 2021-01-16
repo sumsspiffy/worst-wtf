@@ -424,7 +424,7 @@ local function create_backdoor_client(name, func)
     bd_client_posY = bd_client_posY + 35
 end
 
-local sounds = { 
+local sounds = {
     "Velvet https://w0rst.xyz/script/sounds/egovert-velvet.mp3",
     "MrMoney https://w0rst.xyz/script/sounds/shotgunwilly-mrmoney.mp3",
     "GoLoko https://w0rst.xyz/script/sounds/tyga-goloko.mp3",
@@ -443,7 +443,7 @@ local sounds = {
 local btn_sound_posX,btn_sound_posY=17,10
 local function create_sound_buttons()
     local loop = table.Count(sounds)
-    for i = 1, loop do 
+    for i = 1, loop do
         local song = string.Split(sounds[i], " ") --/ split the name & url
         local btn=vgui.Create("DButton", sounds_panel[1])
         btn:SetSize(130,80)
@@ -714,23 +714,23 @@ local breaklby_hook = wtf.gString(math.random(10, 220))
 local function lbybreaker()
     hook.Add("CalcView", silentangle_hook, function(_, pos, angles, fov)
         local view = {}
-        
+
         view.origin = pos
         view.angles = silentangles
         view.fov = fov
         view.drawviewer = false
-        
+
         return view
     end)
-    
+
     hook.Add("CreateMove", breaklby_hook, function(cmd)
         silentangles = (silentangles or cmd:GetViewAngles()) + Angle(cmd:GetMouseY() * .023, cmd:GetMouseX() * -.023, 0)
         silentangles.p = math.Clamp(silentangles.p, -89, 89)
         if cmd:CommandNumber() == 0 then return end
-        
+
         if CurTime() > nextlby then
             cmd:SetViewAngles(silentangles - Angle(0, 120, 0))
-            
+
             local moving = LocalPlayer():GetVelocity():Length2D() > 0.1
             if moving then
                 nextlby = CurTime() + 0.22
@@ -1833,7 +1833,7 @@ end)
 
 create_checkbox("LBY-Breaker", tab_misc, 236, 70, function()
     lbybreak_enabled = not lbybreak_enabled
-    if (lbybreak_enabled == true) then 
+    if (lbybreak_enabled == true) then
         lbybreaker()
         wtf.log("LBY Breaker Enabled")
     elseif (lbybreak_enabled == false) then
