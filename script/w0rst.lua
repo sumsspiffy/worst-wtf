@@ -12,12 +12,12 @@ local RelayHook, KeyHook = wtf.gString(math.random(10, 220)), wtf.gString(math.r
 local PhysgunHook, EspHook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
 local BhopHook, FSHook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
 local AimbotEnable, AutoFireEnable, AimbotHook = false, false, wtf.gString(math.random(10, 220))
+local RainbowEnable, SkeletonEnable, RefreshHook = false, false, wtf.gString(math.random(10, 220))
 local EntList, Ent3DEnable, EntNameEnable, EntDistanceEnable = {}, false, false, false
 local TracerEnable, DistanceEnable, NameEnable, WeaponEnable = false, false, false, false
 local WallhackEnable, FreecamEnable, BhopEnable, IsKeyDown = false, false, false, false
 local LBYBreakEnable, FlashSpamEnable, ChamsEnable = false, false, false
 local Box3DEnable, UseSpamEnable, Box2DEnable = false, false, false
-local RainbowEnable, SkeletonEnable = false, false
 local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local LogPosY = 10
@@ -245,13 +245,11 @@ local MenuCloseButton=vgui.Create("DButton", Menu)
 MenuCloseButton:SetText("X")
 MenuCloseButton:SetSize(30,30)
 MenuCloseButton:SetPos(570,0)
+MenuCloseButton.DoClick = function() Menu:Hide() end
 MenuCloseButton.Paint = function(self,w,h)
     self:SetTextColor(Color(75,75,75, 105))
     surface.SetDrawColor(Color(0,0,0,0))
     surface.DrawOutlinedRect(0,0,w,h)
-end
-MenuCloseButton.DoClick = function()
-    Menu:Close(); hook.Remove("Think", KeyHook)
 end
 
 local Tab=vgui.Create("DFrame", Menu)
@@ -416,7 +414,7 @@ local function CreateButton(name, tab, width, height, x, y, func)
 end
 
 --/ init panels for later functions
-local PlayerPanel=CreatePanel(TabPlayers, 445, 435, 10, 10)
+local PlayerPanel=CreatePanel(TabPlayers, 445, 460, 10, 10)
 local EntityPanel=CreatePanel(TabVisuals, 440, 270, 15, 190)
 local SoundPanel=CreatePanel(TabSounds, 445, 425, 10, 10)
 local ServerBDPanel=CreatePanel(TabBackdoor, 200, 200, 20, 35)
@@ -652,7 +650,18 @@ local function PopulatePlayers()
           PlrPosY=PlrPosY+140
       end
     end
-end; PopulatePlayers()
+end
+
+PopulatePlayers()
+
+local RefreshDelay = 5
+hook.Add("Think", RefreshHook, function()
+    if CurTime() < RefreshDelay then return end
+    RefreshDelay = CurTime() + 5
+    PlayerPanel[1]:GetCanvas():Clear()
+    PlrPosX, PlrPosY = 9, 10
+    PopulatePlayers()
+end)
 
 local EntOnList = vgui.Create("DListView", EntityPanel[1])
 EntOnList:SetPos( 220, 0)
@@ -1881,12 +1890,6 @@ end)
 CreateButton("Stop Sounds", TabSounds, 100, 25, 245, 445, function()
     wtf.SendLua([[for k,v in pairs(player.GetAll()) do v:ConCommand('stopsound') end]])
     wtf.Log("Stopped Sounds")
-end)
-
-CreateButton("Wipe/Populate Players-Pannel", TabPlayers, 445, 20, 10, 455, function()
-    PlayerPanel[1]:GetCanvas():Clear() --/ Clear pannel
-    PlrPosX, PlrPosY = 9, 10 --/ Reset points
-    PopulatePlayers() --/ populate | add all players
 end)
 
 CreateSoundButtons() --/ creates all sound buttons
