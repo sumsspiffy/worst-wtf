@@ -499,7 +499,7 @@ local function CreateSoundButtons()
         end
         Button.DoClick = function()
             if wtf.CheckNet(SelectedNet) then
-                wtf.SendLua([[BroadcastLua("sound.PlayURL(']]..song[2]..[[','mono',function(station) station:Play() end)")]])
+                wtf.SendLua([[BroadcastLua("sound.PlayURL(']]..Song[2]..[[','mono',function(station) station:Play() end)")]])
                 wtf.Log("Sent Sound: "..Song[1]); wtf.conoutRGB("PLAYED SOUND: "..Song[1])
             else
                 wtf.Log("No Net Selected"); wtf.conoutRGB("NO NET SELECTED")
