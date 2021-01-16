@@ -1,3 +1,4 @@
 bin/
+api/config.ini
 backup.lua
 complete-backup.rar
