@@ -7,7 +7,6 @@ function wtf.gString(l)
 end return s
 end
 
-function relay()
 local UseTimer, LogTimer = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
 local RelayHook, KeyHook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
 local PhysgunHook, EspHook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
@@ -78,7 +77,7 @@ function wtf.CheckWebNets()
         local Nets = string.Split(b, " ")
         for k,v in pairs(Nets) do
             if wtf.Check(v) then
-                wtf.Log("Net Found: "..v) 
+                wtf.Log("Net Found: "..v)
                 wtf.conoutRGB("NET: "..v)
                 SelectedNet=v
             end
@@ -152,40 +151,40 @@ function(icons)
     end
 end)
 
-surface.CreateFont('Font', { 
-    font = 'Open Sans', 
-    extended = false, 
-    size = 20, 
-    weight = 1000, 
-    blursize = 0, 
-    scanlines = 0, 
-    antialias = true, 
-    underline = false, 
-    italic = false, 
-    strikeout = false, 
-    symbol = false, 
-    rotary = false, 
-    shadow = true, 
-    additive = false, 
-    outline = false, 
+surface.CreateFont('Font', {
+    font = 'Open Sans',
+    extended = false,
+    size = 20,
+    weight = 1000,
+    blursize = 0,
+    scanlines = 0,
+    antialias = true,
+    underline = false,
+    italic = false,
+    strikeout = false,
+    symbol = false,
+    rotary = false,
+    shadow = true,
+    additive = false,
+    outline = false,
 })
 
-surface.CreateFont('Sounds', { 
-    font = 'Marlett', 
-    extended = false, 
-    size = 17, 
-    weight = 1000, 
-    blursize = 0, 
-    scanlines = 0, 
-    antialias = true, 
-    underline = false, 
-    italic = false, 
-    strikeout = false, 
-    symbol = false, 
-    rotary = false, 
-    shadow = true, 
-    additive = true, 
-    outline = true, 
+surface.CreateFont('Sounds', {
+    font = 'Marlett',
+    extended = false,
+    size = 17,
+    weight = 1000,
+    blursize = 0,
+    scanlines = 0,
+    antialias = true,
+    underline = false,
+    italic = false,
+    strikeout = false,
+    symbol = false,
+    rotary = false,
+    shadow = true,
+    additive = true,
+    outline = true,
 })
 
 function wtf.conoutRGB(str)
@@ -429,9 +428,9 @@ local function CreateBDServer(name, func)
     Button:SetPos(12, BDServerPosY)
     Button:SetText(name)
     Button.DoClick = function()
-        if SelectedNet ~= "NONE" then 
-            func() 
-        else 
+        if SelectedNet ~= "NONE" then
+            func()
+        else
             wtf.Log("No Net Selected")
         end
     end
@@ -451,9 +450,9 @@ local function CreateBDClient(name, func)
     Button:SetPos(12, BDClientPosY)
     Button:SetText(name)
     Button.DoClick = function()
-        if SelectedNet ~= "NONE" then 
+        if SelectedNet ~= "NONE" then
             if wtf.CheckPlr() then func() end
-        else 
+        else
             wtf.Log("No Net Selected")
         end
     end
