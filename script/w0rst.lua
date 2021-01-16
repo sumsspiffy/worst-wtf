@@ -7,7 +7,7 @@ function wtf.gString(l)
 end return s
 end
 
-local esp_hook, bhop_hook, hud_hook, as_hook, flash_spam_hook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
+local esp_hook, bhop_hook, hud_hook, as_hook, flash_spam_hook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
 local use_timer, log_timer, key_hook, rgb_physgun_hook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
 local relay_hook = wtf.gString(math.random(10, 220))
 
@@ -16,7 +16,8 @@ local wallhack_enable, freecam_enable, bhop_enable, is_key_down, use_spam_enable
 local rainbow_enable, skeleton_enable, rgb_physgun_enable, lbybreak_enabled = false, false, false, false
 
 local aimbot_enable, autoshoot_enable, aimbot_hook = false, false, wtf.gString(math.random(10, 220))
-local entity_list, entity_enable = {}, false
+local player_enable = false
+local entity_list, entity3d_enable, entityname_enable, entitdistance_enable = {}, false, false, false
 
 local tracer_color = { r="255", g="255", b="255" }
 local distance_color = { r="255", g="255", b="255" }
@@ -386,7 +387,7 @@ end
 
 --/ init panels for later functions
 local player_panel=create_panel(tab_players, 445, 435, 10, 10)
-local entity_panel=create_panel(tab_visuals, 440, 300, 15, 160)
+local entity_panel=create_panel(tab_visuals, 440, 270, 15, 190)
 local sounds_panel=create_panel(tab_sounds, 445, 425, 10, 10)
 local server_panel=create_panel(tab_backdoor, 200, 200, 20, 35)
 local client_panel=create_panel(tab_backdoor, 200, 200, 245, 35)
@@ -615,7 +616,7 @@ end; populate_players()
 
 local entonlist = vgui.Create("DListView", entity_panel[1])
 entonlist:SetPos( 220, 0)
-entonlist:SetSize( 220, 298 )
+entonlist:SetSize( 220, 270 )
 entonlist:SetMultiSelect(false)
 entonlist:AddColumn("Whitelisted Entities")
 entonlist:SetHideHeaders(true)
@@ -626,7 +627,7 @@ end
 
 local entofflist = vgui.Create("DListView", entity_panel[1])
 entofflist:SetPos( 0, 0 )
-entofflist:SetSize( 220, 298 )
+entofflist:SetSize( 220, 270 )
 entofflist:SetMultiSelect(false)
 entofflist:SetHideHeaders(true)
 entofflist:AddColumn("Whitelist Entities")
@@ -812,22 +813,39 @@ hook.Add("HUDPaint", esp_hook, function()
     for k, v in pairs(ents.GetAll()) do
         if v:IsValid() and v ~= LocalPlayer() and not v:IsDormant() then
             local ent=v
-            if entity_enable then
+            if entity3d_enable or entityname_enable or entitdistance_enable then
                 for k, v in pairs(entity_list) do
-                    if v == ent:GetClass() and ent:GetOwner() ~= LocalPlayer() then
-                        local name = ent:GetClass()
-                        local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
-                        local position = (ent:GetPos() + Vector(0,0,5)):ToScreen()
-                        draw.SimpleText(name.." ["..distance.."]", "Default", position.x,position.y,Color(entity_color.r, entity_color.g, entity_color.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-                    end
-                end
+                  if v == ent:GetClass() and ent:GetOwner() ~= LocalPlayer() then
+                        if entityname_enable then
+                            local name = ent:GetClass()
+                            local position = (ent:GetPos() + Vector(0,0,5)):ToScreen()
+                            draw.SimpleText(name, "Default", position.x,position.y,Color(entity_color.r, entity_color.g, entity_color.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                        end
+
+                        if entitydistance_enable then
+                          local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
+                          local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
+                          draw.SimpleText(distance, "Default", position.x,position.y,Color(entity_color.r, entity_color.g, entity_color.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                        end
+
+                        if entity3d_enable then
+                          local Position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
+                          local eyeangles = ent:EyeAngles()
+                          local min, max = ent:WorldSpaceAABB()
+                          local origin = ent:GetPos()
+                            cam.Start3D()
+                               render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, Color(entity_color.r, entity_color.g, entity_color.b) )
+                            cam.End3D()
+                        end
+                   end
+               end
             end
-        end
-    end
+         end
+      end
 
     for k,v in pairs (player.GetAll()) do
             if v ~= LocalPlayer() and v:IsValid() and v:Alive() and v:Health() > 0 then
-                local Ent=v
+                local ent=v
 
                 if tracer_enable then
                     surface.SetDrawColor(Color(tracer_color.r, tracer_color.b, tracer_color.g))
@@ -846,8 +864,8 @@ hook.Add("HUDPaint", esp_hook, function()
                 end
 
                 if weapon_enable then
-                    if Ent:GetActiveWeapon():IsValid() then
-                        local weapon_name=Ent:GetActiveWeapon():GetPrintName()
+                    if ent:GetActiveWeapon():IsValid() then
+                        local weapon_name=ent:GetActiveWeapon():GetPrintName()
                         local Position = (v:GetPos() + Vector(0,0,-15)):ToScreen()
                         draw.SimpleText(weapon_name,"Default",Position.x,Position.y,Color(weapon_color.r, weapon_color.g, weapon_color.b),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
                     end
@@ -868,8 +886,8 @@ hook.Add("HUDPaint", esp_hook, function()
                     local Bones = {}
 
                     for k, v in pairs(wtf.Bones) do
-                        if Ent:LookupBone(v) ~= nil and Ent:GetBonePosition(Ent:LookupBone(v)) ~= nil then
-                            table.insert(Bones, Ent:GetBonePosition(Ent:LookupBone(v)):ToScreen())
+                        if ent:LookupBone(v) ~= nil and ent:GetBonePosition(ent:LookupBone(v)) ~= nil then
+                            table.insert(Bones, ent:GetBonePosition(ent:LookupBone(v)):ToScreen())
                         else Success=false; return end
                     end
 
@@ -889,14 +907,14 @@ hook.Add("HUDPaint", esp_hook, function()
                 end
 
                 if box_3d_enable then
-                    local MaxX, MaxY, MinX, MinY, V1, V2, V3, V4, V5, V6, V7, V8 = get_ent_pos(Ent)
-                    surface.SetDrawColor(Color(box_3d_color.r, box_3d_color.g, box_3d_color.b))
-                    surface.DrawLine( V4.x, V4.y, V6.x, V6.y); surface.DrawLine( V1.x, V1.y, V8.x, V8.y)
-                    surface.DrawLine( V6.x, V6.y, V8.x, V8.y); surface.DrawLine( V4.x, V4.y, V1.x, V1.y)
-                    surface.DrawLine( V3.x, V3.y, V5.x, V5.y); surface.DrawLine( V2.x, V2.y, V7.x, V7.y)
-                    surface.DrawLine( V3.x, V3.y, V2.x, V2.y); surface.DrawLine( V5.x, V5.y, V7.x, V7.y)
-                    surface.DrawLine( V3.x, V3.y, V4.x, V4.y); surface.DrawLine( V2.x, V2.y, V1.x, V1.y)
-                    surface.DrawLine( V7.x, V7.y, V8.x, V8.y); surface.DrawLine( V5.x, V5.y, V6.x, V6.y)
+                  local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
+                  local eyeangles = ent:EyeAngles()
+                  local min, max = ent:WorldSpaceAABB()
+                  local origin = ent:GetPos()
+
+                  cam.Start3D()
+                     render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, Color(box_3d_color.r, box_3d_color.g, box_3d_color.b) )
+                  cam.End3D()
                 end
 
                 if wallhack_enable then
@@ -1049,17 +1067,17 @@ function refresh_entlist()
     end
 end; refresh_entlist()
 
-create_button("Refresh Ents", tab_visuals, 80, 25, 23, 130, function()
+create_button("Refresh Ents", tab_visuals, 80, 25, 23, 160, function()
     refresh_entlist()
 end)
 
-create_button("Add Ent", tab_visuals, 80, 25, 108, 130, function()
+create_button("Add Ent", tab_visuals, 80, 25, 108, 160, function()
   if entofflist:GetSelectedLine() ~= nil then
       table.insert( entity_list, entofflist:GetLine(entofflist:GetSelectedLine()):GetValue(1) )
   end; refresh_entlist()
 end)
 
-create_button("Remove Ent", tab_visuals, 80, 25, 193, 130, function()
+create_button("Remove Ent", tab_visuals, 80, 25, 193, 160, function()
     if entonlist:GetSelectedLine() ~= nil then
         for k, v in pairs( entity_list ) do
             if v == entonlist:GetLine(entonlist:GetSelectedLine()):GetValue(1) then
@@ -1069,18 +1087,18 @@ create_button("Remove Ent", tab_visuals, 80, 25, 193, 130, function()
     end; refresh_entlist()
 end)
 
-create_button("Add All", tab_visuals, 80, 25, 278, 130, function()
+create_button("Add All", tab_visuals, 80, 25, 278, 160, function()
   for k, v in pairs( entofflist:GetLines() ) do
       table.insert( entity_list, v:GetValue(1) )
   end; refresh_entlist()
 end)
 
-create_button("Remove All", tab_visuals, 80, 25, 363, 130, function()
+create_button("Remove All", tab_visuals, 80, 25, 363, 160, function()
   table.Empty( entity_list )
   refresh_entlist()
 end)
 
-create_checkbox("Tracer-ESP", tab_visuals, 16, 10, function()
+create_checkbox("Plr-Tracer", tab_visuals, 16, 10, function()
     tracer_enable=not tracer_enable
     if(tracer_enable == false) then
         wtf.log("Tracer Disabled")
@@ -1089,7 +1107,7 @@ create_checkbox("Tracer-ESP", tab_visuals, 16, 10, function()
     end
 end)
 
-create_checkbox("Distance-ESP", tab_visuals, 126, 10, function()
+create_checkbox("Plr-Distance", tab_visuals, 126, 10, function()
     distance_enable=not distance_enable
     if(distance_enable == false) then
         wtf.log("Distance Disabled")
@@ -1098,7 +1116,7 @@ create_checkbox("Distance-ESP", tab_visuals, 126, 10, function()
     end
 end)
 
-create_checkbox("Name-ESP", tab_visuals, 236, 10, function()
+create_checkbox("Plr-Names", tab_visuals, 236, 10, function()
     name_enable=not name_enable
     if(name_enable == false) then
         wtf.log("Name Disabled")
@@ -1107,7 +1125,7 @@ create_checkbox("Name-ESP", tab_visuals, 236, 10, function()
     end
 end)
 
-create_checkbox("Weapon-ESP", tab_visuals, 346, 10, function()
+create_checkbox("Plr-Weapons", tab_visuals, 346, 10, function()
     weapon_enable=not weapon_enable
     if(weapon_enable == false) then
         wtf.log("Weapon Disabled")
@@ -1116,7 +1134,7 @@ create_checkbox("Weapon-ESP", tab_visuals, 346, 10, function()
     end
 end)
 
-create_checkbox("Box-2D-ESP", tab_visuals, 16, 40, function()
+create_checkbox("Plr-2D-Box", tab_visuals, 16, 40, function()
     box_2d_enable=not box_2d_enable
     if(box_2d_enable == false) then
         wtf.log("Box-2D Disabled")
@@ -1125,7 +1143,7 @@ create_checkbox("Box-2D-ESP", tab_visuals, 16, 40, function()
     end
 end)
 
-create_checkbox("Box-3D-ESP", tab_visuals, 126, 40, function()
+create_checkbox("Plr-3D-Box", tab_visuals, 126, 40, function()
     box_3d_enable=not box_3d_enable
     if(box_3d_enable == false) then
         wtf.log("Box-3D Disabled")
@@ -1134,7 +1152,7 @@ create_checkbox("Box-3D-ESP", tab_visuals, 126, 40, function()
     end
 end)
 
-create_checkbox("Skeleton-ESP", tab_visuals, 236, 40, function()
+create_checkbox("Plr-Skeletons", tab_visuals, 236, 40, function()
     skeleton_enable=not skeleton_enable
     if(skeleton_enable == false) then
         wtf.log("Skeleton Disabled")
@@ -1143,7 +1161,7 @@ create_checkbox("Skeleton-ESP", tab_visuals, 236, 40, function()
     end
 end)
 
-create_checkbox("Chams-ESP", tab_visuals, 346, 40, function()
+create_checkbox("Plr-Chams", tab_visuals, 346, 40, function()
     chams_enable=not chams_enable
     if(chams_enable == false) then
         wtf.log("Chams Disabled")
@@ -1152,16 +1170,34 @@ create_checkbox("Chams-ESP", tab_visuals, 346, 40, function()
     end
 end)
 
-create_checkbox("Entity-ESP", tab_visuals, 16, 70, function()
-  entity_enable=not entity_enable
-  if(entity_enable == false) then
-      wtf.log("Entity Disabled")
-  elseif(entity_enable == true) then
-      wtf.log("Entity Enabled")
+create_checkbox("Ent-Names", tab_visuals, 16, 70, function()
+  entityname_enable=not entityname_enable
+  if(entityname_enable == false) then
+      wtf.log("Entity Names Disabled")
+  elseif(entityname_enable == true) then
+      wtf.log("Entity Names Enabled")
   end
 end)
 
-create_checkbox("Wallhack", tab_visuals, 126, 70, function()
+create_checkbox("Ent-Distance", tab_visuals, 126, 70, function()
+  entitydistance_enable=not entitydistance_enable
+  if(entitydistance_enable == false) then
+      wtf.log("Entity Distance Disabled")
+  elseif(entitydistance_enable == true) then
+      wtf.log("Entity Distance Enabled")
+  end
+end)
+
+create_checkbox("Ent-3D (D)", tab_visuals, 236, 70, function()
+  entity3d_enable=not entity3d_enable
+  if(entity3d_enable == false) then
+      wtf.log("Entity 3D-Boxes Disabled")
+  elseif(entity3d_enable == true) then
+      wtf.log("Entity 3D-Boxes Enabled")
+  end
+end)
+
+create_checkbox("Wallhack", tab_visuals, 346, 70, function()
     wallhack_enable=not wallhack_enable
     if(wallhack_enable == false) then
         wtf.log("Wallhack Disabled")
@@ -1170,7 +1206,7 @@ create_checkbox("Wallhack", tab_visuals, 126, 70, function()
     end
 end)
 
-create_checkbox("Free Camera", tab_visuals, 236, 70, function()
+create_checkbox("Free Camera", tab_visuals, 16, 100, function()
     FC.Enabled=not FC.Enabled
     if FC.Enabled then
         wtf.log("Freecam Enabled")
