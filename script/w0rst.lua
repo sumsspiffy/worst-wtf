@@ -64,11 +64,12 @@ function wtf.CheckNet(str)
 end
 
 function wtf.CheckPlr()
-    if SelectedPlr ~= "NONE" then
-        local plr=SelectedPlr
+    if (plr ~= nil && Player(plr):IsValid() ~= false) then
+        SelectedPlr = plr
         return true
     else
-        wtf.Log("No Player Selected")
+        wtf.Log("Player Not Selected/Valid")
+        wtf.conoutRGB("PLAYER INVALID OR NOT SELECTED")
     end
 end
 
@@ -249,7 +250,6 @@ MenuCloseButton.Paint = function(self,w,h)
     surface.SetDrawColor(Color(0,0,0,0))
     surface.DrawOutlinedRect(0,0,w,h)
 end
-
 MenuCloseButton.DoClick = function()
     Menu:Close(); hook.Remove("Think", KeyHook)
 end
@@ -450,8 +450,8 @@ local function CreateBDClient(name, func)
     Button:SetPos(12, BDClientPosY)
     Button:SetText(name)
     Button.DoClick = function()
-        if SelectedNet ~= "NONE" then
-            if wtf.CheckPlr() then func() end
+        if wtf.CheckNet(SelectedNet) then
+            func()
         else
             wtf.Log("No Net Selected")
         end
@@ -622,9 +622,10 @@ local function PopulatePlayers()
       end
       LabelButton.DoClick = function()
           plr = v:UserID()
-          SelectedPlr = plr
-          wtf.Log("Player: "..Player(plr):Nick().." Selected")
-          wtf.conoutRGB("SELECTED PLAYER: "..Player(plr):Nick())
+          if wtf.CheckPlr() then
+              wtf.Log("Player: "..Player(plr):Nick().." Selected")
+              wtf.conoutRGB("SELECTED PLAYER: "..Player(plr):Nick())
+          end
       end
 
       local AvatarFrame = vgui.Create("DFrame", Frame)
