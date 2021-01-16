@@ -76,7 +76,7 @@ function wtf.CheckWebNets()
     http.Post("https://w0rst.xyz/api/net/view.php", { A0791AfFA0F30EdCee1EdADb="02C2C6A1Ded7183AeDAA8650" }, function(b)
         local Nets = string.Split(b, " ")
         for k,v in pairs(Nets) do
-            if wtf.Check(v) then
+            if wtf.CheckNet(v) then
                 wtf.Log("Net Found: "..v)
                 wtf.conoutRGB("NET: "..v)
                 SelectedNet=v
