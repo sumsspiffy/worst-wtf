@@ -622,7 +622,7 @@ local function PopulatePlayers()
       end
       LabelButton.DoClick = function()
           plr = v:UserID()
-          SelectedPlr=plr
+          SelectedPlr = plr
           wtf.Log("Player: "..Player(plr):Nick().." Selected")
           wtf.conoutRGB("SELECTED PLAYER: "..Player(plr):Nick())
       end
