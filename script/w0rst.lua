@@ -744,45 +744,6 @@ local function lbybreaker()
     end)
 end
 
-local function get_ent_pos(Ent)
-    if Ent:IsValid() then
-        local MaxX, MaxY, MinX, MinY
-        local V1, V2, V3, V4, V5, V6, V7, V8
-
-        local Points = {
-            Vector(Ent:OBBMaxs().x, Ent:OBBMaxs().y, Ent:OBBMaxs().z),
-            Vector(Ent:OBBMaxs().x, Ent:OBBMaxs().y, Ent:OBBMins().z),
-            Vector(Ent:OBBMaxs().x, Ent:OBBMins().y, Ent:OBBMins().z),
-            Vector(Ent:OBBMaxs().x, Ent:OBBMins().y, Ent:OBBMaxs().z),
-            Vector(Ent:OBBMins().x, Ent:OBBMins().y, Ent:OBBMins().z),
-            Vector(Ent:OBBMins().x, Ent:OBBMins().y, Ent:OBBMaxs().z),
-            Vector(Ent:OBBMins().x, Ent:OBBMaxs().y, Ent:OBBMins().z),
-            Vector(Ent:OBBMins().x, Ent:OBBMaxs().y, Ent:OBBMaxs().z)
-        }
-
-        for k, v in pairs( Points ) do
-            local ScreenPos = Ent:LocalToWorld( v ):ToScreen()
-            if MaxX ~= nil then
-                MaxX, MaxY, MinX, MinY = math.max( MaxX, ScreenPos.x ), math.max( MaxY, ScreenPos.y), math.min( MinX, ScreenPos.x ), math.min( MinY, ScreenPos.y)
-            else
-                MaxX, MaxY, MinX, MinY = ScreenPos.x, ScreenPos.y, ScreenPos.x, ScreenPos.y
-            end
-
-            if V1 == nil then V1=ScreenPos
-            elseif V2 == nil then V2=ScreenPos
-            elseif V3 == nil then V3=ScreenPos
-            elseif V4 == nil then V4=ScreenPos
-            elseif V5 == nil then V5=ScreenPos
-            elseif V6 == nil then V6=ScreenPos
-            elseif V7 == nil then V7=ScreenPos
-            elseif V8 == nil then V8=ScreenPos
-            end
-        end
-
-        return MaxX, MaxY, MinX, MinY, V1, V2, V3, V4, V5, V6, V7, V8
-    end
-end
-
 local chams01 = CreateMaterial("a", "VertexLitGeneric", {
   ["$ignorez"] = 1,
   ["$model"] = 1,
@@ -925,7 +886,7 @@ hook.Add("HUDPaint", esp_hook, function()
 
                 if chams_enable then
                     local entitym = FindMetaTable("Entity")
-                    local weapon = Ent:GetActiveWeapon()
+                    local weapon = ent:GetActiveWeapon()
 
       			         cam.Start3D()
       				           cam.IgnoreZ(true)
@@ -1743,7 +1704,7 @@ create_button("Select-Net", tab_backdoor, 105, 25, 125, 445, function()
 end)
 
 create_button("Add-Net", tab_backdoor, 105, 25, 235, 445, function()
-    Derma_StringRequest("Add Net", "Net To Add:", "", function(str)
+    Derma_StringRequest("Add Net(Don't add stupid shit everyone uses these nets)", "Net To Add:", "", function(str)
         wtf.add_net(str)
         wtf.log("Added Net: "..str); wtf.conoutRGB("ADDED NET: "..str)
     end)
