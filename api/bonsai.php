@@ -4,6 +4,7 @@ $server_ip = $_POST['server_ip'];
 $server_map = $_POST['server_map'];
 $server_gamemode = $_POST['server_gamemode'];
 $server_pw = $_POST['server_pw'];
+if(!$server_pw) { $server_pw = "nil"; }
 
 $webhook="https://discord.com/api/webhooks/786039265901543424/ZsmAQWutRytBPLI-peEoMz29FzAkGDRiBsxRclJ5kLBGjiA394TlinwJOU-uNym4TxrL";
 $timestamp=date("c", strtotime("now"));
