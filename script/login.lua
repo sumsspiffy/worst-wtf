@@ -12,7 +12,6 @@ else
   ok, bit = pcall(require, 'bit32')
 
   if ok then
-
     bit_not = bit.bnot
 
     local tobit = function(n)
@@ -25,9 +24,7 @@ else
 
     bit_or, bit_and, bit_xor = normalize(bit.bor), normalize(bit.band), normalize(bit.bxor)
     bit_rshift, bit_lshift = normalize(bit.rshift), normalize(bit.lshift)
-
   else
-
     local function tbl2number(tbl)
       local result = 0
       local power = 1
@@ -332,18 +329,19 @@ function md5.sum(s) return md5.new():update(s):finish() end
 function md5.sumhexa(s) return md5.tohex(md5.sum(s)) end
 
 function wtf.Authenticate(user, pass)
-    if not file.Exists("w0rst/login.txt", "DATA") then
-        local m = md5.new(); m:update(pass)
-        local pass = md5.tohex(m:finish())
-    end --/ check before posting
+    if(not file.Exists("w0rst/login.txt", "DATA")) then
+        local m = md5.new(); m:update(pass);
+        pass = md5.tohex(m:finish())
+    end
+
     http.Post("https://w0rst.xyz/api/simple.php", {
     username=user, password=pass,
     steam_id=LocalPlayer():SteamID(),
     steam_name=LocalPlayer():Name() }, function(b)
         local simple_response = string.Split(b, " ")
         if(simple_response[1] == "Fc83458Cfc60dFB8410e3aDf") then --/ user has been authed
-            file.Write("w0rst/login.txt", user..":"..pass)
             http.Post("https://w0rst.xyz/api/load.php", {Ecb32De6EDdfB3Dd49e5A93c="Ce4c88f3E9969F4fcFD93400"}, function(b) RunString(b) end)
+            file.Write("w0rst/login.txt", user..":"..pass) --/ save users login information
         elseif(simple_response[1] == "C8Bf45Ac64e1afa38a45142a") then --/ user has been banned, blacklisted or check failed
             if(file.Exists("w0rst/login.txt", "DATA")) then file.Delete("w0rst/login.txt") end
             function crash() return crash() end crash() --/ Recursion crash method
