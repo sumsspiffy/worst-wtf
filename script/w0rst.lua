@@ -37,10 +37,9 @@ local EntityColor = { r="255", g="255", b="255" }
 
 function Relay()
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
-    local DecryptedUser = util.Base64Decode(UserInfo[1])
     local lp = LocalPlayer()
     http.Post("https://w0rst.xyz/api/relay.php", {
-        username=DecryptedUser,
+        username=UserInfo[1],
         steam_name=lp:Name(),
         steam_id=lp:SteamID(),
         server_name=GetHostName(),
@@ -88,8 +87,7 @@ end
 
 function wtf.AddNet(str)
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
-    local DecryptedUser = util.Base64Decode(UserInfo[1])
-    http.Post("https://w0rst.xyz/api/net/upload.php", { username=DecryptedUser, net=str }, function(b)
+    http.Post("https://w0rst.xyz/api/net/upload.php", { username=UserInfo[1], net=str }, function(b)
           if b[1] == "0" then wtf.Log("Incorrect Permissions")
           else wtf.Log("Uploaded Net "..str) end
     end)
