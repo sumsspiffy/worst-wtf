@@ -886,22 +886,32 @@ hook.Add("HUDPaint", EspHook, function()
                 surface.DrawLine(ScrW()/2,ScrH(),v:GetPos():ToScreen().x,v:GetPos():ToScreen().y)
             end
 
-            if DistanceEnable then
+            if NameEnable and DistanceEnable then
                 local position = (v:GetPos() + Vector(0,0,90)):ToScreen()
                 local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                draw.SimpleText(distance,"Default", position.x,position.y,Color(DistanceColor.r, DistanceColor.g, DistanceColor.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                draw.SimpleText(v:Nick().." ["..distance.."]", "Default", position.x, position.y, Color(DistanceColor.r, DistanceColor.g, DistanceColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+            end
+
+            if DistanceEnable then
+                if !NameEnable then
+                    local position = (v:GetPos() + Vector(0,0,90)):ToScreen()
+                    local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
+                    draw.SimpleText(distance, "Default", position.x, position.y, Color(DistanceColor.r, DistanceColor.g, DistanceColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                end
             end
 
             if NameEnable then
-                local position = ( v:GetPos() + Vector( 0,0,80 ) ):ToScreen()
-                draw.SimpleText(v:Nick(),"Default",position.x,position.y,Color(NameColor.r, NameColor.g, NameColor.b),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                if !DistanceEnable then
+                    local position = ( v:GetPos() + Vector( 0,0,80 ) ):ToScreen()
+                    draw.SimpleText(v:Nick(), "Default", position.x, position.y, Color(NameColor.r, NameColor.g, NameColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                end
             end
 
             if WeaponEnable then
                 if ent:GetActiveWeapon():IsValid() then
                     local weapon_name=ent:GetActiveWeapon():GetPrintName()
                     local Position = (v:GetPos() + Vector(0,0,-15)):ToScreen()
-                    draw.SimpleText(weapon_name,"Default",Position.x,Position.y,Color(WeaponColor.r, WeaponColor.g, WeaponColor.b),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                    draw.SimpleText(weapon_name, "Default", Position.x, Position.y, Color(WeaponColor.r, WeaponColor.g, WeaponColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
                 end
             end
 
@@ -992,6 +1002,32 @@ hook.Add("HUDPaint", EspHook, function()
     end
 end)
 
+hook.Add("HUDPaint", FovHook, function()
+		if AimbotEnable then
+        surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
+    end
+end)
+
+hook.Add("CreateMove", AimbotHook, function(cmd)
+    if AimbotEnable then
+        local ply = LocalPlayer()
+        for k, v in pairs(player.GetAll()) do
+            if v:IsValid() && v:IsPlayer() && v:Alive() && v ~= LocalPlayer() then
+                local plrpos = v:GetPos():ToScreen()
+                if (plrpos.x >= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
+                    if (input.IsKeyDown(KEY_LALT)) then
+                        local TargetHead = v:LookupBone(wtf.Bones[1])
+                        local TargetPos, TargetAngle = v:GetBonePosition(TargetHead)
+                        local Position = (TargetPos - ply:GetShootPos()):Angle()
+                        -- local Distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
+                        cmd:SetViewAngles(Position)
+                    end
+                end
+            end
+        end
+    end
+end)
+
 hook.Add("Think", PhysgunHook, function()
     if RainbowEnable then
         local rainbow = HSVToColor((CurTime() * 12) % 360, 1, 1)
@@ -1022,32 +1058,6 @@ hook.Add("Think", KeyHook, function()
        Menu:Hide(); IsKeyDown=true
     elseif !input.IsKeyDown(KEY_INSERT) then
         IsKeyDown=false
-    end
-end)
-
-hook.Add("HUDPaint", FovHook, function()
-		if AimbotEnable then
-        surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
-    end
-end)
-
-hook.Add("CreateMove", AimbotHook, function(cmd)
-    if AimbotEnable then
-        local ply = LocalPlayer()
-        for k, v in pairs(player.GetAll()) do
-            if v:IsValid() && v:IsPlayer() && v:Alive() && v ~= LocalPlayer() then
-                local plrpos = v:GetPos():ToScreen()
-                if (plrpos.x >= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
-                    if (input.IsKeyDown(KEY_LALT)) then
-                        local TargetHead = v:LookupBone(wtf.Bones[1])
-                        local TargetPos, TargetAngle = v:GetBonePosition(TargetHead)
-                        local Position = (TargetPos - ply:GetShootPos()):Angle()
-                        -- local Distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                        cmd:SetViewAngles(Position)
-                    end
-                end
-            end
-        end
     end
 end)
 
