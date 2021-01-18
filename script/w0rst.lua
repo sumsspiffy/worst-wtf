@@ -546,7 +546,7 @@ end
 
 local function CreateSlider(name, tab, table, x, y)
     local Frame=vgui.Create("DFrame", tab)
-    Frame:SetSize(120,25)
+    Frame:SetSize(110,25)
     Frame:SetPos(x, y)
     Frame:SetDraggable(false)
     Frame:ShowCloseButton(false)
@@ -559,10 +559,10 @@ local function CreateSlider(name, tab, table, x, y)
     end
 
     local Slider=vgui.Create("DNumSlider", Frame)
-    Slider:SetText(name);
-    Slider:SetMin(1);
+    Slider:SetText(name)
+    Slider:SetMin(5)
     Slider:SetMax(1200)
-    Slider:SetSize(125, 10)
+    Slider:SetSize(120, 10)
     Slider:SetPos(5, 5)
     Slider:SetDecimals(0)
     Slider:SetDark(true)
@@ -633,60 +633,60 @@ end
 
 local function PopulatePlayers()
     for k,v in pairs(player.GetAll()) do
-      local Frame = vgui.Create("DFrame", PlayerPanel[1])
-      Frame:SetPos(PlrPosX, PlrPosY)
-      Frame:SetSize(145, 140)
-      Frame:SetTitle(" ")
-      Frame:SetDraggable(false)
-      Frame:ShowCloseButton(false)
-      Frame.Paint = function(self, w, h)
-          surface.SetDrawColor(Color(15,15,15,255))
-          surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-          draw.RoundedBox(0,0,0,w,h,Color(55, 55, 55, 25))
-      end
+        local Frame = vgui.Create("DFrame", PlayerPanel[1])
+        Frame:SetPos(PlrPosX, PlrPosY)
+        Frame:SetSize(145, 140)
+        Frame:SetTitle(" ")
+        Frame:SetDraggable(false)
+        Frame:ShowCloseButton(false)
+        Frame.Paint = function(self, w, h)
+            surface.SetDrawColor(Color(15,15,15,255))
+            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+            draw.RoundedBox(0,0,0,w,h,Color(55, 55, 55, 25))
+        end
 
-      local LabelButton = vgui.Create("DButton", Frame)
-      LabelButton:SetText("Select " .. v:Nick())
-      LabelButton:SetColor(Color(255,255,255))
-      LabelButton:SetSize(115, 30)
-      LabelButton:SetPos(15, 100)
-      LabelButton.Paint = function(self, w, h)
-          draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
-          surface.SetDrawColor(40, 40, 40, 255)
-          surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-          self:SetTextColor(Color(255,255,255))
-      end
-      LabelButton.DoClick = function()
-          plr = v:UserID()
-          if wtf.CheckPlr() then
-              wtf.Log("Player: "..Player(plr):Nick().." Selected")
-              wtf.conoutRGB("SELECTED PLAYER: "..Player(plr):Nick())
-          end
-      end
+        local LabelButton = vgui.Create("DButton", Frame)
+        LabelButton:SetText("Select " .. v:Nick())
+        LabelButton:SetColor(Color(255,255,255))
+        LabelButton:SetSize(115, 30)
+        LabelButton:SetPos(15, 100)
+        LabelButton.Paint = function(self, w, h)
+            draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
+            surface.SetDrawColor(40, 40, 40, 255)
+            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+            self:SetTextColor(Color(255,255,255))
+        end
+        LabelButton.DoClick = function()
+            plr = v:UserID()
+            if wtf.CheckPlr() then
+                wtf.Log("Player: "..Player(plr):Nick().." Selected")
+                wtf.conoutRGB("SELECTED PLAYER: "..Player(plr):Nick())
+            end
+        end
 
-      local AvatarFrame = vgui.Create("DFrame", Frame)
-      AvatarFrame:SetSize(82, 82)
-      AvatarFrame:SetPos(32, 10)
-      AvatarFrame:SetTitle(" ")
-      AvatarFrame:SetDraggable(false)
-      AvatarFrame:ShowCloseButton(false)
-      AvatarFrame.Paint = function(self, w, h)
-          draw.RoundedBox(0,0,0,w,h,Color(0,0,0, 255))
-      end
+        local AvatarFrame = vgui.Create("DFrame", Frame)
+        AvatarFrame:SetSize(82, 82)
+        AvatarFrame:SetPos(31, 10)
+        AvatarFrame:SetTitle(" ")
+        AvatarFrame:SetDraggable(false)
+        AvatarFrame:ShowCloseButton(false)
+        AvatarFrame.Paint = function(self, w, h)
+            draw.RoundedBox(0,0,0,w,h,Color(0,0,0, 255))
+        end
 
-      local Avatar = vgui.Create( "AvatarImage", AvatarFrame)
-      Avatar:SetSize(80, 80)
-      Avatar:Center()
-      Avatar:SetPlayer(v, 128)
-      Avatar.Paint = function(self, w, h)
-          draw.RoundedBox( 10, 0, 0, w, h, Color(255,255,255))
-      end
+        local Avatar = vgui.Create( "AvatarImage", AvatarFrame)
+        Avatar:SetSize(80, 80)
+        Avatar:Center()
+        Avatar:SetPlayer(v, 128)
+        Avatar.Paint = function(self, w, h)
+            draw.RoundedBox( 10, 0, 0, w, h, Color(255,255,255))
+        end
 
-      PlrPosX=PlrPosX+155
-      if PlrPosX==484 then
-          PlrPosX=19
-          PlrPosY=PlrPosY+150
-      end
+        PlrPosX=PlrPosX+155
+        if PlrPosX==484 then
+            PlrPosX=19
+            PlrPosY=PlrPosY+150
+        end
     end
 end
 
