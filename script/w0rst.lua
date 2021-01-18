@@ -31,6 +31,7 @@ local PlrPosX, PlrPosY, plr = 19, 10, nil
 local TracerColor = { r=255, g=255, b=255 }
 local DistanceColor = { r=255, g=255, b=255 }
 local NameColor = { r=255, g=255, b=255 }
+local NameDistColor = { r=255, g=255, b=255 }
 local WeaponColor = { r=255, g=255, b=255 }
 local Box2DColor = { r=255, g=255, b=255 }
 local Box3DColor = { r=255, g=255, b=255 }
@@ -770,6 +771,7 @@ local SkeletonSlider = CreateColorSlider("Skeleton-Editor", SkeletonColor, TabMi
 local ChamsSlider = CreateColorSlider("Chams-Editor", ChamsColor, TabMisc, 384, 370)
 local EntitySlider = CreateColorSlider("Entity-Editor", EntityColor, TabMisc, 9, 460)
 local FovSlider = CreateColorSlider("Fov-Editor", FovColor, TabMisc, 134, 460)
+local NameDistSlider = CreateColorSlider("Name/Dist-Editor", NameDistColor, TabMisc, 259, 460)
 
 local FC={}
 FC.Enabled=false
@@ -887,14 +889,14 @@ hook.Add("HUDPaint", EspHook, function()
             end
 
             if NameEnable and DistanceEnable then
-                local position = (v:GetPos() + Vector(0,0,90)):ToScreen()
+                local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
                 local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                draw.SimpleText(v:Nick().." ["..distance.."]", "Default", position.x, position.y, Color(DistanceColor.r, DistanceColor.g, DistanceColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                draw.SimpleText(v:Nick().." ["..distance.."]", "Default", position.x, position.y, Color(NameDistColor.r, NameDistColor.g, NameDistColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
             end
 
             if DistanceEnable then
                 if !NameEnable then
-                    local position = (v:GetPos() + Vector(0,0,90)):ToScreen()
+                    local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
                     local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
                     draw.SimpleText(distance, "Default", position.x, position.y, Color(DistanceColor.r, DistanceColor.g, DistanceColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                 end
@@ -902,7 +904,7 @@ hook.Add("HUDPaint", EspHook, function()
 
             if NameEnable then
                 if !DistanceEnable then
-                    local position = ( v:GetPos() + Vector( 0,0,80 ) ):ToScreen()
+                    local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
                     draw.SimpleText(v:Nick(), "Default", position.x, position.y, Color(NameColor.r, NameColor.g, NameColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                 end
             end
@@ -1008,11 +1010,16 @@ hook.Add("HUDPaint", FovHook, function()
     end
 end)
 
+local function Valid(v)
+    if(!v or  !v:IsValid() or v:Health() < 1 or v:IsDormant() or v == me) then return false; end
+    return true
+end
+
 hook.Add("CreateMove", AimbotHook, function(cmd)
     if AimbotEnable then
         local ply = LocalPlayer()
         for k, v in pairs(player.GetAll()) do
-            if v:IsValid() && v:IsPlayer() && v:Alive() && v ~= LocalPlayer() then
+            if Valid(v) then
                 local plrpos = v:GetPos():ToScreen()
                 if (plrpos.x >= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
                     if (input.IsKeyDown(KEY_LALT)) then
@@ -1222,9 +1229,10 @@ CreateButton("Save Visuals", TabMisc, 110, 25, 395, 250, function()
     local cc = ChamsColor.r.." "..ChamsColor.g.." "..ChamsColor.b
     local ec = EntityColor.r.." "..EntityColor.g.." "..EntityColor.b
     local fc = FovColor.r.." "..FovColor.g.." "..FovColor.b
+    local ndc = NameDistColor.r.." "..NameDistColor.g.." "..NameDistColor.b
 
     wtf.Log("Visuals Saved")
-    file.Write("w0rst/visuals.txt", tc..","..dc..","..nc..","..wc..","..bc..","..sc..","..dbc..","..cc..","..ec..","..fc)
+    file.Write("w0rst/visuals.txt", tc..","..dc..","..nc..","..wc..","..bc..","..sc..","..dbc..","..cc..","..ec..","..fc..","..ndc)
 end)
 
 CreateButton("Load Visuals", TabMisc, 110, 25, 280, 250, function()
@@ -1232,23 +1240,21 @@ CreateButton("Load Visuals", TabMisc, 110, 25, 280, 250, function()
         wtf.Log("File Not Found"); wtf.conoutRGB("VISUALS FILE NOT FOUND")
     else
         wtf.Log("Visuals Loaded"); wtf.conoutRGB("VISUALS LOADED")
-        local f = file.Read("w0rst/visuals.txt")
-        local lines = string.Split(f, ",")
+        local f = file.Read("w0rst/visuals.txt"); local lines = string.Split(f, ",")
         local tc,dc,nc = string.Split(lines[1], " "), string.Split(lines[2], " "), string.Split(lines[3], " ")
         local wc,bc,sc = string.Split(lines[4], " "), string.Split(lines[5], " "), string.Split(lines[6], " ")
         local dbc, cc, ec = string.Split(lines[7], " "), string.Split(lines[8], " "), string.Split(lines[9], " ")
-        local fc = string.Split(lines[10], " ")
+        local fc, ndc = string.Split(lines[10], " "), string.Split(lines[11], " ")
 
-        TracerSlider[1]:SetValue(tc[1]); TracerSlider[2]:SetValue(tc[2]); TracerSlider[3]:SetValue(tc[3])
-        DistanceSlider[1]:SetValue(dc[1]); DistanceSlider[2]:SetValue(dc[2]); DistanceSlider[3]:SetValue(dc[3])
-        NameSlider[1]:SetValue(nc[1]); NameSlider[2]:SetValue(nc[2]); NameSlider[3]:SetValue(nc[3])
-        WeaponSlider[1]:SetValue(wc[1]); WeaponSlider[2]:SetValue(wc[2]); WeaponSlider[3]:SetValue(wc[3])
-        Box2DSlider[1]:SetValue(bc[1]); Box2DSlider[2]:SetValue(bc[2]); Box2DSlider[3]:SetValue(bc[3])
-        SkeletonSlider[1]:SetValue(sc[1]); SkeletonSlider[2]:SetValue(sc[2]); SkeletonSlider[3]:SetValue(sc[3])
-        Box3DSlider[1]:SetValue(dbc[1]); Box3DSlider[2]:SetValue(dbc[2]); Box3DSlider[3]:SetValue(dbc[3])
-        ChamsSlider[1]:SetValue(cc[1]); ChamsSlider[2]:SetValue(cc[2]); ChamsSlider[3]:SetValue(cc[3])
-        EntitySlider[1]:SetValue(ec[1]); EntitySlider[2]:SetValue(ec[2]); EntitySlider[3]:SetValue(ec[3])
-        FovSlider[1]:SetValue(fc[1]); FovSlider[2]:SetValue(fc[2]); FovSlider[3]:SetValue(fc[3])
+        local function load(color_table, slider)
+            slider[1]:SetValue(color_table[1])
+            slider[2]:SetValue(color_table[2]);
+            slider[3]:SetValue(color_table[3])
+        end
+
+        load(tc, TracerSlider); load(dc, DistanceSlider); load(nc, NameSlider); load(wc, WeaponSlider)
+        load(bc, Box2DSlider); load(sc, SkeletonSlider); load(dbc, Box2DSlider); load(cc, ChamsSlider)
+        load(ec, EntitySlider); load(fc, FovSlider); load(ndc, NameDistSlider)
     end
 end)
 
