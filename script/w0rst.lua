@@ -979,9 +979,9 @@ hook.Add("HUDPaint", EspHook, function()
 
                 cam.Start3D()
                     render.MaterialOverride(chams01)
-                    render.SetColorModulation(ChamsColor.b / 255, ChamsColor.r / 255, ChamsColor.g / 255)
+                    render.SetColorModulation(ChamsColor.r/255, ChamsColor.g/255, ChamsColor.b/255)
                     entitym.DrawModel(v)
-                    render.SetColorModulation(ChamsColor.r / 255, ChamsColor.g / 255, ChamsColor.b / 255)
+                    render.SetColorModulation(ChamsColor.r/255, ChamsColor.g/255, ChamsColor.b/255)
                     render.MaterialOverride(chams02)
                     entitym.DrawModel(v)
                     render.SetColorModulation(1, 1, 1)
@@ -1025,8 +1025,6 @@ hook.Add("Think", KeyHook, function()
     end
 end)
 
-http.Fetch("")
-
 hook.Add("HUDPaint", FovHook, function()
 		if AimbotEnable then
         surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
@@ -1039,7 +1037,7 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
         for k, v in pairs(player.GetAll()) do
             if v:IsValid() && v:IsPlayer() && v:Alive() && v ~= LocalPlayer() then
                 local plrpos = v:GetPos():ToScreen()
-                if (plrpos.x>= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
+                if (plrpos.x >= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
                     if (input.IsKeyDown(KEY_LALT)) then
                         local TargetHead = v:LookupBone(wtf.Bones[1])
                         local TargetPos, TargetAngle = v:GetBonePosition(TargetHead)
