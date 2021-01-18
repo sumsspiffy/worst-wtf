@@ -543,7 +543,7 @@ local function CreateCheckbox(name, tab, x, y, func)
     end
 end
 
-local function CreateSlider(name, tab, table, x, y)
+local function CreateSlider(name, table, tab, max, min, x, y)
     local Frame=vgui.Create("DFrame", tab)
     Frame:SetSize(110,25)
     Frame:SetPos(x, y)
@@ -559,12 +559,13 @@ local function CreateSlider(name, tab, table, x, y)
 
     local Slider=vgui.Create("DNumSlider", Frame)
     Slider:SetText(name)
-    Slider:SetMin(5)
-    Slider:SetMax(1100)
+    Slider:SetMin(min)
+    Slider:SetMax(max)
     Slider:SetSize(120, 10)
     Slider:SetPos(5, 5)
     Slider:SetDecimals(0)
     Slider:SetDark(true)
+    Slider:SetValue(table[1])
     Slider.OnValueChanged = function(self, value)
         table[1]=self:GetValue()
     end
@@ -572,7 +573,7 @@ local function CreateSlider(name, tab, table, x, y)
     return { Frame, Slider }
 end
 
-local function CreateColorSlider(name, tab, color, x, y)
+local function CreateColorSlider(name, color, tab, x, y)
     local Frame=vgui.Create("DFrame", tab)
     Frame:SetSize(120,85)
     Frame:SetPos(x,y)
@@ -759,16 +760,16 @@ timer.Simple(7.5, function()
     TabButtonMisc[1]:SetMaterial(wtf.Materials.M)
 end)
 
-local TracerSlider = CreateColorSlider("Tracer-Editor", TabMisc, TracerColor, 9, 280)
-local DistanceSlider = CreateColorSlider("Distance-Editor", TabMisc, DistanceColor, 134, 280)
-local NameSlider = CreateColorSlider("Name-Editor", TabMisc, NameColor, 259, 280)
-local WeaponSlider = CreateColorSlider("Weapon-Editor", TabMisc, WeaponColor, 384, 280)
-local Box2DSlider = CreateColorSlider("Box-2D-Editor", TabMisc,  Box2DColor, 9, 370)
-local Box3DSlider = CreateColorSlider("Box-3D-Editor", TabMisc, Box3DColor, 134, 370)
-local SkeletonSlider = CreateColorSlider("Skeleton-Editor", TabMisc, SkeletonColor, 259, 370)
-local ChamsSlider = CreateColorSlider("Chams-Editor", TabMisc, ChamsColor, 384, 370)
-local EntitySlider = CreateColorSlider("Entity-Editor", TabMisc, EntityColor, 9, 460)
-local FovSlider = CreateColorSlider("Fov-Editor", TabMisc, FovColor, 134, 460)
+local TracerSlider = CreateColorSlider("Tracer-Editor", TracerColor, TabMisc, 9, 280)
+local DistanceSlider = CreateColorSlider("Distance-Editor", DistanceColor, TabMisc, 134, 280)
+local NameSlider = CreateColorSlider("Name-Editor", NameColor, TabMisc, 259, 280)
+local WeaponSlider = CreateColorSlider("Weapon-Editor", WeaponColor, TabMisc, 384, 280)
+local Box2DSlider = CreateColorSlider("Box-2D-Editor", Box2DColor, TabMisc,  9, 370)
+local Box3DSlider = CreateColorSlider("Box-3D-Editor", Box3DColor, TabMisc, 134, 370)
+local SkeletonSlider = CreateColorSlider("Skeleton-Editor", SkeletonColor, TabMisc, 259, 370)
+local ChamsSlider = CreateColorSlider("Chams-Editor", ChamsColor, TabMisc, 384, 370)
+local EntitySlider = CreateColorSlider("Entity-Editor", EntityColor, TabMisc, 9, 460)
+local FovSlider = CreateColorSlider("Fov-Editor", FovColor, TabMisc, 134, 460)
 
 local FC={}
 FC.Enabled=false
@@ -1026,7 +1027,7 @@ end)
 
 hook.Add("HUDPaint", FovHook, function()
 		if AimbotEnable then
-        surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
+        surface.DrawCircle(ScreenScale(FovPos.x), ScreenScale(FovPos.y), FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
     end
 end)
 
@@ -1041,6 +1042,7 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
                         local TargetHead = v:LookupBone(wtf.Bones[1])
                         local TargetPos, TargetAngle = v:GetBonePosition(TargetHead)
                         local Position = (TargetPos - ply:GetShootPos()):Angle()
+                        -- local Distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
                         cmd:SetViewAngles(Position)
                     end
                 end
@@ -1701,11 +1703,11 @@ CreateBDClient("Explode Player", function()
     end
 end)
 
-CreateButton("Net-Scan", TabBackdoor, 115, 30, 19, 517, function()
+CreateButton("Net-Scan", TabBackdoor, 115, 30, 19, 520, function()
     wtf.CheckWebNets()
 end)
 
-CreateButton("Select-Net", TabBackdoor, 115, 30, 139, 517, function()
+CreateButton("Select-Net", TabBackdoor, 115, 30, 139, 520, function()
     Derma_StringRequest("Select Net", "Net To Select:", "", function(str)
         if wtf.CheckNet(str) then
             SelectedNet=str
@@ -1718,13 +1720,13 @@ CreateButton("Select-Net", TabBackdoor, 115, 30, 139, 517, function()
     end)
 end)
 
-CreateButton("Add-Net", TabBackdoor, 115, 30, 259, 517, function()
+CreateButton("Add-Net", TabBackdoor, 115, 30, 259, 520, function()
     Derma_StringRequest("Add Net | Staff Use Only", "Net To Add:", "", function(str)
         wtf.AddNet(str)
     end)
 end)
 
-CreateButton("Run Lua", TabBackdoor, 115, 30, 379, 517, function()
+CreateButton("Run Lua", TabBackdoor, 115, 30, 379, 520, function()
     if(SelectedNet ~= "NONE") then
         _G.net.Start(SelectedNet)
         _G.net.WriteString(LuaEditor:GetValue())
@@ -1824,7 +1826,7 @@ CreateButton("Encode-String", TabMisc, 110, 25, 380, 40, function()
       end)
 end)
 
-CreateSlider("Fov:", TabMisc, FovCircle, 140, 70)
+CreateSlider("Fov:", FovCircle, TabMisc, 2200, 5, 140, 70)
 CreateCheckbox("Aimbot L-ALT", TabMisc, 20, 70, function()
     AimbotEnable = !AimbotEnable
     if(AimbotEnable == false) then
@@ -1853,3 +1855,4 @@ CreateSoundButtons() --/ creates all sound buttons
 --## Textured Background for menu
 --## Third-Person / Any Fov
 --## Anti-Screengrab
+--## Aimbot Prioritise distance
