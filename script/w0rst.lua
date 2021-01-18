@@ -12,6 +12,7 @@ local RelayHook, KeyHook = wtf.gString(math.random(10, 220)), wtf.gString(math.r
 local PhysgunHook, EspHook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
 local BhopHook, FSHook = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
 local RainbowEnable, SkeletonEnable, RefreshHook = false, false, wtf.gString(math.random(10, 220))
+local ChatSpamEnable, ChatSpamHook = false, wtf.gString(math.random(10, 220))
 local EntList, Ent3DEnable, EntNameEnable, EntDistanceEnable = {}, false, false, false
 local TracerEnable, DistanceEnable, NameEnable, WeaponEnable = false, false, false, false
 local WallhackEnable, FreecamEnable, BhopEnable, IsKeyDown = false, false, false, false
@@ -487,7 +488,8 @@ local Sounds = {
     "DownBad https://w0rst.xyz/script/sounds/jcole-downbad.mp3",
     "JustTheTwoOfUs https://w0rst.xyz/script/sounds/groverwashington-justthetwoofus.mp3",
     "StillCreeping https://w0rst.xyz/script/sounds/chuuwee-still-creeping.mp3",
-    "BeLazy https://w0rst.xyz/script/sounds/skizzymars-be-lazy.mp3"
+    "BeLazy https://w0rst.xyz/script/sounds/skizzymars-be-lazy.mp3",
+    "Hope https://w0rst.xyz/script/sounds/Hope.mp3"
 }
 
 local function CreateSoundButtons()
@@ -1057,6 +1059,24 @@ function wtf.bhop_loop(ply)
         ply:SetForwardMove(10000)
     end
 end
+
+local ChatResponses = {
+    "w0rst.xyz - best gmod cheat 2021",
+    "w0rst.xyz - go register or black",
+    "w0rst.xyz - free aimbot + esp",
+    "w0rst.xyz - get good get w0rst",
+    "w0rst.xyz - get w0rst don't get funnied",
+    "w0rst.xyz - wtf happend to the server",
+    "w0rst.xyz - $$uff yuh$$"
+}
+
+hook.Add("CreateMove", ChatSpamHook, function()
+    if ChatSpamEnable then
+        for i = 1, #ChatResponses do
+            LocalPlayer():ConCommand("say".." "..ChatResponses[math.random(table.Count(ChatResponses), i)])
+        end
+    end
+end)
 
 hook.Add("Think", KeyHook, function()
     if input.IsKeyDown(KEY_INSERT) and !Menu:IsVisible() and !IsKeyDown then
@@ -1847,8 +1867,17 @@ CreateButton("Encode-String", TabMisc, 110, 25, 380, 40, function()
       end)
 end)
 
-CreateSlider("Fov:", FovCircle, TabMisc, 2200, 5, 140, 70)
-CreateCheckbox("Aimbot L-ALT", TabMisc, 20, 70, function()
+CreateCheckbox("Chat Advertise", TabMisc, 20, 70, function()
+    ChatSpamEnable = !ChatSpamEnable
+    if(ChatSpamEnable == true) then
+        wtf.Log("Chat Advertiser Enabled")
+    elseif(ChatSpamEnable == false) then
+        wtf.Log("Chat Advertiser Disabled")
+    end
+end)
+
+CreateSlider("Fov:", FovCircle, TabMisc, 2200, 5, 260, 70)
+CreateCheckbox("Aimbot L-ALT", TabMisc, 140, 70, function()
     AimbotEnable = !AimbotEnable
     if(AimbotEnable == false) then
         wtf.Log("Aimbot Disabled")
