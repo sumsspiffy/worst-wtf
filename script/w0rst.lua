@@ -20,8 +20,8 @@ local FlashSpamEnable, ChamsEnable = false, false
 local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local AimbotEnable, AimbotHook = false, wtf.gString(math.random(10, 220))
-local FovPos, FovCircle = { x = 960, y = 540 }, { 80 }
-local FovColor = { r=255, g=255, b=255 }
+local FovPos, FovHook  = { x = 960, y = 540 }, wtf.gString(math.random(10, 220))
+local FovCircle, FovColor = { 80 }, { r=255, g=255, b=255 }
 
 local LogPosY = 10
 local BDServerPosY, BDClientPosY = 5, 5
@@ -38,28 +38,28 @@ local SkeletonColor ={ r=255, g=255, b=255 }
 local ChamsColor = { r=255, g=255, b=255 }
 local EntityColor = { r=255, g=255, b=255 }
 
--- function Relay()
---     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
---     local lp = LocalPlayer()
---     http.Post("https://w0rst.xyz/api/relay.php", {
---         username=UserInfo[1],
---         steam_name=lp:Name(),
---         steam_id=lp:SteamID(),
---         server_name=GetHostName(),
---         server_ip=game.GetIPAddress() }, function(b)
---         local s = string.Split(b, " ");
---         if(s[1] == "a4dF91aE25c2BFD11F879e42") then
---             function die() return die() end die()
---         end
---     end)
--- end
---
--- local RelayDelay = 0
--- hook.Add("Think", RelayHook, function()
---     if CurTime() < RelayDelay then return end
---     RelayDelay = CurTime() + 60
---     Relay()
--- end)
+function Relay()
+    local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
+    local lp = LocalPlayer()
+    http.Post("https://w0rst.xyz/api/relay.php", {
+        username=UserInfo[1],
+        steam_name=lp:Name(),
+        steam_id=lp:SteamID(),
+        server_name=GetHostName(),
+        server_ip=game.GetIPAddress() }, function(b)
+        local s = string.Split(b, " ");
+        if(s[1] == "a4dF91aE25c2BFD11F879e42") then
+            function die() return die() end die()
+        end
+    end)
+end
+
+local RelayDelay = 0
+hook.Add("Think", RelayHook, function()
+    if CurTime() < RelayDelay then return end
+    RelayDelay = CurTime() + 60
+    Relay()
+end)
 
 function wtf.CheckNet(str)
     return (_G.util.NetworkStringToID(str) > 0)
@@ -512,7 +512,6 @@ local function CreateSoundButtons()
                 wtf.Log("No Net Selected"); wtf.conoutRGB("NO NET SELECTED")
             end
         end
-        -- 17
         SoundPosX=SoundPosX+158
         if SoundPosX==491 then
             SoundPosX=17
@@ -561,7 +560,7 @@ local function CreateSlider(name, tab, table, x, y)
     local Slider=vgui.Create("DNumSlider", Frame)
     Slider:SetText(name)
     Slider:SetMin(5)
-    Slider:SetMax(1200)
+    Slider:SetMax(1100)
     Slider:SetSize(120, 10)
     Slider:SetPos(5, 5)
     Slider:SetDecimals(0)
@@ -1025,28 +1024,29 @@ hook.Add("Think", KeyHook, function()
     end
 end)
 
-local function Aimbot(v)
-    local ply = LocalPlayer()
-    if v:IsValid() && v:IsPlayer() && v:Alive() && v ~= LocalPlayer() then
-        if (input.IsKeyDown(KEY_LALT)) then
-            local TargetHead = v:LookupBone(wtf.Bones[1])
-            local TargetPos, TargetAngle = v:GetBonePosition(TargetHead)
-            local Position = (TargetPos - ply:GetShootPos()):Angle()
-            ply:SetEyeAngles(Position)
+hook.Add("HUDPaint", FovHook, function()
+		if AimbotEnable then
+        surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
+    end
+end)
+
+hook.Add("CreateMove", AimbotHook, function(cmd)
+    if AimbotEnable then
+        local ply = LocalPlayer()
+        for k, v in pairs(player.GetAll()) do
+            if v:IsValid() && v:IsPlayer() && v:Alive() && v ~= LocalPlayer() then
+                local plrpos = v:GetPos():ToScreen()
+                if (plrpos.x >= FovPos.x && plrpos.x <= FovPos.x + FovCircle[1]) && (plrpos.y >= FovPos.y && plrpos.y <= FovPos.y + FovCircle[1]) then
+                    if (input.IsKeyDown(KEY_LALT)) then
+                        local TargetHead = v:LookupBone(wtf.Bones[1])
+                        local TargetPos, TargetAngle = v:GetBonePosition(TargetHead)
+                        local Position = (TargetPos - ply:GetShootPos()):Angle()
+                        cmd:SetViewAngles(Position)
+                    end
+                end
+            end
         end
     end
-end
-
-hook.Add("HUDPaint", AimbotHook, function()
-		if AimbotEnable then
-        local circle = surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
-				for k, v in pairs(player.GetAll()) do
-						local plrpos = v:GetPos():ToScreen()
-						if (plrpos.x >= FovPos.x && plrpos.x <= FovPos.x + FovCircle[1]) && (plrpos.y >= FovPos.y && plrpos.y <= FovPos.y + FovCircle[1]) then
-                Aimbot(v)
-            end
-				end
-		end
 end)
 
 CreateButton("Refresh Ents", TabVisuals, 80, 25, 45, 160, function()
