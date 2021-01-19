@@ -794,7 +794,7 @@ hook.Add("HUDPaint", EspHook, function()
             if NameEnable and DistanceEnable then
                 local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
                 local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                draw.SimpleText(v:Nick().." ["..distance.."]", "Default", position.x, position.y, color['Name'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                draw.SimpleText(v:Nick().." ["..distance.."]", "Default", position.x, position.y, color['NameDist'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
             end
 
             if DistanceEnable then
@@ -885,18 +885,18 @@ hook.Add("HUDPaint", EspHook, function()
                 if weapon:IsValid() then
                     cam.Start3D()
                         render.MaterialOverride(chams01)
-                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, 255)
+                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
                         entitym.DrawModel(weapon)
-                        render.SetColorModulation(color['Chams'].r/170, color['Chams'].g/170, color['Chams'].b/170, 255)
+                        render.SetColorModulation(color['Chams'].r/170, color['Chams'].g/170, color['Chams'].b/170, color['Chams'].a)
                         render.MaterialOverride(chams02)
                         entitym.DrawModel(weapon)
                     cam.End3D()
 
                     cam.Start3D()
                         render.MaterialOverride(chams01)
-                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255)
+                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
                         entitym.DrawModel(v)
-                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255)
+                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
                         render.MaterialOverride(chams02)
                         entitym.DrawModel(v)
                         render.SetColorModulation(1, 1, 1)
