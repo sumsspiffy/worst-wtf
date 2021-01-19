@@ -425,7 +425,6 @@ local function CreateColorSlider(name, color, tab, x, y)
         ColorR:SetValue(color.r)
         ColorG:SetValue(color.g)
         ColorG:SetValue(color.b)
-        UpdateColors = false
     end
 
     external = {}
@@ -447,18 +446,20 @@ local SoundPanel=CreatePanel(SoundsTab[1], 495, 505, 10, 10)
 local ServerBDPanel=CreatePanel(BackdoorTab[1], 225, 300, 20, 15)
 local ClientBDPanel=CreatePanel(BackdoorTab[1], 225, 300, 270, 15)
 
---/ Color Silders
-local TracerSlider = CreateColorSlider("Tracer-Editor", color['Tracer'], MiscTab[1], 9, 280)
-local DistanceSlider = CreateColorSlider("Distance-Editor", color['Distance'], MiscTab[1], 134, 280)
-local NameSlider = CreateColorSlider("Name-Editor", color['Name'], MiscTab[1], 259, 280)
-local WeaponSlider = CreateColorSlider("Weapon-Editor", color['Weapon'], MiscTab[1], 384, 280)
-local Box2DSlider = CreateColorSlider("Box-2D-Editor", color['Box2D'], MiscTab[1],  9, 370)
-local Box3DSlider = CreateColorSlider("Box-3D-Editor", color['Box3D'], MiscTab[1], 134, 370)
-local SkeletonSlider = CreateColorSlider("Skeleton-Editor", color['Skeleton'], MiscTab[1], 259, 370)
-local ChamsSlider = CreateColorSlider("Chams-Editor", color['Chams'], MiscTab[1], 384, 370)
-local EntitySlider = CreateColorSlider("Entity-Editor", color['Entity'], MiscTab[1], 9, 460)
-local FovSlider = CreateColorSlider("Fov-Editor", color['Fov'], MiscTab[1], 134, 460)
-local NameDistSlider = CreateColorSlider("Name/Dist-Editor", color['NameDist'], MiscTab[1], 259, 460)
+--/ ColorSilders
+local ColorSliders = {
+    CreateColorSlider("Tracer-Editor", color['Tracer'], MiscTab[1], 9, 280),
+    CreateColorSlider("Distance-Editor", color['Distance'], MiscTab[1], 134, 280),
+    CreateColorSlider("Name-Editor", color['Name'], MiscTab[1], 259, 280),
+    CreateColorSlider("Weapon-Editor", color['Weapon'], MiscTab[1], 384, 280),
+    CreateColorSlider("Box-2D-Editor", color['Box2D'], MiscTab[1],  9, 370),
+    CreateColorSlider("Box-3D-Editor", color['Box3D'], MiscTab[1], 134, 370),
+    CreateColorSlider("Skeleton-Editor", color['Skeleton'], MiscTab[1], 259, 370),
+    CreateColorSlider("Chams-Editor", color['Chams'], MiscTab[1], 384, 370),
+    CreateColorSlider("Entity-Editor", color['Entity'], MiscTab[1], 9, 460),
+    CreateColorSlider("Fov-Editor", color['Fov'], MiscTab[1], 134, 460),
+    CreateColorSlider("Name/Dist-Editor", color['NameDist'], MiscTab[1], 259, 460)
+}
 
 local EntOnList = vgui.Create("DListView", EntityPanel[1])
 EntOnList:SetPos( 245, 0)
@@ -1178,12 +1179,9 @@ local function LoadVisuals()
         local file = file.Read("w0rst/visuals.txt", "DATA")
         local json = util.JSONToTable(file)
         table.Merge(color, json)
-
-        wtf.Log("Loaded Visuals");
-        TracerSlider.Update(); DistanceSlider.Update(); NameSlider.Update()
-        WeaponSlider.Update(); Box2DSlider.Update(); Box3DSlider.Update()
-        SkeletonSlider.Update(); ChamsSlider.Update(); EntitySlider.Update()
-        FovSlider.Update(); NameDistSlider.Update()
+        for i = 1, #ColorSliders do
+            ColorSliders[i].Update()
+        end; wtf.Log("Loaded Visuals")
     else
         wtf.Log("Unable To Load Visuals")
     end
