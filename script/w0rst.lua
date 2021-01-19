@@ -1101,7 +1101,11 @@ hook.Add("CreateMove", ChatSpamHook, function()
     if CurTime() < ChatSpamDelay then return end
     ChatSpamDelay = CurTime() + 0.5
     if ChatSpamEnable then
-        LocalPlayer():ConCommand("say".." "..ChatResponses[math.random(1, table.Count(ChatResponses))])
+        if engine.ActiveGamemode() == 'darkrp' then
+            LocalPlayer():ConCommand("say".." /ooc "..ChatResponses[math.random(1, table.Count(ChatResponses))])
+        else
+            LocalPlayer():ConCommand("say".." "..ChatResponses[math.random(1, table.Count(ChatResponses))])
+        end
     end
 end)
 
