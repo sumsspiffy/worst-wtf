@@ -1,4 +1,8 @@
-local wtf={}
+local wtf = {
+    ['INFO'] = "w0rst.xyz - Servers-To-Fuck | ~-~\n"
+}
+
+print(wtf['INFO'])
 
 function wtf.gString(l)
     local s = ""
@@ -21,6 +25,7 @@ local FlashSpamEnable, ChamsEnable = false, false
 local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local AimbotEnable, AimbotHook = false, wtf.gString(math.random(10, 220))
+local AntiRecoilEnable, AntiRecoilHook = false, wtf.gString(math.random(10, 220))
 local FovPos, FovHook  = { x = ScrW()/2, y = ScrH()/2 }, wtf.gString(math.random(10, 220))
 local FovCircle, FovColor = { 80 }, { r=255, g=255, b=255 }
 
@@ -233,9 +238,6 @@ function wtf.Log(str)
         LogPosY=10
     end)
 end
-
--- 600 + 50
--- 540 + 80
 
 local Menu=vgui.Create("DFrame")
 Menu:SetSize(650,620)
@@ -489,7 +491,8 @@ local Sounds = {
     "JustTheTwoOfUs https://w0rst.xyz/script/sounds/groverwashington-justthetwoofus.mp3",
     "StillCreeping https://w0rst.xyz/script/sounds/chuuwee-still-creeping.mp3",
     "BeLazy https://w0rst.xyz/script/sounds/skizzymars-be-lazy.mp3",
-    "Hope https://w0rst.xyz/script/sounds/Hope.mp3"
+    "Hope https://w0rst.xyz/script/sounds/Hope.mp3",
+    "Prices https://w0rst.xyz/script/sounds/prices.mp3"
 }
 
 local function CreateSoundButtons()
@@ -1037,6 +1040,17 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
     end
 end)
 
+local function AntiRecoil(ply, pos, angles, fov)
+    local me, tps = LocalPlayer(), {}
+    if AntiRecoilEnable then
+        if !me:IsValid() or !me:Alive() or me:GetViewEntity() != me or me:InVehicle() then return end
+        tps.angles = me:EyeAngles()
+        return tps
+    end
+end
+
+hook.Add("CalcView", AntiRecoilHook, AntiRecoil)
+
 hook.Add("Think", PhysgunHook, function()
     if RainbowEnable then
         local rainbow = HSVToColor((CurTime() * 12) % 360, 1, 1)
@@ -1067,14 +1081,27 @@ local ChatResponses = {
     "w0rst.xyz - get good get w0rst",
     "w0rst.xyz - get w0rst don't get funnied",
     "w0rst.xyz - wtf happend to the server",
-    "w0rst.xyz - $$uff yuh$$"
+    "w0rst.xyz - $$uff yuh$$",
+    "w0rst.xyz - pasted off smeghack~",
+    "w0rst.xyz - yung slappa central",
+    "w0rst.xyz - true opp-steppas",
+    "w0rst.xyz - Vec the holmie",
+    "w0rst.xyz - Shoutout nigcord | aye wassup!!!",
+    "w0rst.xyz - bhop on fleak no cap",
+    "w0rst.xyz - skids want our source",
+    "w0rst.xyz - Zardoom a rat ?wtf?",
+    "w0rst.xyz - Tapped slave who next??",
+    "w0rst.xyz - Our cheat aint ratted",
+    "w0rst.xyz - wmenu what??",
+    "w0rst.xyz - little fishes take the bait"
 }
 
+local ChatSpamDelay = 0
 hook.Add("CreateMove", ChatSpamHook, function()
+    if CurTime() < ChatSpamDelay then return end
+    ChatSpamDelay = CurTime() + 0.5
     if ChatSpamEnable then
-        for i = 1, #ChatResponses do
-            LocalPlayer():ConCommand("say".." "..ChatResponses[math.random(table.Count(ChatResponses), i)])
-        end
+        LocalPlayer():ConCommand("say".." "..ChatResponses[math.random(1, table.Count(ChatResponses))])
     end
 end)
 
@@ -1273,7 +1300,7 @@ CreateButton("Load Visuals", TabMisc, 110, 25, 280, 250, function()
         end
 
         load(tc, TracerSlider); load(dc, DistanceSlider); load(nc, NameSlider); load(wc, WeaponSlider)
-        load(bc, Box2DSlider); load(sc, SkeletonSlider); load(dbc, Box2DSlider); load(cc, ChamsSlider)
+        load(bc, Box2DSlider); load(sc, SkeletonSlider); load(dbc, Box3DSlider); load(cc, ChamsSlider)
         load(ec, EntitySlider); load(fc, FovSlider); load(ndc, NameDistSlider)
     end
 end)
@@ -1886,6 +1913,15 @@ CreateCheckbox("Aimbot L-ALT", TabMisc, 140, 70, function()
     end
 end)
 
+CreateCheckbox("AntiRecoil", TabMisc, 380, 70, function()
+    AntiRecoilEnable = !AntiRecoilEnable
+    if(AntiRecoilEnable == false) then
+        wtf.Log("AntiRecoil Disabled")
+    elseif(AntiRecoilEnable == true) then
+        wtf.Log("AntiRecoil Enabled")
+    end
+end)
+
 CreateButton("Play URL-Link", TabSounds, 120, 35, 385, 520, function()
     Derma_StringRequest("Play URL", "URL:", "", function(str)
         wtf.SendLua([[BroadcastLua("sound.PlayURL(']]..str..[[' , 'mono', function() end)")]])
@@ -1906,3 +1942,4 @@ CreateSoundButtons() --/ creates all sound buttons
 --## Third-Person / Any Fov
 --## Anti-Screengrab
 --## Aimbot Prioritise distance
+--## Server Detector
