@@ -39,7 +39,7 @@ local color = {
     ['Fov'] = Color(255, 255, 255)
 }
 
-local chatresponses = {
+local responses = {
     "w0rst.xyz - best gmod cheat 2021",
     "w0rst.xyz - go register or black",
     "w0rst.xyz - free aimbot + esp",
@@ -489,7 +489,6 @@ local ColorSliders = {
     CreateColorSlider("Name/Dist-Editor", color['NameDist'], MiscTab[1], 259, 460)
 }
 
-
 local EntList = {}
 local EntOnList = vgui.Create("DListView", EntityPanel[1])
 EntOnList:SetPos( 245, 0)
@@ -509,9 +508,10 @@ EntOffList:SetMultiSelect(false)
 EntOffList:SetHideHeaders(true)
 EntOffList:AddColumn("Whitelist Entities")
 EntOffList.Paint = function(self,w,h)
-  surface.SetDrawColor(Color(0,0,0,0))
-  surface.DrawOutlinedRect(0,0,w,h)
+    surface.SetDrawColor(Color(0,0,0,0))
+    surface.DrawOutlinedRect(0,0,w,h)
 end
+
 function EntOffList:DoDoubleClick()
     table.insert( EntList, EntOffList:GetLine(EntOffList:GetSelectedLine()):GetValue(1) )
 end
@@ -967,8 +967,8 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
                 local plrpos = v:GetPos():ToScreen()
                 if (plrpos.x >= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
                     if (input.IsKeyDown(KEY_LALT)) then
-                        local TargetHead = v:LookupBone(wtf.Bones[1])
-                        local TargetPos, TargetAngle = v:GetBonePosition(TargetHead)
+                        local Target = v:LookupBone(wtf.Bones[1])
+                        local TargetPos, TargetAngle = v:GetBonePosition(Target)
                         local Position = (TargetPos - ply:GetShootPos()):Angle()
                         cmd:SetViewAngles(Position)
                         if enable['AutoFire'] then
@@ -1021,9 +1021,9 @@ hook.Add("CreateMove", ChatSpamHook, function()
     ChatSpamDelay = CurTime() + 0.05
     if enable['ChatSpam'] then
         if engine.ActiveGamemode() == 'darkrp' then
-            LocalPlayer():ConCommand("say".." /ooc "..chatresponses[math.random(1, table.Count(chatresponses))])
+            LocalPlayer():ConCommand("say".." /ooc "..responses[math.random(1, table.Count(responses))])
         else
-            LocalPlayer():ConCommand("say".." "..chatresponses[math.random(1, table.Count(chatresponses))])
+            LocalPlayer():ConCommand("say".." "..responses[math.random(1, table.Count(responses))])
         end
     end
 end)
@@ -1849,3 +1849,6 @@ end)
 CreateSoundButtons()
 
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
+--# ADD PASTED REBUG BACKDOOR OPTIONS
+--# CREATE NEW ENTITY LIST
+--# CREATE NEW COLOR SLIDERS
