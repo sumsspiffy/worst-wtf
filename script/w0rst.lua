@@ -208,8 +208,9 @@ end
 
 --/ Menu Edited Positions
 local LogPosY = 10
-local BDServerPosY, BDClientPosY = 5, 5
 local SoundPosX, SoundPosY = 17, 10
+local EntOffPosY, EntOnPosY = 5, 5
+local BDServerPosY, BDClientPosY = 5, 5
 local PlrPosX, PlrPosY, plr = 19, 10, nil
 
 local LogTimer = wtf.gString()
@@ -468,11 +469,13 @@ local SoundsTab = CreateTabButton(wtf.Materials.S, 13, 325)
 -- 405
 
 --/ Panels
-local PlayerPanel=CreatePanel(PlayersTab[1], 495, 540, 10, 10)
-local EntityPanel=CreatePanel(VisualsTab[1], 490, 350, 15, 190)
-local SoundPanel=CreatePanel(SoundsTab[1], 495, 505, 10, 10)
-local ServerBDPanel=CreatePanel(BackdoorTab[1], 225, 300, 20, 15)
-local ClientBDPanel=CreatePanel(BackdoorTab[1], 225, 300, 270, 15)
+local PlayerPanel = CreatePanel(PlayersTab[1], 495, 540, 10, 10)
+local SoundPanel = CreatePanel(SoundsTab[1], 495, 505, 10, 10)
+local ServerBDPanel = CreatePanel(BackdoorTab[1], 225, 300, 20, 15)
+local ClientBDPanel = CreatePanel(BackdoorTab[1], 225, 300, 270, 15)
+local EntityPanel = CreatePanel(VisualsTab[1], 490, 350, 15, 190)
+local EntOffPanel = CreatePanel(EntityPanel[1], 230, 330, 10, 10)
+local EntOnPanel = CreatePanel(EntityPanel[1], 230, 330, 250, 10)
 
 --/ ColorSilders
 local ColorSliders = {
@@ -490,51 +493,57 @@ local ColorSliders = {
 }
 
 local EntList = {}
-local EntOnList = vgui.Create("DListView", EntityPanel[1])
-EntOnList:SetPos( 245, 0)
-EntOnList:SetSize( 245, 349 )
-EntOnList:SetMultiSelect(false)
-EntOnList:AddColumn("Whitelisted Entities")
-EntOnList:SetHideHeaders(true)
-EntOnList.Paint = function(self,w,h)
-    surface.SetDrawColor(Color(0,0,0,0))
-    surface.DrawOutlinedRect(0,0,w,h)
-end
-
-local EntOffList = vgui.Create("DListView", EntityPanel[1])
-EntOffList:SetPos( 0, 0 )
-EntOffList:SetSize( 245, 348 )
-EntOffList:SetMultiSelect(false)
-EntOffList:SetHideHeaders(true)
-EntOffList:AddColumn("Whitelist Entities")
-EntOffList.Paint = function(self,w,h)
-    surface.SetDrawColor(Color(0,0,0,0))
-    surface.DrawOutlinedRect(0,0,w,h)
-end
-
-function EntOffList:DoDoubleClick()
-    table.insert( EntList, EntOffList:GetLine(EntOffList:GetSelectedLine()):GetValue(1) )
-end
-
-function RefreshEntList()
-    EntOnList:Clear(); EntOffList:Clear()
-    for k, v in pairs(EntList) do
-        EntOnList:AddLine(v)
+local function PopulateEntLists()
+    local EntsOn, EntsOff = {}, {}
+    function CheckTable(table, value)
+        if table ~= nil then 
+            for i = 1, #table do 
+                if table[i] == value then 
+                    return true
+                end
+            end; return false
+        end
     end
 
-    for k, v in pairs(ents.GetAll()) do
+    for k, v in pairs(ents.GetAll()) do 
         local name = v:GetClass()
-        local copy = false
-        if name ~= "player" then
-            if not table.HasValue( EntList, name ) then
-                for k, v in pairs (EntOffList:GetLines() ) do
-                    if v:GetValue(1) == name then copy = true end
-                end
-                if copy == false then EntOffList:AddLine(name) end
+        if name ~= "player" && name ~= "viewmodel" then 
+            if !CheckTable(EntList, name) && !CheckTable(EntsOff, name) then 
+                CreateButton(name, EntOffPanel[1], 220, 25, 5, EntOffPosY, function()
+                    table.insert(EntList, name); ClearLists()
+                end); 
+
+                table.insert(EntsOff, name)
+                EntOffPosY = EntOffPosY + 26 
+            end
+
+            if CheckTable(EntList, name) && !CheckTable(EntsOn, name) then 
+                CreateButton(name, EntOnPanel[1], 220, 25, 5, EntOnPosY, function()
+                    for i = 1, #EntList do 
+                        if EntList[i] == name then 
+                            table.remove(EntList, i) 
+                        end
+                    end; ClearLists()
+                end); 
+                
+                table.insert(EntsOn, name)
+                EntOnPosY = EntOnPosY + 26 
             end
         end
     end
-end; RefreshEntList()
+
+    function ClearLists()
+        EntOffPanel[1]:Clear(); EntOnPanel[1]:Clear()
+        EntOffPosY, EntOnPosY = 5, 5
+        PopulateEntLists()
+    end
+
+    external = {}
+    external['Clear'] = ClearLists
+    return external
+end; 
+
+local EntityLists = PopulateEntLists()
 
 local function PopulatePlayers()
     for k,v in pairs(player.GetAll()) do
@@ -1037,37 +1046,6 @@ hook.Add("Think", KeyHook, function()
     elseif !input.IsKeyDown(KEY_INSERT) then
         IsKeyDown=false
     end
-end)
-
-CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 45, 160, function()
-    RefreshEntList()
-end)
-
-CreateButton("Add Ent", VisualsTab[1], 80, 25, 130, 160, function()
-  if EntOffList:GetSelectedLine() ~= nil then
-      table.insert( EntList, EntOffList:GetLine(EntOffList:GetSelectedLine()):GetValue(1) )
-  end; RefreshEntList()
-end)
-
-CreateButton("Remove Ent", VisualsTab[1], 80, 25, 215, 160, function()
-    if EntOnList:GetSelectedLine() ~= nil then
-        for k, v in pairs( EntList ) do
-            if v == EntOnList:GetLine(EntOnList:GetSelectedLine()):GetValue(1) then
-                table.remove( EntList, k )
-            end
-        end
-    end; RefreshEntList()
-end)
-
-CreateButton("Add All", VisualsTab[1], 80, 25, 300, 160, function()
-  for k, v in pairs( EntOffList:GetLines() ) do
-      table.insert( EntList, v:GetValue(1) )
-  end; RefreshEntList()
-end)
-
-CreateButton("Remove All", VisualsTab[1], 80, 25, 385, 160, function()
-  table.Empty( EntList )
-  RefreshEntList()
 end)
 
 CreateCheckbox("Plr-Tracer", VisualsTab[1], 22, 10, function()
@@ -1844,6 +1822,10 @@ end)
 CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
     wtf.SendLua([[for k,v in pairs(player.GetAll()) do v:ConCommand('stopsound') end]])
     wtf.Log("Stopped Sounds")
+end)
+
+CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, function()
+    EntityLists.Clear()
 end)
 
 CreateSoundButtons()
