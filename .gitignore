@@ -3,3 +3,4 @@ script/sounds/
 script/images/
 api/config.ini
 bin/
+*.ini
