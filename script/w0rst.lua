@@ -90,7 +90,7 @@ end
 
 function wtf.CheckPlr(plr)
     if (plr ~= "NONE" and Player(plr):IsValid() ~= false) then
-        return true
+        SelectedPlr = plr; return true
     else
         wtf.Log("Player Not Selected/Valid")
         wtf.conoutRGB("PLAYER INVALID OR NOT SELECTED")
@@ -566,8 +566,7 @@ local function PopulatePlayers()
             self:SetTextColor(Color(255,255,255))
         end
         LabelButton.DoClick = function()
-            local player = v:UserID()
-            if wtf.CheckPlr(player) then
+            if wtf.CheckPlr(v:UserID()) then
                 wtf.Log("Player: "..Player(SelectedPlr):Nick().." Selected")
                 wtf.conoutRGB("SELECTED PLAYER: "..Player(SelectedPlr):Nick())
             end
