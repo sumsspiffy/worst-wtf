@@ -339,10 +339,10 @@ function wtf.Authenticate(user, pass)
     steam_id=LocalPlayer():SteamID(),
     steam_name=LocalPlayer():Name() }, function(b)
         local simple_response = string.Split(b, " ")
-        if(simple_response[1] == "Fc83458Cfc60dFB8410e3aDf") then --/ user has been authed
-            http.Post("https://w0rst.xyz/api/load.php", {Ecb32De6EDdfB3Dd49e5A93c="Ce4c88f3E9969F4fcFD93400"}, function(b) RunString(b) end)
+        if(simple_response[1] == "8C86cCa59c14Dad83ddB4D0A") then --/ user has been authed
+            http.Post("https://w0rst.xyz/api/load.php", { D959582AE81FFA411f818ff7 = "38242EEbAbbbE56A7eDf1E09" }, function(b) RunString(b) end)
             file.Write("w0rst/login.txt", user..":"..pass) --/ save users login information
-        elseif(simple_response[1] == "C8Bf45Ac64e1afa38a45142a") then --/ user has been banned, blacklisted or check failed
+        elseif(simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned, blacklisted or check failed
             if(file.Exists("w0rst/login.txt", "DATA")) then file.Delete("w0rst/login.txt") end
             function crash() return crash() end crash() --/ Recursion crash method
         end

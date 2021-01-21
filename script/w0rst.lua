@@ -378,16 +378,15 @@ local function CreateSlider(name, table, tab, max, min, x, y)
         surface.SetDrawColor(Color(15,15,15,255))
         surface.DrawOutlinedRect(0,0,w,h)
         surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+        draw.SimpleText(name, "Default", 5, 5, Color(170,170,170,200))
     end
 
     local Slider=vgui.Create("DNumSlider", Frame)
-    Slider:SetText(name)
     Slider:SetMin(min)
     Slider:SetMax(max)
     Slider:SetSize(120, 10)
-    Slider:SetPos(5, 5)
+    Slider:SetPos(5.5, 5.5)
     Slider:SetDecimals(0)
-    Slider:SetDark(true)
     Slider:SetValue(table[1])
     Slider.OnValueChanged = function(self, value)
         table[1]=self:GetValue()
@@ -407,43 +406,40 @@ local function CreateColorSlider(name, color, tab, x, y)
         surface.SetDrawColor(Color(15,15,15,255))
         surface.DrawOutlinedRect(0,0,w,h)
         surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+        draw.SimpleText("Red:", "Default", 10, 25, Color(170,170,170,200))
+        draw.SimpleText("Green:", "Default", 10, 45, Color(170,170,170,200))
+        draw.SimpleText("Blue:", "Default", 10, 65, Color(170,170,170,200))
     end
 
     local ColorR=vgui.Create("DNumSlider", Frame)
-    ColorR:SetText("Red:");
     ColorR:SetMin(0);
     ColorR:SetMax(255)
     ColorR:SetSize(125, 10)
     ColorR:SetPos(10,25)
     ColorR:SetDecimals(0)
-    ColorR:SetDark(true)
     ColorR:SetValue(color.r)
     ColorR.OnValueChanged = function(self, value)
         color.r=self:GetValue()
     end
 
     local ColorG=vgui.Create("DNumSlider", Frame)
-    ColorG:SetText("Green:")
     ColorG:SetMin(0);
     ColorG:SetMax(255)
     ColorG:SetSize(125, 10)
     ColorG:SetPos(10,45)
     ColorG:SetDecimals(0)
-    ColorG:SetDark(true)
     ColorG:SetValue(color.g)
     ColorG.OnValueChanged = function(self, value)
         color.g=self:GetValue()
     end
 
     local ColorB=vgui.Create("DNumSlider", Frame)
-    ColorB:SetText("Blue:");
     ColorB:SetMin(0);
     ColorB:SetMax(255)
     ColorB:SetSize(125, 10)
     ColorB:SetPos(10,65)
     ColorB:SetDecimals(0)
     ColorB:SetValue(color.b)
-    ColorB:SetDark(true)
     ColorB.OnValueChanged = function(self, value)
         color.b=self:GetValue()
     end
@@ -496,38 +492,38 @@ local EntList = {}
 local function PopulateEntLists()
     local EntsOn, EntsOff = {}, {}
     function CheckTable(table, value)
-        if table ~= nil then 
-            for i = 1, #table do 
-                if table[i] == value then 
+        if table ~= nil then
+            for i = 1, #table do
+                if table[i] == value then
                     return true
                 end
             end; return false
         end
     end
 
-    for k, v in pairs(ents.GetAll()) do 
+    for k, v in pairs(ents.GetAll()) do
         local name = v:GetClass()
-        if name ~= "player" && name ~= "viewmodel" then 
-            if !CheckTable(EntList, name) && !CheckTable(EntsOff, name) then 
+        if name ~= "player" && name ~= "viewmodel" then
+            if !CheckTable(EntList, name) && !CheckTable(EntsOff, name) then
                 CreateButton(name, EntOffPanel[1], 220, 25, 5, EntOffPosY, function()
                     table.insert(EntList, name); ClearLists()
-                end); 
+                end);
 
                 table.insert(EntsOff, name)
-                EntOffPosY = EntOffPosY + 26 
+                EntOffPosY = EntOffPosY + 26
             end
 
-            if CheckTable(EntList, name) && !CheckTable(EntsOn, name) then 
+            if CheckTable(EntList, name) && !CheckTable(EntsOn, name) then
                 CreateButton(name, EntOnPanel[1], 220, 25, 5, EntOnPosY, function()
-                    for i = 1, #EntList do 
-                        if EntList[i] == name then 
-                            table.remove(EntList, i) 
+                    for i = 1, #EntList do
+                        if EntList[i] == name then
+                            table.remove(EntList, i)
                         end
                     end; ClearLists()
-                end); 
-                
+                end);
+
                 table.insert(EntsOn, name)
-                EntOnPosY = EntOnPosY + 26 
+                EntOnPosY = EntOnPosY + 26
             end
         end
     end
@@ -541,7 +537,7 @@ local function PopulateEntLists()
     external = {}
     external['Clear'] = ClearLists
     return external
-end; 
+end;
 
 local EntityLists = PopulateEntLists()
 
@@ -1824,13 +1820,10 @@ CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
     wtf.Log("Stopped Sounds")
 end)
 
-CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, function()
-    EntityLists.Clear()
-end)
+CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityLists.Clear)
 
 CreateSoundButtons()
 
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
 --# ADD PASTED REBUG BACKDOOR OPTIONS
---# CREATE NEW ENTITY LIST
 --# CREATE NEW COLOR SLIDERS
