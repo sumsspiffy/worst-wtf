@@ -210,7 +210,7 @@ local LogPosY = 10
 local SoundPosX, SoundPosY = 17, 10
 local EntOffPosY, EntOnPosY = 5, 5
 local BDServerPosY, BDClientPosY = 5, 5
-local PlrPosX, PlrPosY, plr = 19, 10, nil
+local PlrPosX, PlrPosY = 19, 10
 
 local LogTimer = wtf.gString()
 function wtf.Log(str)
@@ -647,7 +647,9 @@ local function CreateBDClient(name, func)
     Button:SetText(name)
     Button.DoClick = function()
         if wtf.CheckNet(SelectedNet) then
-            func()
+            if wtf.CheckPlr(SelectedPlr) then
+                func()
+            end
         else
             wtf.Log("No Net Selected")
         end
@@ -1412,240 +1414,200 @@ CreateBDServer("Armor All", function()
 end)
 
 CreateBDClient("Kill", function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Killed: "..Player(plr):Nick())
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            me:Kill()
-            me:Spawn()
-        ]])
-    end
+    wtf.Log("Killed: "..Player( SelectedPlr):Nick())
+    wtf.SendLua([[
+        local me = Player(]].. SelectedPlr..[[)
+        me:Kill()
+        me:Spawn()
+    ]])
 end)
 
 CreateBDClient("Fling", function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Flung: "..Player(plr):Nick())
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            me:SetVelocity(Vector(math.random(-1000,1000),math.random(-1000,1000),math.random(50,1000)))
-        ]])
-    end
+    wtf.Log("Flung: "..Player( SelectedPlr):Nick())
+    wtf.SendLua([[
+        local me = Player(]].. SelectedPlr..[[)
+        me:SetVelocity(Vector(math.random(-1000,1000),math.random(-1000,1000),math.random(50,1000)))
+    ]])
 end)
 
 CreateBDClient("Set Speed",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        Derma_StringRequest("Set Speed", "Speed To Set The Player:", "", function(str)
-            wtf.Log(Player(plr):Nick().." Speed Set")
-            wtf.SendLua([[
-                local me = Player(]]..plr..[[)
-                me:SetMaxSpeed(]]..str..[[)
-                me:SetRunSpeed(]]..str..[[)
-            ]])
-        end)
-    end
+    Derma_StringRequest("Set Speed", "Speed To Set The Player:", "", function(str)
+        wtf.Log(Player( SelectedPlr):Nick().." Speed Set")
+        wtf.SendLua([[
+            local me = Player(]].. SelectedPlr..[[)
+            me:SetMaxSpeed(]]..str..[[)
+            me:SetRunSpeed(]]..str..[[)
+        ]])
+    end)
 end)
 
 CreateBDClient("Give Item",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        Derma_StringRequest("Give Item", "Give Item Named:", "", function(str)
-            wtf.Log("Item Given To: "..Player(plr):Nick())
-            wtf.SendLua([[
-                local me = Player(]]..plr..[[)
-                me:Give(']]..str..[[')
-            ]])
-        end)
-    end
+    Derma_StringRequest("Give Item", "Give Item Named:", "", function(str)
+        wtf.Log("Item Given To: "..Player( SelectedPlr):Nick())
+        wtf.SendLua([[
+            local me = Player(]].. SelectedPlr..[[)
+            me:Give(']]..str..[[')
+        ]])
+    end)
 end)
 
 CreateBDClient("Crash Player",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.SendLua([[
-            Player(]]..plr..[[):SendLua("function die() return die() end die()")
-        ]])
-        wtf.Log("Player: "..Player(plr):Nick().." Crashed")
-    end
+    wtf.SendLua([[
+        Player(]].. SelectedPlr..[[):SendLua("function die() return die() end die()")
+    ]])
+    wtf.Log("Player: "..Player( SelectedPlr):Nick().." Crashed")
 end)
 
 CreateBDClient("Force Say",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        Derma_StringRequest("Force Say", "Force Player To Say:", "", function(str)
-            wtf.SendLua([[
-                local me = Player(]]..plr..[[)
-                me:Say("]]..str..[[")
-            ]])
-            wtf.Log("Player: "..Player(plr):Nick().." Said "..str)
-        end)
-    end
+    Derma_StringRequest("Force Say", "Force Player To Say:", "", function(str)
+        wtf.SendLua([[
+            local me = Player(]].. SelectedPlr..[[)
+            me:Say("]]..str..[[")
+        ]])
+        wtf.Log("Player: "..Player( SelectedPlr):Nick().." Said "..str)
+    end)
 end)
 
 CreateBDClient("NoClip Player",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            if me:GetMoveType() ~= MOVETYPE_NOCLIP then
-                me:SetMoveType(MOVETYPE_NOCLIP)
-            else
-                me:SetMoveType(MOVETYPE_WALK)
-            end
-        ]])
-
-        if Player(plr):GetMoveType() == MOVETYPE_NOCLIP then
-            wtf.Log("Noclip Off")
+    wtf.SendLua([[
+        local me = Player(]].. SelectedPlr..[[)
+        if me:GetMoveType() ~= MOVETYPE_NOCLIP then
+            me:SetMoveType(MOVETYPE_NOCLIP)
         else
-            wtf.Log("Noclip On")
+            me:SetMoveType(MOVETYPE_WALK)
         end
+    ]])
+
+    if Player(SelectedPlr):GetMoveType() == MOVETYPE_NOCLIP then
+        wtf.Log("Noclip Off")
+    else
+        wtf.Log("Noclip On")
     end
 end)
 
 CreateBDClient("Set Usergroup",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        Derma_StringRequest("Set Usergroup", "ex: superadmin", "", function(str)
-            wtf.Log("Player: "..Player(plr):Nick().." Usergroup: "..str)
-            wtf.SendLua([[
-                local me = Player(]]..plr..[[)
-                me:SetUserGroup("]]..str..[[")
-            ]])
-        end)
-    end
+    Derma_StringRequest("Set Usergroup", "ex: superadmin", "", function(str)
+        wtf.Log("Player: "..Player(SelectedPlr):Nick().." Usergroup: "..str)
+        wtf.SendLua([[
+            local me = Player(]]..SelectedPlr..[[)
+            me:SetUserGroup("]]..str..[[")
+        ]])
+    end)
 end)
 
 CreateBDClient("God Enable",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Player: "..Player(plr):Nick().." Godded")
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            me:GodEnable()
-        ]])
-    end
+    wtf.Log("Player: "..Player(SelectedPlr):Nick().." Godded")
+    wtf.SendLua([[
+        local me = Player(]]..SelectedPlr..[[)
+        me:GodEnable()
+    ]])
 end)
 
 CreateBDClient("God Disable",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Player: "..Player(plr):Nick().." UnGodded")
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            me:GodDisable()
-        ]])
-    end
+    wtf.Log("Player: "..Player(SelectedPlr):Nick().." UnGodded")
+    wtf.SendLua([[
+        local me = Player(]]..SelectedPlr..[[)
+        me:GodDisable()
+    ]])
 end)
 
 CreateBDClient("Ban Player",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Player"..Player(plr):Nick().." Banned")
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            me:Ban(999999999,false)
-            me:Kick()
-        ]])
-    end
+    wtf.Log("Player"..Player(SelectedPlr):Nick().." Banned")
+    wtf.SendLua([[
+        local me = Player(]]..SelectedPlr..[[)
+        me:Ban(999999999,false)
+        me:Kick()
+    ]])
 end)
 
 CreateBDClient("Kick Player",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Player "..Player(plr):Nick().." Kicked")
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            me:Kick()
-        ]])
-    end
+    wtf.Log("Player "..Player(SelectedPlr):Nick().." Kicked")
+    wtf.SendLua([[
+        local me = Player(]]..SelectedPlr..[[)
+        me:Kick()
+    ]])
 end)
 
 CreateBDClient("Retry Player",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Player "..Player(plr):Nick().." Retry'd")
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            me:ConCommand('retry')
-        ]])
-    end
+    wtf.Log("Player "..Player(SelectedPlr):Nick().." Retry'd")
+    wtf.SendLua([[
+        local me = Player(]]..SelectedPlr..[[)
+        me:ConCommand('retry')
+    ]])
 end)
 
 CreateBDClient("Print Ip",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Players IPs Logged")
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            local ply = ]]..LocalPlayer():UserID()..[[
-            Player(ply):ChatPrint("Player: " .. me:Nick() .. " (" .. me:SteamID() .. ") IP: " .. me:IPAddress())
-        ]])
-    end
+    wtf.Log("Players IPs Logged")
+    wtf.SendLua([[
+        local me = Player(]]..SelectedPlr..[[)
+        local ply = ]]..LocalPlayer():UserID()..[[
+        Player(ply):ChatPrint("Player: " .. me:Nick() .. " (" .. me:SteamID() .. ") IP: " .. me:IPAddress())
+    ]])
 end)
 
 CreateBDClient("Dance Player",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Players: "..Player(plr):Nick().." Dancing")
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            me:DoAnimationEvent(ACT_GMOD_TAUNT_DANCE)
-        ]])
-    end
+    wtf.Log("Players: "..Player(SelectedPlrr):Nick().." Dancing")
+    wtf.SendLua([[
+        local me = Player(]]..SelectedPlr..[[)
+        me:DoAnimationEvent(ACT_GMOD_TAUNT_DANCE)
+    ]])
 end)
 
 CreateBDClient("Size Player",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        Derma_StringRequest("Set Size", "Players Size:", "", function(str)
-            wtf.Log("Player: "..Player(plr):Nick().." Size:"..str)
-            wtf.SendLua([[
-                local me = Player(]]..plr..[[)
-                me:SetModelScale(']]..str..[[')
-            ]])
-        end)
-    end
+    Derma_StringRequest("Set Size", "Players Size:", "", function(str)
+        wtf.Log("Player: "..Player(SelectedPlr):Nick().." Size:"..str)
+        wtf.SendLua([[
+            local me = Player(]]..SelectedPlr..[[)
+            me:SetModelScale(']]..SelectedPlr..[[')
+        ]])
+    end)
 end)
 
 CreateBDClient("ConCommand Player",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        Derma_StringRequest("ConCommand", "String To Run In Console:", "", function(str)
-            wtf.Log("Ran Command: "..str.." Player: "..Player(plr):Nick())
-            wtf.SendLua([[
-                local me = Player(]]..plr..[[)
-                me:ConCommand(']]..str..[[')
-            ]])
-        end)
-    end
+    Derma_StringRequest("ConCommand", "String To Run In Console:", "", function(str)
+        wtf.Log("Ran Command: "..str.." Player: "..Player(SelectedPlr):Nick())
+        wtf.SendLua([[
+            local me = Player(]]..SelectedPlr..[[)
+            me:ConCommand(']]..str..[[')
+        ]])
+    end)
 end)
 
 CreateBDClient("IP Say",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("They Said There Ip")
-        wtf.SendLua([[
-      			local me = Player(]]..plr..[[)
-      			me:Say("My IP Is: "..me:IPAddress())
-        ]])
-    end
+    wtf.Log("They Said There Ip")
+    wtf.SendLua([[
+  			local me = Player(]].. SelectedPlr..[[)
+  			me:Say("My IP Is: "..me:IPAddress())
+    ]])
 end)
 
 CreateBDClient("Drop Weapon",  function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("They Dropped Their Weapon")
-        wtf.SendLua([[
-            local me = Player(]]..plr..[[)
-            if me:GetActiveWeapon() ~= nil then
-                me:DropWeapon(me:GetActiveWeapon())
-            end
-        ]])
-    end
+    wtf.Log("They Dropped Their Weapon")
+    wtf.SendLua([[
+        local me = Player(]].. SelectedPlr..[[)
+        if me:GetActiveWeapon() ~= nil then
+            me:DropWeapon(me:GetActiveWeapon())
+        end
+    ]])
 end)
 
 CreateBDClient("Explode Player", function()
-    if plr == nil then do wtf.Log("No Player Selected") return end else
-        wtf.Log("Exploded "..Player(plr):Nick())
-        wtf.SendLua([[
-            local explo = ents.Create("env_explosion")
-            local me = Player(]]..plr..[[)
+    wtf.Log("Exploded "..Player( SelectedPlr):Nick())
+    wtf.SendLua([[
+        local explo = ents.Create("env_explosion")
+        local me = Player(]].. SelectedPlr..[[)
 
-                explo:SetOwner(me)
-                explo:SetPos(me:GetPos())
-                explo:SetKeyValue("iMagnitude", "250")
-                explo:Spawn()
-                explo:Activate()
-                explo:Fire("Explode", "", 0)
+            explo:SetOwner(me)
+            explo:SetPos(me:GetPos())
+            explo:SetKeyValue("iMagnitude", "250")
+            explo:Spawn()
+            explo:Activate()
+            explo:Fire("Explode", "", 0)
 
-            if me:Alive() then
-                me:Kill()
-            end
-        ]])
-    end
+        if me:Alive() then
+            me:Kill()
+        end
+    ]])
 end)
 
 CreateButton("Net-Scan", BackdoorTab[1], 115, 30, 19, 520, function()
