@@ -51,7 +51,7 @@ local responses = {
     "w0rst.xyz - yung slappa central",
     "w0rst.xyz - true opp-steppas",
     "w0rst.xyz - Vec the holmie",
-    "w0rst.xyz - Shoutout nigcord | aye wassup!!!",
+    "w0rst.xyz - Shoutout nigcord",
     "w0rst.xyz - bhop on fleak no cap",
     "w0rst.xyz - skids want our source",
     "w0rst.xyz - Zardoom a rat ?wtf?",
@@ -88,9 +88,8 @@ function wtf.CheckNet(str)
     return (_G.util.NetworkStringToID(str) > 0)
 end
 
-function wtf.CheckPlr()
-    if (plr ~= nil && Player(plr):IsValid() ~= false) then
-        SelectedPlr = plr
+function wtf.CheckPlr(plr)
+    if (plr ~= nil and Player(plr):IsValid() ~= false) then
         return true
     else
         wtf.Log("Player Not Selected/Valid")
@@ -503,8 +502,8 @@ local function PopulateEntLists()
 
     for k, v in pairs(ents.GetAll()) do
         local name = v:GetClass()
-        if name ~= "player" && name ~= "viewmodel" then
-            if !CheckTable(EntList, name) && !CheckTable(EntsOff, name) then
+        if name ~= "player" and name ~= "viewmodel" then
+            if not CheckTable(EntList, name) and not CheckTable(EntsOff, name) then
                 CreateButton(name, EntOffPanel[1], 220, 25, 5, EntOffPosY, function()
                     table.insert(EntList, name); ClearLists()
                 end);
@@ -513,7 +512,7 @@ local function PopulateEntLists()
                 EntOffPosY = EntOffPosY + 26
             end
 
-            if CheckTable(EntList, name) && !CheckTable(EntsOn, name) then
+            if CheckTable(EntList, name) and not CheckTable(EntsOn, name) then
                 CreateButton(name, EntOnPanel[1], 220, 25, 5, EntOnPosY, function()
                     for i = 1, #EntList do
                         if EntList[i] == name then
@@ -567,10 +566,10 @@ local function PopulatePlayers()
             self:SetTextColor(Color(255,255,255))
         end
         LabelButton.DoClick = function()
-            plr = v:UserID()
-            if wtf.CheckPlr() then
-                wtf.Log("Player: "..Player(plr):Nick().." Selected")
-                wtf.conoutRGB("SELECTED PLAYER: "..Player(plr):Nick())
+            SelectedPlr = v:UserID()
+            if wtf.CheckPlr(SelectedPlr) then
+                wtf.Log("Player: "..Player(SelectedPlr):Nick().." Selected")
+                wtf.conoutRGB("SELECTED PLAYER: "..Player(SelectedPlr):Nick())
             end
         end
 
@@ -798,7 +797,7 @@ hook.Add("HUDPaint", EspHook, function()
                 end
 
                 if enable['EntName'] then
-                    if !enable['EntDistance'] then
+                    if not enable['EntDistance'] then
                         local name = ent:GetClass()
                         local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
                         draw.SimpleText(name, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
@@ -806,7 +805,7 @@ hook.Add("HUDPaint", EspHook, function()
                 end
 
                 if enable['EntDistance'] then
-                    if !enable['EntName'] then
+                    if not enable['EntName'] then
                         local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
                         local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
                         draw.SimpleText(distance, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
@@ -843,7 +842,7 @@ hook.Add("HUDPaint", EspHook, function()
             end
 
             if enable['Distance'] then
-                if !enable['Name'] then
+                if not enable['Name'] then
                     local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
                     local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
                     draw.SimpleText(distance, "Default", position.x, position.y, color['Distance'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
@@ -851,7 +850,7 @@ hook.Add("HUDPaint", EspHook, function()
             end
 
             if enable['Name'] then
-                if !enable['Distance'] then
+                if not enable['Distance'] then
                     local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
                     draw.SimpleText(v:Nick(), "Default", position.x, position.y, color['Name'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                 end
@@ -960,7 +959,7 @@ hook.Add("HUDPaint", FovHook, function()
 end)
 
 local function Valid(v)
-    if(!v or  !v:IsValid() or v:Health() < 1 or v:IsDormant() or v == me) then return false; end
+    if(not v or  not v:IsValid() or v:Health() < 1 or v:IsDormant() or v == me) then return false; end
     return true
 end
 
@@ -989,7 +988,7 @@ end)
 local function AntiRecoil(ply, pos, angles, fov)
     local me, tps = LocalPlayer(), {}
     if enable['AntiRecoil'] then
-        if !me:IsValid() or !me:Alive() or me:GetViewEntity() != me or me:InVehicle() then return end
+        if not me:IsValid() and not me:Alive() and me:GetViewEntity() or me:InVehicle() then return end
         tps.angles = me:EyeAngles()
         return tps
     end
@@ -1035,17 +1034,17 @@ end)
 
 local IsKeyDown = false
 hook.Add("Think", KeyHook, function()
-    if input.IsKeyDown(KEY_INSERT) and !Menu:IsVisible() and !IsKeyDown then
+    if input.IsKeyDown(KEY_INSERT) and not Menu:IsVisible() and not IsKeyDown then
         Menu:Show(); IsKeyDown=true
-    elseif input.IsKeyDown(KEY_INSERT) and Menu:IsVisible() and !IsKeyDown then
+    elseif input.IsKeyDown(KEY_INSERT) and Menu:IsVisible() and not IsKeyDown then
        Menu:Hide(); IsKeyDown=true
-    elseif !input.IsKeyDown(KEY_INSERT) then
+    elseif not input.IsKeyDown(KEY_INSERT) then
         IsKeyDown=false
     end
 end)
 
 CreateCheckbox("Plr-Tracer", VisualsTab[1], 22, 10, function()
-    enable['Tracer'] = !enable['Tracer']
+    enable['Tracer'] = not enable['Tracer']
     if enable['Tracer'] then
         wtf.Log("Tracer Enabled")
     else
@@ -1054,7 +1053,7 @@ CreateCheckbox("Plr-Tracer", VisualsTab[1], 22, 10, function()
 end)
 
 CreateCheckbox("Plr-Distance", VisualsTab[1], 142, 10, function()
-    enable['Distance'] = !enable['Distance']
+    enable['Distance'] = not enable['Distance']
     if enable['Distance'] then
         wtf.Log("Distance Enabled")
     else
@@ -1063,7 +1062,7 @@ CreateCheckbox("Plr-Distance", VisualsTab[1], 142, 10, function()
 end)
 
 CreateCheckbox("Plr-Names", VisualsTab[1], 262, 10, function()
-    enable['Name'] = !enable['Name']
+    enable['Name'] = not enable['Name']
     if enable['Name'] then
         wtf.Log("Names Enabled")
     else
@@ -1072,7 +1071,7 @@ CreateCheckbox("Plr-Names", VisualsTab[1], 262, 10, function()
 end)
 
 CreateCheckbox("Plr-Weapons", VisualsTab[1], 382, 10, function()
-    enable['Weapon'] = !enable['Weapon']
+    enable['Weapon'] = not enable['Weapon']
     if enable['Weapon'] then
         wtf.Log("Weapons Enabled")
     else
@@ -1081,7 +1080,7 @@ CreateCheckbox("Plr-Weapons", VisualsTab[1], 382, 10, function()
 end)
 
 CreateCheckbox("Plr-2D-Box", VisualsTab[1], 22, 40, function()
-    enable['Box2D'] = !enable['Box2D']
+    enable['Box2D'] = not enable['Box2D']
     if enable['Box2D'] then
         wtf.Log("2D Boxes Enabled")
     else
@@ -1090,7 +1089,7 @@ CreateCheckbox("Plr-2D-Box", VisualsTab[1], 22, 40, function()
 end)
 
 CreateCheckbox("Plr-3D-Box", VisualsTab[1], 142, 40, function()
-    enable['Box3D'] = !enable['Box3D']
+    enable['Box3D'] = not enable['Box3D']
     if enable['Box3D'] then
         wtf.Log("3D Boxes Enabled")
     else
@@ -1099,7 +1098,7 @@ CreateCheckbox("Plr-3D-Box", VisualsTab[1], 142, 40, function()
 end)
 
 CreateCheckbox("Plr-Skeletons", VisualsTab[1], 262, 40, function()
-    enable['Skeleton'] = !enable['Skeleton']
+    enable['Skeleton'] = not enable['Skeleton']
     if enable['Skeleton'] then
         wtf.Log("Skeletons Enabled")
     else
@@ -1108,7 +1107,7 @@ CreateCheckbox("Plr-Skeletons", VisualsTab[1], 262, 40, function()
 end)
 
 CreateCheckbox("Plr-Chams", VisualsTab[1], 382, 40, function()
-    enable['Chams'] = !enable['Chams']
+    enable['Chams'] = not enable['Chams']
     if enable['Chams']then
         wtf.Log("Chams Enabled")
     else
@@ -1117,7 +1116,7 @@ CreateCheckbox("Plr-Chams", VisualsTab[1], 382, 40, function()
 end)
 
 CreateCheckbox("Ent-Names", VisualsTab[1], 22, 70, function()
-    enable['EntName'] = !enable['EntName']
+    enable['EntName'] = not enable['EntName']
     if enable['EntName'] then
         wtf.Log("Ent Names Enabled")
     else
@@ -1126,7 +1125,7 @@ CreateCheckbox("Ent-Names", VisualsTab[1], 22, 70, function()
 end)
 
 CreateCheckbox("Ent-Distance", VisualsTab[1], 142, 70, function()
-    enable['EntDistance'] = !enable['EnttDistance']
+    enable['EntDistance'] = not enable['EnttDistance']
     if enable['EnttDistance'] then
         wtf.Log("Ent tDistance Enabled")
     else
@@ -1135,7 +1134,7 @@ CreateCheckbox("Ent-Distance", VisualsTab[1], 142, 70, function()
 end)
 
 CreateCheckbox("Ent-3D", VisualsTab[1], 262, 70, function()
-    enable['Ent3D'] = !enable['Ent3D']
+    enable['Ent3D'] = not enable['Ent3D']
     if enable['Ent3D'] then
         wtf.Log("Ent 3D Boxes Enabled")
     else
@@ -1144,7 +1143,7 @@ CreateCheckbox("Ent-3D", VisualsTab[1], 262, 70, function()
 end)
 
 CreateCheckbox("Wallhack", VisualsTab[1], 382, 70, function()
-    enable['Wallhack'] = !enable['Wallhack']
+    enable['Wallhack'] = not enable['Wallhack']
     if enable['Wallhack'] then
         wtf.Log("Wallhack Enabled")
     else
@@ -1153,7 +1152,7 @@ CreateCheckbox("Wallhack", VisualsTab[1], 382, 70, function()
 end)
 
 CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
-    FC.Enabled = !FC.Enabled
+    FC.Enabled = not FC.Enabled
     if FC.Enabled then
         wtf.Log("Freecam Enabled")
     else
@@ -1290,9 +1289,9 @@ CreateBDServer("Force Say All", function()
     end)
 end)
 
-CreateBDServer("Encony fucker!!", function()
+CreateBDServer("Encony fuckernot not ", function()
     wtf.SendLua("for k,v in pairs(player.GetAll()) do v:addMoney(9999999999999) end")
-		wtf.Log("Eco got raped cuh!!")
+		wtf.Log("Eco got raped cuhnot not ")
 end)
 
 CreateBDServer("Console Say", function()
@@ -1336,7 +1335,7 @@ CreateBDServer("JumpPower All", function()
 end)
 
 CreateBDServer("Break Glass", function()
-  wtf.Log("Glass Breaking funni!")
+  wtf.Log("Glass Breaking funninot ")
 		wtf.SendLua([[
 			for k,v in pairs(player.GetAll()) do
 				v:EmitSound("physics/glass/glass_largesheet_break" .. math.random(1, 3) .. ".wav", 100, math.random(40, 180))
@@ -1684,7 +1683,7 @@ CreateButton("Run Lua", BackdoorTab[1], 115, 30, 379, 520, function()
 end)
 
 CreateButton("Adv-Bhop", MiscTab[1], 110, 25, 20, 10, function()
-    enable['Bhop'] = !enable['Bhop']
+    enable['Bhop'] = not enable['Bhop']
     if enable['Bhop'] then
         wtf.Log("Bhop Enabled")
         hook.Add("CreateMove", BhopHook, function(ply) wtf.bhop_loop(ply) end);
@@ -1720,7 +1719,7 @@ CreateButton("W0RST-BD | Method", MiscTab[1], 110, 25, 260, 10, function()
 end)
 
 CreateButton("Rainbow-Physgun", MiscTab[1], 110, 25, 380, 10, function()
-    enable['PhysRainbow'] = !enable['PhysRainbow']
+    enable['PhysRainbow'] = not enable['PhysRainbow']
     if enable['PhysRainbow'] then
         wtf.Log("RGB-Physgun Enabled")
     else
@@ -1729,7 +1728,7 @@ CreateButton("Rainbow-Physgun", MiscTab[1], 110, 25, 380, 10, function()
 end)
 
 CreateButton("Use-Spammer", MiscTab[1], 110, 25, 20, 40, function()
-    enable['UseSpam'] = !enable['UseSpam']
+    enable['UseSpam'] = not enable['UseSpam']
     if enable['UseSpam'] then
         wtf.Log("Use Spammer Enabled")
         hook.Add("Tick", UseSpamHook, function()
@@ -1743,7 +1742,7 @@ CreateButton("Use-Spammer", MiscTab[1], 110, 25, 20, 40, function()
 end)
 
 CreateButton("Flash-Spammer", MiscTab[1], 110, 25, 140, 40, function()
-    enable['FlashSpam'] = !enable['FlashSpam']
+    enable['FlashSpam'] = not enable['FlashSpam']
     if enable['FlashSpam'] then
         wtf.Log("Flash Spammer Enabled")
         hook.Add("Tick", FlashSpamHook , function()
@@ -1772,7 +1771,7 @@ CreateButton("Encode-String", MiscTab[1], 110, 25, 380, 40, function()
 end)
 
 CreateCheckbox("Chat Advertise", MiscTab[1], 20, 70, function()
-    enable['ChatSpam'] = !enable['ChatSpam']
+    enable['ChatSpam'] = not enable['ChatSpam']
     if enable['ChatSpam'] then
         wtf.Log("Chat Advertiser Disabled")
     else
@@ -1782,7 +1781,7 @@ end)
 
 CreateSlider("Fov:", FovCircle, MiscTab[1], 1000, 5, 260, 70)
 CreateCheckbox("Fov Aimbot", MiscTab[1], 140, 70, function()
-    enable['Aimbot'] = !enable['Aimbot']
+    enable['Aimbot'] = not enable['Aimbot']
     if enable['Aimbot'] then
         wtf.Log("Aimbot Enabled")
     else
@@ -1791,7 +1790,7 @@ CreateCheckbox("Fov Aimbot", MiscTab[1], 140, 70, function()
 end)
 
 CreateCheckbox("Auto Fire", MiscTab[1], 20, 100, function()
-    enable['AutoFire'] = !enable['AutoFire']
+    enable['AutoFire'] = not enable['AutoFire']
     if enable['AutoFire'] then
         wtf.Log("Aimbot AutoFire Enabled")
     else
@@ -1800,7 +1799,7 @@ CreateCheckbox("Auto Fire", MiscTab[1], 20, 100, function()
 end)
 
 CreateCheckbox("AntiRecoil", MiscTab[1], 380, 70, function()
-    enable['AntiRecoil'] = !enable['AntiRecoil']
+    enable['AntiRecoil'] = not enable['AntiRecoil']
     if enable['AntiRecoil'] then
         wtf.Log("AntiRecoil Enabled")
     else
