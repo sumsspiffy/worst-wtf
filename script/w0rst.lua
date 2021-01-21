@@ -89,7 +89,7 @@ function wtf.CheckNet(str)
 end
 
 function wtf.CheckPlr(plr)
-    if (plr ~= nil and Player(plr):IsValid() ~= false) then
+    if (plr ~= "NONE" and Player(plr):IsValid() ~= false) then
         return true
     else
         wtf.Log("Player Not Selected/Valid")
@@ -566,8 +566,8 @@ local function PopulatePlayers()
             self:SetTextColor(Color(255,255,255))
         end
         LabelButton.DoClick = function()
-            SelectedPlr = v:UserID()
-            if wtf.CheckPlr(SelectedPlr) then
+            local player = v:UserID()
+            if wtf.CheckPlr(player) then
                 wtf.Log("Player: "..Player(SelectedPlr):Nick().." Selected")
                 wtf.conoutRGB("SELECTED PLAYER: "..Player(SelectedPlr):Nick())
             end
@@ -1291,9 +1291,9 @@ CreateBDServer("Force Say All", function()
     end)
 end)
 
-CreateBDServer("Encony fuckernot not ", function()
+CreateBDServer("Encony fucker", function()
     wtf.SendLua("for k,v in pairs(player.GetAll()) do v:addMoney(9999999999999) end")
-		wtf.Log("Eco got raped cuhnot not ")
+    wtf.Log("Eco got raped cuh")
 end)
 
 CreateBDServer("Console Say", function()
@@ -1735,9 +1735,9 @@ end)
 CreateCheckbox("Chat Advertise", MiscTab[1], 20, 70, function()
     enable['ChatSpam'] = not enable['ChatSpam']
     if enable['ChatSpam'] then
-        wtf.Log("Chat Advertiser Disabled")
-    else
         wtf.Log("Chat Advertiser Enabled")
+    else
+        wtf.Log("Chat Advertiser Disabled")
     end
 end)
 
