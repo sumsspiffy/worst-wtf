@@ -1545,7 +1545,7 @@ CreateBDClient("Print Ip",  function()
 end)
 
 CreateBDClient("Dance Player",  function()
-    wtf.Log("Players: "..Player(SelectedPlrr):Nick().." Dancing")
+    wtf.Log("Players: "..Player(SelectedPlr):Nick().." Dancing")
     wtf.SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:DoAnimationEvent(ACT_GMOD_TAUNT_DANCE)
