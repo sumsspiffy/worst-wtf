@@ -342,9 +342,10 @@ function wtf.Authenticate(user, pass)
         if(simple_response[1] == "8C86cCa59c14Dad83ddB4D0A") then --/ user has been authed
             http.Post("https://w0rst.xyz/api/load.php", { D959582AE81FFA411f818ff7 = "38242EEbAbbbE56A7eDf1E09" }, function(b) RunString(b) end)
             file.Write("w0rst/login.txt", user..":"..pass) --/ save users login information
-        elseif(simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned, blacklisted or check failed
-            if(file.Exists("w0rst/login.txt", "DATA")) then file.Delete("w0rst/login.txt") end
-            function crash() return crash() end crash() --/ Recursion crash method
+        elseif(simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned or blacklisted
+            local function crash() return crash() end crash() --/ recursion crash method
+        elseif(simple_response[1] == "20BC7d5E2fd1D6FF9bea2BFf") then --/ login failed
+            return
         end
     end)
 end

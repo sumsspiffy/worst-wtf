@@ -54,7 +54,8 @@ curl_setopt($curl, CURLOPT_HEADER, 0);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
 $Successful = "8C86cCa59c14Dad83ddB4D0A";
-$Failed = "ceFF46F38e74D172DE8c8ab4";
+$Banned = "ceFF46F38e74D172DE8c8ab4";
+$Failed = "20BC7d5E2fd1D6FF9bea2BFf";
 
 $lua_blacklist = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_blacklist', "a");
 $lua_connections = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_connections', "a");
@@ -69,14 +70,14 @@ if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
         fwrite($lua_connections, "FAILED BLACKLISTED USER: $user:$ip_address | $steam_name:$steam_id - $time\n");
         fwrite($lua_blacklist, "$user:$steam_id:$ip_address - $time\n");
         $attempt="Failed | Blacklisted User";
-        echo $Failed;
+        echo $Banned;
     }
 
     elseif ($auth_checked == true && $group_checked == 0 && $blacklisted == false) { // forum-banned-user
         fwrite($lua_connections, "BANNED FORUM USER: $user:$ip_address | $steam_name:$steam_id - $time\n");
         fwrite($lua_blacklist, "$user:$steam_id:$ip_address - $time\n");
         $attempt="Failed | User Forum Banned";
-        echo $Failed;
+        echo $Banned;
     }
 
     else { // failed-any-reason

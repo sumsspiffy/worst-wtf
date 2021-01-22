@@ -134,7 +134,8 @@ wtf.Icons, wtf.Materials = {
     B="https://w0rst.xyz/script/images/backdoor.png",
     M="https://w0rst.xyz/script/images/misc.png",
     S="https://w0rst.xyz/script/images/sounds.png",
-    A="https://w0rst.xyz/script/images/aimbot.png"
+    A="https://w0rst.xyz/script/images/aimbot.png",
+    E="https://w0rst.xyz/script/images/exploits.png"
 }, {}
 
 function wtf.Download(filename, url, callback, errorCallback)
@@ -465,8 +466,8 @@ local VisualsTab = CreateTabButton(wtf.Materials.V, 13, 5)
 local MiscTab = CreateTabButton(wtf.Materials.M, 13, 85)
 local PlayersTab = CreateTabButton(wtf.Materials.P, 13, 165)
 local BackdoorTab = CreateTabButton(wtf.Materials.B, 13, 245)
+-- local ExploitsTab = CreateTabButton(wtf.Materials.E, 13, 325)
 local SoundsTab = CreateTabButton(wtf.Materials.S, 13, 325)
--- 405
 
 --/ Panels
 local PlayerPanel = CreatePanel(PlayersTab[1], 495, 540, 10, 10)
@@ -1789,6 +1790,16 @@ end)
 CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityLists.Clear)
 
 CreateSoundButtons()
+
+-- CreateButton("Unisec Free-Unlock", ExploitsTab[1], 110, 25, 22, 10, function()
+--     wtf.Log("Unisec paid-entry doors unlocked")
+--     for k,v in pairs(ents.FindByClass("uni_keypad")) do
+--         net.Start("usec_paid_door")
+--         net.WriteEntity(v)
+--         net.WriteBool(true)
+--         net.SendToServer()
+--     end
+-- end)
 
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
 --# ADD PASTED REBUG BACKDOOR OPTIONS
