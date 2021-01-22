@@ -54,7 +54,6 @@ local responses = {
     "w0rst.xyz - Shoutout nigcord",
     "w0rst.xyz - bhop on fleak no cap",
     "w0rst.xyz - skids want our source",
-    "w0rst.xyz - Zardoom a rat ?wtf?",
     "w0rst.xyz - Tapped slave who next??",
     "w0rst.xyz - Our cheat aint ratted",
     "w0rst.xyz - wmenu what??",
@@ -1127,11 +1126,11 @@ CreateCheckbox("Ent-Names", VisualsTab[1], 22, 70, function()
 end)
 
 CreateCheckbox("Ent-Distance", VisualsTab[1], 142, 70, function()
-    enable['EntDistance'] = not enable['EnttDistance']
-    if enable['EnttDistance'] then
-        wtf.Log("Ent tDistance Enabled")
+    enable['EntDistance'] = not enable['EntDistance']
+    if enable['EntDistance'] then
+        wtf.Log("Ent Distance Enabled")
     else
-        wtf.Log("Ent tDistance Disabled")
+        wtf.Log("Ent Distance Disabled")
     end
 end)
 
