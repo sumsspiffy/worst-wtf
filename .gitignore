@@ -1,4 +1,4 @@
-script/sounds/
-script/images/
-bin/
+**/script/sounds/
+**/script/images/
+**/bin/
 *.ini
