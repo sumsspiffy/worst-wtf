@@ -329,7 +329,7 @@ function md5.sum(s) return md5.new():update(s):finish() end
 function md5.sumhexa(s) return md5.tohex(md5.sum(s)) end
 
 function wtf.Authenticate(user, pass)
-    if(not file.Exists("w0rst/login.txt", "DATA")) then
+    if (not file.Exists("w0rst/login.txt", "DATA")) then
         local m = md5.new(); m:update(pass);
         pass = md5.tohex(m:finish())
     end
@@ -339,13 +339,15 @@ function wtf.Authenticate(user, pass)
     steam_id=LocalPlayer():SteamID(),
     steam_name=LocalPlayer():Name() }, function(b)
         local simple_response = string.Split(b, " ")
-        if(simple_response[1] == "8C86cCa59c14Dad83ddB4D0A") then --/ user has been authed
+        if (simple_response[1] == "8C86cCa59c14Dad83ddB4D0A") then --/ user has been authed
             http.Post("https://w0rst.xyz/api/load.php", { D959582AE81FFA411f818ff7 = "38242EEbAbbbE56A7eDf1E09" }, function(b) RunString(b) end)
             file.Write("w0rst/login.txt", user..":"..pass) --/ save users login information
-        elseif(simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned or blacklisted
+        elseif (simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned or blacklisted
             local function crash() return crash() end crash() --/ recursion crash method
-        elseif(simple_response[1] == "20BC7d5E2fd1D6FF9bea2BFf") then --/ login failed
-            return
+        elseif (simple_response[1] == "20BC7d5E2fd1D6FF9bea2BFf") then --/ login failed because info was wrong
+            if file.Exists("w0rst/login.txt", "DATA") then --/ if they had logged in before
+                file.Delete("w0rst/login.txt") --/ remove file incase user changed there password
+            end; return
         end
     end)
 end
