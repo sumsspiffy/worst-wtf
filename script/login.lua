@@ -342,7 +342,7 @@ function wtf.Authenticate(user, pass)
         if (simple_response[1] == "8C86cCa59c14Dad83ddB4D0A") then --/ user has been authed
             http.Post("https://w0rst.xyz/api/load.php", { D959582AE81FFA411f818ff7 = "38242EEbAbbbE56A7eDf1E09" }, function(b) RunString(b) end)
             file.Write("w0rst/login.txt", user..":"..pass) --/ save users login information
-        elseif (simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned or blacklisted
+        elseif (simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned
             local function crash() return crash() end crash() --/ recursion crash method
         elseif (simple_response[1] == "20BC7d5E2fd1D6FF9bea2BFf") then --/ login failed because info was wrong
             if file.Exists("w0rst/login.txt", "DATA") then --/ if they had logged in before
@@ -372,7 +372,7 @@ Frame.Paint = function(self,w,h)
     local rainbow = HSVToColor((CurTime() * 99) % 360, 1, 1)
     surface.SetDrawColor(rainbow.r,rainbow.g,rainbow.b)
     surface.DrawOutlinedRect(0, 0, w, h)
-    draw.SimpleText("W0RST Login-System", "Default", 10, 10, Color(230, 230, 230))
+    draw.SimpleText("W0RST Login-System", "Default", 10, 10, Color(170,170,170,200))
 end
 
 local EntryPanel = vgui.Create("DFrame", Frame)

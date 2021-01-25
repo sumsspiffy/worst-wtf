@@ -12,13 +12,8 @@ $steam_name = $_POST['steam_name'];
 $server_name = $_POST['server_name'];
 $server_ip = $_POST['server_ip'];
 
-$blacklisted;
 $group_checked;
 $check;
-
-$blacklist = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_blacklist');
-if ((strpos($blacklist, $username) !== false) || (strpos($blacklist, $steam_id) !== false) || (strpos($blacklist, $ip_address) !== false)) { $blacklisted=true; } 
-else { $blacklisted=false; }
 
 $sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $username) ."'" ;
 $results = $link->query($sql);
@@ -49,17 +44,16 @@ curl_setopt($curl, CURLOPT_HEADER, 0);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
 $lua_relay = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_relay', "a");
-$lua_blacklist = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_blacklist', "a");
 if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") { 
-    if (!$blacklisted and $group_checked==1) { 
+    if ($group_checked == 1) { 
         fwrite($lua_relay, "RELAY: $username:$ip_address - $steam_name:$steam_id - $server_name:$server_name - $time\n"); 
         $check="Nothing";
     }
 
-    elseif($blacklisted or $group_checked==0) { 
-        fwrite($lua_relay, "BLACKLISTED USER: $username:$steam_id:$ip_address - $server_name:$server_ip - $time\n"); 
+    elseif($group_checked == 0) { 
+        fwrite($lua_relay, "BANNED USER: $username:$steam_id:$ip_address - $server_name:$server_ip - $time\n"); 
         fwrite($lua_blacklist, "$username:$steam_id:$ip_address - $time\n");
-        $check="User's Blacklisted";
+        $check="User's Banned";
         echo a4dF91aE25c2BFD11F879e42; 
     }
 
@@ -85,5 +79,4 @@ else {
 }
 
 $fclose($lua_relay);
-$fclose($lua_blacklist);
 ?>

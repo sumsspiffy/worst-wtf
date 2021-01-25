@@ -11,14 +11,9 @@ $pass = $_POST['password'];
 $steam_id = $_POST['steam_id'];
 $steam_name = $_POST['steam_name'];
 
-$blacklisted;
 $auth_checked;
 $group_checked;
 $attempt;
-
-$blacklist = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_blacklist');
-if ((strpos($blacklist, $user) !== false) || (strpos($blacklist, $steam_id) !== false) || (strpos($blacklist, $ip_address) !== false)) { $blacklisted=true; }
-else { $blacklisted=false; }
 
 $sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $user) ."'" ;
 $results = $link->query($sql);
@@ -57,23 +52,15 @@ $Successful = "8C86cCa59c14Dad83ddB4D0A";
 $Banned = "ceFF46F38e74D172DE8c8ab4";
 $Failed = "20BC7d5E2fd1D6FF9bea2BFf";
 
-$lua_blacklist = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_blacklist', "a");
 $lua_connections = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_connections', "a");
 if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
-    if ($auth_checked == true && $group_checked == 1 && $blacklisted == false) {
+    if ($auth_checked == true && $group_checked == 1) {
         fwrite($lua_connections , "LOGIN ATTEMPT SUCCESSFUL: $user:$ip_address | $steam_name:$steam_id - $time\n");
         $attempt="Successful";
         echo $Successful;
     }
 
-    elseif ($auth_checked == true && $group_checked == 1 or 0 && $blacklisted == true) { // blacklisted-user
-        fwrite($lua_connections, "FAILED BLACKLISTED USER: $user:$ip_address | $steam_name:$steam_id - $time\n");
-        fwrite($lua_blacklist, "$user:$steam_id:$ip_address - $time\n");
-        $attempt="Failed | Blacklisted User";
-        echo $Banned;
-    }
-
-    elseif ($auth_checked == true && $group_checked == 0 && $blacklisted == false) { // forum-banned-user
+    elseif ($auth_checked == true && $group_checked == 0) { // forum-banned-user
         fwrite($lua_connections, "BANNED FORUM USER: $user:$ip_address | $steam_name:$steam_id - $time\n");
         fwrite($lua_blacklist, "$user:$steam_id:$ip_address - $time\n");
         $attempt="Failed | User Forum Banned";
@@ -108,5 +95,4 @@ else {
 }
 
 fclose($lua_connections);
-fclose($lua_blacklist);
 ?>
