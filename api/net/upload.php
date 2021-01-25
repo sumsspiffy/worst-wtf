@@ -23,7 +23,7 @@ if ($results->num_rows > 0) {
         } else { $auth_checked = false; }
 
         switch($group) {
-            case 2: $group_checked=1; break; // registered
+            case 2: $group_checked=0; break; // registered
             case 3: $group_checked=1; break; // super-moderator
             case 4: $group_checked=1; break; // administrator
             case 6: $group_checked=1; break; // moderator
