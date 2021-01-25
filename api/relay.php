@@ -18,15 +18,14 @@ $check;
 $sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $username) ."'" ;
 $results = $link->query($sql);
 
-if ($results->num_rows > 0) { 
-    while($row = $results->fetch_assoc()) { 
+if ($results->num_rows > 0) {
+    while($row = $results->fetch_assoc()) {
         $group = $row['usergroup'].$row['additionalgroups'];
-        
-        switch($group) { 
-            case 2: $group_checked=1; break; // registered 
+
+        switch($group) {
+            case 2: $group_checked=1; break; // registered
             case 3: $group_checked=1; break; // super-moderator
             case 4: $group_checked=1; break; // administrator
-            case 5: $group_checked=2; break; // awaiting activation
             case 6: $group_checked=1; break; // moderator
             case 7: $group_checked=0; break; // banned member
         }
@@ -44,17 +43,17 @@ curl_setopt($curl, CURLOPT_HEADER, 0);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
 $lua_relay = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_relay', "a");
-if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") { 
-    if ($group_checked == 1) { 
-        fwrite($lua_relay, "RELAY: $username:$ip_address - $steam_name:$steam_id - $server_name:$server_name - $time\n"); 
+if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
+    if ($group_checked == 1) {
+        fwrite($lua_relay, "RELAY: $username:$ip_address - $steam_name:$steam_id - $server_name:$server_name - $time\n");
         $check="Nothing";
     }
 
-    elseif($group_checked == 0) { 
-        fwrite($lua_relay, "BANNED USER: $username:$steam_id:$ip_address - $server_name:$server_ip - $time\n"); 
+    elseif($group_checked == 0) {
+        fwrite($lua_relay, "BANNED USER: $username:$steam_id:$ip_address - $server_name:$server_ip - $time\n");
         fwrite($lua_blacklist, "$username:$steam_id:$ip_address - $time\n");
         $check="User's Banned";
-        echo a4dF91aE25c2BFD11F879e42; 
+        echo a4dF91aE25c2BFD11F879e42;
     }
 
     $json_data = json_encode([
@@ -64,7 +63,7 @@ if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
                 "color" => hexdec("#86ffba"),
                 "timestamp" => $timestamp,
                 "description" => "```Check Detected $check\nUsername:$username | Ip-Address:$ip_address\nSteam-Name:$steam_name | Steam-Id:$steam_id\nServer-Name:$server_name | Server-Ip:$server_ip```",
-                "footer" => [ 
+                "footer" => [
                     "text" => "Lua-Relay",
                 ]
             ]
@@ -74,7 +73,7 @@ if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
     curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
     curl_exec($curl);
 }
-else { 
+else {
     echo fuckoff;
 }
 

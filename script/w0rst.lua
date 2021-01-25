@@ -115,8 +115,11 @@ end
 function wtf.AddNet(str)
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
     http.Post("https://w0rst.xyz/api/net/upload.php", { username=UserInfo[1], password=UserInfo[2], net=str }, function(b)
-          if b[1] == "0" then wtf.Log("Incorrect Permissions")
-          else wtf.Log("Uploaded Net "..str) end
+          if b[1] == "0" then
+              wtf.Log("Uploaded Net "..str)
+          elseif b[1] == "1" then
+              wtf.Log("Incorrect Permissions")
+          end
     end)
 end
 

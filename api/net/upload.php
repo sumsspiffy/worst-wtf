@@ -33,8 +33,9 @@ if ($results->num_rows > 0) {
 
 $net_path = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/nets', "a");
 if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
-    if($auth_checked && $group_checked == 1) { fwrite($net_path, "$str "); }
-    else { echo 0; }
+    if($auth_checked && $group_checked == 1) {
+      fwrite($net_path, "$str "); echo 0;
+    } else { echo 1; }
 }
 else {
     echo fuckoff;
