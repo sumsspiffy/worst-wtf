@@ -7,7 +7,7 @@ function wtf.gString()
 
     for i = 1, math.random(10, 220) do
         s = s .. string.char(math.random(32, 126))
-    end 
+    end
 
     return s
 end
@@ -100,7 +100,7 @@ function wtf.CheckPlr(plr)
 end
 
 function wtf.CheckWebNets()
-    http.Post("https://w0rst.xyz/api/net/view.php", { A0791AfFA0F30EdCee1EdADb="02C2C6A1Ded7183AeDAA8650" }, function(b)
+    http.Post("https://w0rst.xyz/api/net/view.php", { A0791AfFA0F30EdCee1EdADb = "02C2C6A1Ded7183AeDAA8650" }, function(b)
         local Nets = string.Split(b, " ")
         for k,v in pairs(Nets) do
             if wtf.CheckNet(v) then
@@ -114,7 +114,7 @@ end
 
 function wtf.AddNet(str)
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
-    http.Post("https://w0rst.xyz/api/net/upload.php", { username=UserInfo[1], net=str }, function(b)
+    http.Post("https://w0rst.xyz/api/net/upload.php", { username=UserInfo[1], password=UserInfo[2], net=str }, function(b)
           if b[1] == "0" then wtf.Log("Incorrect Permissions")
           else wtf.Log("Uploaded Net "..str) end
     end)
