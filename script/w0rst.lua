@@ -1691,7 +1691,7 @@ CreateButton("Run Lua", BackdoorTab[1], 115, 30, 379, 520, function()
     end
 end)
 
-CreateButton("Adv-Bhop", MiscTab[1], 110, 25, 20, 10, function()
+CreateCheckbox("Adv-Bhop", MiscTab[1], 20, 10, function()
     enable['Bhop'] = not enable['Bhop']
     if enable['Bhop'] then
         wtf.Log("Bhop Enabled")
@@ -1736,7 +1736,7 @@ CreateButton("Rainbow-Physgun", MiscTab[1], 110, 25, 380, 10, function()
     end
 end)
 
-CreateButton("Use-Spammer", MiscTab[1], 110, 25, 20, 40, function()
+CreateCheckbox("Use-Spammer", MiscTab[1], 20, 40, function()
     enable['UseSpam'] = not enable['UseSpam']
     if enable['UseSpam'] then
         wtf.Log("Use Spammer Enabled")
@@ -1750,7 +1750,7 @@ CreateButton("Use-Spammer", MiscTab[1], 110, 25, 20, 40, function()
     end
 end)
 
-CreateButton("Flash-Spammer", MiscTab[1], 110, 25, 140, 40, function()
+CreateCheckbox("Flash-Spammer", MiscTab[1], 140, 40, function()
     enable['FlashSpam'] = not enable['FlashSpam']
     if enable['FlashSpam'] then
         wtf.Log("Flash Spammer Enabled")
