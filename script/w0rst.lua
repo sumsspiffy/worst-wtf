@@ -4,7 +4,6 @@ local wtf = {
 
 function wtf.gString()
     local s = ""
-
     for i = 1, math.random(10, 220) do
         s = s .. string.char(math.random(32, 126))
     end
@@ -19,13 +18,13 @@ local RelayHook, KeyHook, EspHook = wtf.gString(), wtf.gString(), wtf.gString()
 local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local enable = {
-    ['UseSpam'] = false, ['Bhop'] = false, ['Freecam'] = false,
     ['Ent3DBox'] = false, ['FlashSpam'] = false, ['PhyRainbow'] = false,
     ['Tracer'] = false, ['Distance'] = false, ['Name'] = false,
     ['Weapon'] = false, ['Wallhack'] = false, ['Chams'] = false,
     ['Box3D'] = false, ['Box2D'] = false, ['Skeleton'] = false,
     ['ChatSpam'] = false, ['EntName'] = false, ['EntDistance'] = false,
-    ['Aimbot'] = false, ['AutoFire'] = false, ['AntiRecoil'] = false
+    ['Aimbot'] = false, ['AutoFire'] = false, ['AntiRecoil'] = false,
+    ['UseSpam'] = false, ['Bhop'] = false
 }
 
 local color = {
@@ -725,62 +724,97 @@ local function CreateSoundButtons()
     end
 end
 
-local FC={}
-FC.Enabled=false
-FC.Hook=wtf.gString()
-FC.FC_Speed=0.9
-FC.ViewOrigin=Vector(0,0,0)
-FC.ViewAngle=Angle(0,0,0)
-FC.Velocity=Vector(0,0,0)
-function FC.CalcView(ply, origin, angles, fov)
-    if not FC.Enabled then return end
-    if (FC.SetView) then
-        FC.ViewOrigin=origin
-        FC.ViewAngle=angles
-        FC.SetView=false
+local FreeCamera = {
+    ['Enabled'] = false,
+    ['SetView'] = false
+}
+
+FreeCamera.ViewOrigin = Vector(0,0,0)
+FreeCamera.ViewAngle = Angle(0,0,0)
+FreeCamera.Velocity = Vector(0,0,0)
+FreeCamera.Hook = wtf.gString()
+FreeCamera.Speed = .97
+
+function FreeCamera.CalcView(ply, origin, angles, fov)
+    if not FreeCamera['Enabled'] then return end
+    if FreeCamera['SetView'] then
+        FreeCamera.ViewOrigin = origin
+        FreeCamera.ViewAngle = angles
+        FreeCamera['SetView'] = false
     end
-    return {origin=FC.ViewOrigin,angles=FC.ViewAngle}
+    return {
+        origin = FreeCamera.ViewOrigin,
+        angles = FreeCamera.ViewAngle
+    }
 end
 
-hook.Add("CalcView", FC.Hook, FC.CalcView)
-function FC.CreateMove(cmd)
-    if not FC.Enabled then return end
-    local time = FrameTime()
-    FC.ViewOrigin = FC.ViewOrigin + ( FC.Velocity * time )
-    FC.Velocity = FC.Velocity * FC.FC_Speed
-    local sensitivity = 0.022
-    FC.ViewAngle.p = math.Clamp( FC.ViewAngle.p + ( cmd:GetMouseY() * sensitivity ), -89, 89 )
-    FC.ViewAngle.y = FC.ViewAngle.y + ( cmd:GetMouseX() * -1 * sensitivity )
+function FreeCamera.CreateMove(cmd)
+    if not FreeCamera['Enabled'] then return end
+    local time, sensitivity = FrameTime(), 0.025
+    FreeCamera.ViewOrigin = FreeCamera.ViewOrigin + (FreeCamera.Velocity * time)
+    FreeCamera.Velocity = FreeCamera.Velocity * FreeCamera.Speed
+
+    FreeCamera.ViewAngle.p = math.Clamp( FreeCamera.ViewAngle.p + (cmd:GetMouseY() * sensitivity), -89, 89)
+    FreeCamera.ViewAngle.y = FreeCamera.ViewAngle.y + (cmd:GetMouseX() * -1 * sensitivity)
+
     local add = Vector(0, 0, 0)
-    local ang = FC.ViewAngle
-    if(cmd:KeyDown(IN_FORWARD)) then add = add + ang:Forward() end
-    if(cmd:KeyDown(IN_BACK)) then add = add - ang:Forward() end
-    if(cmd:KeyDown(IN_MOVERIGHT)) then add = add + ang:Right() end
-    if(cmd:KeyDown(IN_MOVELEFT)) then add = add - ang:Right() end
-    if(cmd:KeyDown(IN_JUMP)) then add = add + ang:Up() end
-    if(cmd:KeyDown(IN_DUCK)) then add = add - ang:Up() end
+    local angle = FreeCamera.ViewAngle
+    if(cmd:KeyDown(IN_FORWARD)) then add = add + angle:Forward() end
+    if(cmd:KeyDown(IN_BACK)) then add = add - angle:Forward() end
+    if(cmd:KeyDown(IN_MOVERIGHT)) then add = add + angle:Right() end
+    if(cmd:KeyDown(IN_MOVELEFT)) then add = add - angle:Right() end
+    if(cmd:KeyDown(IN_JUMP)) then add = add + angle:Up() end
+    if(cmd:KeyDown(IN_DUCK)) then add = add - angle:Up() end
+
     add = add:GetNormal() * time * 500
     if (cmd:KeyDown(IN_SPEED)) then add = add * 5 end
-    FC.Velocity = FC.Velocity + add
-    if (FC.LockView == true) then FC.LockView = cmd:GetViewAngles() end
-    if (FC.LockView) then cmd:SetViewAngles(FC.LockView) end
+    FreeCamera.Velocity = FreeCamera.Velocity + add
+
+    cmd:SetViewAngles(cmd:GetViewAngles())
     cmd:SetForwardMove(0)
     cmd:SetSideMove(0)
     cmd:SetUpMove(0)
 end
 
-hook.Add("CreateMove", FC.Hook, FC.CreateMove)
+hook.Add("CalcView", FreeCamera.Hook, FreeCamera.CalcView)
+hook.Add("CreateMove", FreeCamera.Hook, FreeCamera.CreateMove)
+
+local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
+local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
+hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
+    local view = {
+        x = 0, y = 0,
+        w = ScrW(), h = ScrH(),
+        dopostprocess = true,
+        origin = vOrigin,
+        angles =  vAngle,
+        fov = vFOV,
+        drawhud = true,
+        drawmonitors = true,
+        drawviewmodel = true
+    }
+
+    render.RenderView(view)
+    render.CopyTexture(nil, FakeRenderTarget)
+
+    cam.Start2D()
+        hook.Run("AltHUDPaint")
+    cam.End2D()
+
+    render.SetRenderTarget(FakeRenderTarget)
+    return true
+end)
 
 local chams01 = CreateMaterial("a", "VertexLitGeneric", {
-  ["$ignorez"] = 1,
-  ["$model"] = 1,
-  ["$basetexture"] = "models/debug/debugwhite",
+    ["$ignorez"] = 1,
+    ["$model"] = 1,
+    ["$basetexture"] = "models/debug/debugwhite",
 })
 
 local chams02 = CreateMaterial("@", "VertexLitGeneric", {
-  ["$ignorez"] = 0,
-  ["$model"] = 1,
-  ["$basetexture"] = "models/debug/debugwhite",
+    ["$ignorez"] = 0,
+    ["$model"] = 1,
+    ["$basetexture"] = "models/debug/debugwhite",
 })
 
 wtf.Bones = {
@@ -797,7 +831,7 @@ wtf.Bones = {
     "ValveBiped.Bip01_L_Toe0"
 }
 
-hook.Add("HUDPaint", EspHook, function()
+hook.Add("AltHUDPaint", EspHook, function()
     for k, v in pairs(ents.GetAll()) do
         if v:IsValid() and v ~= LocalPlayer() and not v:IsDormant() then
             local ent=v
@@ -966,7 +1000,7 @@ hook.Add("HUDPaint", EspHook, function()
 end)
 
 local FovCircle = { 80 }
-hook.Add("HUDPaint", FovHook, function()
+hook.Add("AltHUDPaint", FovHook, function()
     if enable['Aimbot'] then
         surface.DrawCircle(ScrW()/2, ScrH()/2, FovCircle[1], color['Fov'])
     end
@@ -1166,12 +1200,13 @@ CreateCheckbox("Wallhack", VisualsTab[1], 382, 70, function()
 end)
 
 CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
-    FC.Enabled = not FC.Enabled
-    if FC.Enabled then
+    FreeCamera['Enabled'] = not FreeCamera['Enabled']
+    if FreeCamera['Enabled'] then
+        FreeCamera['SetView'] = true
         wtf.Log("Freecam Enabled")
     else
         wtf.Log("Freecam Disabled")
-    end; FC.LockView, FC.SetView = FC.Enabled, true
+    end
 end)
 
 local function SaveVisuals()
