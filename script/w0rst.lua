@@ -818,181 +818,173 @@ local chams02 = CreateMaterial("@", "VertexLitGeneric", {
 })
 
 wtf.Bones = {
-    "ValveBiped.Bip01_Head1", "ValveBiped.Bip01_Neck1",
-    "ValveBiped.Bip01_Spine4", "ValveBiped.Bip01_Spine2",
-    "ValveBiped.Bip01_Spine1", "ValveBiped.Bip01_Spine",
-    "ValveBiped.Bip01_Pelvis", "ValveBiped.Bip01_R_UpperArm",
-    "ValveBiped.Bip01_R_Forearm", "ValveBiped.Bip01_R_Hand",
-    "ValveBiped.Bip01_L_UpperArm", "ValveBiped.Bip01_L_Forearm",
-    "ValveBiped.Bip01_L_Hand", "ValveBiped.Bip01_R_Thigh",
-    "ValveBiped.Bip01_R_Calf", "ValveBiped.Bip01_R_Foot",
-    "ValveBiped.Bip01_R_Toe0", "ValveBiped.Bip01_L_Thigh",
-    "ValveBiped.Bip01_L_Calf", "ValveBiped.Bip01_L_Foot",
-    "ValveBiped.Bip01_L_Toe0"
+    "ValveBiped.Bip01_Head1", "ValveBiped.Bip01_Neck1", "ValveBiped.Bip01_Spine4",
+    "ValveBiped.Bip01_Spine2", "ValveBiped.Bip01_Spine1", "ValveBiped.Bip01_Spine",
+    "ValveBiped.Bip01_Pelvis", "ValveBiped.Bip01_R_UpperArm", "ValveBiped.Bip01_R_Forearm",
+    "ValveBiped.Bip01_R_Hand", "ValveBiped.Bip01_L_UpperArm", "ValveBiped.Bip01_L_Forearm",
+    "ValveBiped.Bip01_L_Hand", "ValveBiped.Bip01_R_Thigh", "ValveBiped.Bip01_R_Calf",
+    "ValveBiped.Bip01_R_Foot", "ValveBiped.Bip01_R_Toe0",  "ValveBiped.Bip01_L_Thigh",
+    "ValveBiped.Bip01_L_Calf",  "ValveBiped.Bip01_L_Foot", "ValveBiped.Bip01_L_Toe0"
 }
 
 hook.Add("AltHUDPaint", EspHook, function()
     for k, v in pairs(ents.GetAll()) do
-        if v:IsValid() and v ~= LocalPlayer() and not v:IsDormant() then
-            local ent=v
+        local ent = v
+        if ent:IsValid() and ent ~= LocalPlayer() and not ent:IsDormant() then
             for k, v in pairs(EntList) do
-            if v == ent:GetClass() and ent:GetOwner() ~= LocalPlayer() then
-                if enable['EntName'] and enable['EntDistance'] then
-                    local name = ent:GetClass()
-                    local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
-                    local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
-                    draw.SimpleText(name.." ["..distance.."]", "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-                end
-
-                if enable['EntName'] then
-                    if not enable['EntDistance'] then
+                if v == ent:GetClass() and ent:GetOwner() ~= LocalPlayer() then
+                    if enable['EntName'] and enable['EntDistance'] then
                         local name = ent:GetClass()
                         local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
-                        draw.SimpleText(name, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-                    end
-                end
-
-                if enable['EntDistance'] then
-                    if not enable['EntName'] then
-                        local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
                         local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
-                        draw.SimpleText(distance, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                        draw.SimpleText(name.." ["..distance.."]", "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                    end
+
+                    if enable['EntName'] then
+                        if not enable['EntDistance'] then
+                            local name = ent:GetClass()
+                            local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
+                            draw.SimpleText(name, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                        end
+                    end
+
+                    if enable['EntDistance'] then
+                        if not enable['EntName'] then
+                            local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
+                            local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
+                            draw.SimpleText(distance, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                        end
+                    end
+
+                    if enable['Ent3D'] then
+                        local Position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
+                        local eyeangles = ent:EyeAngles()
+                        local min, max = ent:WorldSpaceAABB()
+                        local origin = ent:GetPos()
+                        cam.Start3D()
+                            render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, color['Entity'] )
+                        cam.End3D()
+                    end
+                end
+            end
+
+            if ent:IsPlayer() and ent:Alive() and ent:Health() > 0 then
+                if enable['Tracer'] then
+                    surface.SetDrawColor(color['Tracer'])
+                    surface.DrawLine(ScrW()/2, ScrH(), ent:GetPos():ToScreen().x, ent:GetPos():ToScreen().y)
+                end
+
+                if enable['Name'] and enable['Distance'] then
+                    local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
+                    local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
+                    draw.SimpleText(ent:Nick().." ["..distance.."]", "Default", position.x, position.y, color['NameDist'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                end
+
+                if enable['Distance'] then
+                    if not enable['Name'] then
+                        local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
+                        local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
+                        draw.SimpleText(distance, "Default", position.x, position.y, color['Distance'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                     end
                 end
 
-                if enable['Ent3D'] then
-                    local Position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
+                if enable['Name'] then
+                    if not enable['Distance'] then
+                        local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
+                        draw.SimpleText(ent:Nick(), "Default", position.x, position.y, color['Name'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                    end
+                end
+
+                if enable['Weapon'] then
+                    if ent:GetActiveWeapon():IsValid() then
+                        local weapon_name=ent:GetActiveWeapon():GetPrintName()
+                        local Position = (ent:GetPos() + Vector(0,0,-15)):ToScreen()
+                        draw.SimpleText(weapon_name, "Default", Position.x, Position.y, color['Weapon'], TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+                    end
+                end
+
+                if enable['Box2D'] then
+                    local min, max = ent:GetCollisionBounds()
+                    local pos = ent:GetPos()
+                    local top, bottom = (pos + Vector(0, 0, max.z)):ToScreen(), (pos - Vector(0, 0, 8)):ToScreen()
+                    local middle = bottom.y - top.y
+                    local width = middle / 2.425
+                    surface.SetDrawColor(color['Box2D'])
+                    surface.DrawOutlinedRect(bottom.x - width, top.y, width * 1.85, middle)
+                end
+
+                if enable['Skeleton'] then
+                    local Continue = true
+                    local Bones = {}
+
+                    for k, v in pairs(wtf.Bones) do
+                        if ent:LookupBone(ent) ~= nil and ent:GetBonePosition(ent:LookupBone(ent)) ~= nil then
+                            table.insert(Bones, ent:GetBonePosition(ent:LookupBone(ent)):ToScreen())
+                        else Continue=false; return end
+                    end
+
+                    if Continue then
+                        surface.SetDrawColor(color['Skeleton'])
+                        surface.DrawLine(Bones[1].x, Bones[1].y, Bones[2].x, Bones[2].y); surface.DrawLine(Bones[2].x, Bones[2].y, Bones[3].x, Bones[3].y)
+                        surface.DrawLine(Bones[3].x, Bones[3].y, Bones[4].x, Bones[4].y); surface.DrawLine(Bones[4].x, Bones[4].y, Bones[5].x, Bones[5].y)
+                        surface.DrawLine(Bones[5].x, Bones[5].y, Bones[6].x, Bones[6].y); surface.DrawLine(Bones[6].x, Bones[6].y, Bones[7].x, Bones[7].y)
+                        surface.DrawLine(Bones[7].x, Bones[7].y, Bones[14].x, Bones[14].y); surface.DrawLine(Bones[14].x, Bones[14].y, Bones[15].x, Bones[15].y)
+                        surface.DrawLine(Bones[15].x, Bones[15].y, Bones[16].x, Bones[16].y); surface.DrawLine(Bones[16].x, Bones[16].y, Bones[17].x, Bones[17].y)
+                        surface.DrawLine(Bones[7].x, Bones[7].y, Bones[18].x, Bones[18].y); surface.DrawLine(Bones[18].x, Bones[18].y, Bones[19].x, Bones[19].y)
+                        surface.DrawLine(Bones[19].x, Bones[19].y, Bones[20].x, Bones[20].y); surface.DrawLine(Bones[20].x, Bones[20].y, Bones[21].x, Bones[21].y)
+                        surface.DrawLine(Bones[3].x, Bones[3].y, Bones[8].x, Bones[8].y); surface.DrawLine(Bones[8].x, Bones[8].y, Bones[9].x, Bones[9].y)
+                        surface.DrawLine(Bones[9].x, Bones[9].y, Bones[10].x, Bones[10].y); surface.DrawLine(Bones[3].x, Bones[3].y, Bones[11].x, Bones[11].y)
+                        surface.DrawLine(Bones[11].x, Bones[11].y, Bones[12].x, Bones[12].y); surface.DrawLine(Bones[12].x, Bones[12].y, Bones[13].x, Bones[13].y)
+                    end
+                end
+
+                if enable['Box3D'] then
+                    local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
                     local eyeangles = ent:EyeAngles()
                     local min, max = ent:WorldSpaceAABB()
                     local origin = ent:GetPos()
+
                     cam.Start3D()
-                        render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, color['Entity'] )
+                        render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, color['Box3D'])
                     cam.End3D()
+                end
+
+                if enable['Wallhack'] then
+                    cam.Start3D()
+                        ent:DrawModel()
+                    cam.End3D()
+                end
+
+                if enable['Chams'] then
+                    local entitym = FindMetaTable("Entity")
+                    local weapon = ent:GetActiveWeapon()
+
+                    cam.Start3D()
+                        cam.IgnoreZ(true)
+                        entitym.DrawModel(ent)
+                        cam.IgnoreZ(false)
+                    cam.End3D()
+
+                    if weapon:IsValid() then
+                        cam.Start3D()
+                            render.MaterialOverride(chams01)
+                            render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
+                            entitym.DrawModel(weapon)
+                            render.SetColorModulation(color['Chams'].r/170, color['Chams'].g/170, color['Chams'].b/170, color['Chams'].a)
+                            render.MaterialOverride(chams02)
+                            entitym.DrawModel(weapon)
+                        cam.End3D()
+
+                        cam.Start3D()
+                            render.MaterialOverride(chams01)
+                            render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
+                            entitym.DrawModel(ent)
+                            render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
+                            render.MaterialOverride(chams02)
+                            entitym.DrawModel(ent)
+                            render.SetColorModulation(1, 1, 1)
+                        cam.End3D()
                     end
-                end
-            end
-        end
-    end
-
-    for k,v in pairs (player.GetAll()) do
-        if v ~= LocalPlayer() and v:IsValid() and v:Alive() and v:Health() > 0 then
-            local ent=v
-
-            if enable['Tracer'] then
-                surface.SetDrawColor(color['Tracer'])
-                surface.DrawLine(ScrW()/2,ScrH(),v:GetPos():ToScreen().x,v:GetPos():ToScreen().y)
-            end
-
-            if enable['Name'] and enable['Distance'] then
-                local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
-                local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                draw.SimpleText(v:Nick().." ["..distance.."]", "Default", position.x, position.y, color['NameDist'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-            end
-
-            if enable['Distance'] then
-                if not enable['Name'] then
-                    local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
-                    local distance = math.Round(v:GetPos():Distance(LocalPlayer():GetPos()))
-                    draw.SimpleText(distance, "Default", position.x, position.y, color['Distance'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-                end
-            end
-
-            if enable['Name'] then
-                if not enable['Distance'] then
-                    local position = (v:GetPos() + Vector(0,0,80)):ToScreen()
-                    draw.SimpleText(v:Nick(), "Default", position.x, position.y, color['Name'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-                end
-            end
-
-            if enable['Weapon'] then
-                if ent:GetActiveWeapon():IsValid() then
-                    local weapon_name=ent:GetActiveWeapon():GetPrintName()
-                    local Position = (v:GetPos() + Vector(0,0,-15)):ToScreen()
-                    draw.SimpleText(weapon_name, "Default", Position.x, Position.y, color['Weapon'], TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-                end
-            end
-
-            if enable['Box2D'] then
-                local min, max = v:GetCollisionBounds()
-                local pos = v:GetPos()
-                local top, bottom = (pos + Vector(0, 0, max.z)):ToScreen(), (pos - Vector(0, 0, 8)):ToScreen()
-                local middle = bottom.y - top.y
-                local width = middle / 2.425
-                surface.SetDrawColor(color['Box2D'])
-                surface.DrawOutlinedRect(bottom.x - width, top.y, width * 1.85, middle)
-            end
-
-            if enable['Skeleton'] then
-                local Continue = true
-                local Bones = {}
-
-                for k, v in pairs(wtf.Bones) do
-                    if ent:LookupBone(v) ~= nil and ent:GetBonePosition(ent:LookupBone(v)) ~= nil then
-                        table.insert(Bones, ent:GetBonePosition(ent:LookupBone(v)):ToScreen())
-                    else Continue=false; return end
-                end
-
-                if Continue then
-                    surface.SetDrawColor(color['Skeleton'])
-                    surface.DrawLine(Bones[1].x, Bones[1].y, Bones[2].x, Bones[2].y); surface.DrawLine(Bones[2].x, Bones[2].y, Bones[3].x, Bones[3].y)
-                    surface.DrawLine(Bones[3].x, Bones[3].y, Bones[4].x, Bones[4].y); surface.DrawLine(Bones[4].x, Bones[4].y, Bones[5].x, Bones[5].y)
-                    surface.DrawLine(Bones[5].x, Bones[5].y, Bones[6].x, Bones[6].y); surface.DrawLine(Bones[6].x, Bones[6].y, Bones[7].x, Bones[7].y)
-                    surface.DrawLine(Bones[7].x, Bones[7].y, Bones[14].x, Bones[14].y); surface.DrawLine(Bones[14].x, Bones[14].y, Bones[15].x, Bones[15].y)
-                    surface.DrawLine(Bones[15].x, Bones[15].y, Bones[16].x, Bones[16].y); surface.DrawLine(Bones[16].x, Bones[16].y, Bones[17].x, Bones[17].y)
-                    surface.DrawLine(Bones[7].x, Bones[7].y, Bones[18].x, Bones[18].y); surface.DrawLine(Bones[18].x, Bones[18].y, Bones[19].x, Bones[19].y)
-                    surface.DrawLine(Bones[19].x, Bones[19].y, Bones[20].x, Bones[20].y); surface.DrawLine(Bones[20].x, Bones[20].y, Bones[21].x, Bones[21].y)
-                    surface.DrawLine(Bones[3].x, Bones[3].y, Bones[8].x, Bones[8].y); surface.DrawLine(Bones[8].x, Bones[8].y, Bones[9].x, Bones[9].y)
-                    surface.DrawLine(Bones[9].x, Bones[9].y, Bones[10].x, Bones[10].y); surface.DrawLine(Bones[3].x, Bones[3].y, Bones[11].x, Bones[11].y)
-                    surface.DrawLine(Bones[11].x, Bones[11].y, Bones[12].x, Bones[12].y); surface.DrawLine(Bones[12].x, Bones[12].y, Bones[13].x, Bones[13].y)
-                end
-            end
-
-            if enable['Box3D'] then
-                local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
-                local eyeangles = ent:EyeAngles()
-                local min, max = ent:WorldSpaceAABB()
-                local origin = ent:GetPos()
-
-                cam.Start3D()
-                    render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, color['Box3D'] )
-                cam.End3D()
-            end
-
-            if enable['Wallhack'] then
-                cam.Start3D()
-                    v:DrawModel()
-                cam.End3D()
-            end
-
-            if enable['Chams'] then
-                local entitym = FindMetaTable("Entity")
-                local weapon = ent:GetActiveWeapon()
-
-                cam.Start3D()
-                    cam.IgnoreZ(true)
-                    entitym.DrawModel(v)
-                    cam.IgnoreZ(false)
-                cam.End3D()
-
-                if weapon:IsValid() then
-                    cam.Start3D()
-                        render.MaterialOverride(chams01)
-                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
-                        entitym.DrawModel(weapon)
-                        render.SetColorModulation(color['Chams'].r/170, color['Chams'].g/170, color['Chams'].b/170, color['Chams'].a)
-                        render.MaterialOverride(chams02)
-                        entitym.DrawModel(weapon)
-                    cam.End3D()
-
-                    cam.Start3D()
-                        render.MaterialOverride(chams01)
-                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
-                        entitym.DrawModel(v)
-                        render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
-                        render.MaterialOverride(chams02)
-                        entitym.DrawModel(v)
-                        render.SetColorModulation(1, 1, 1)
-                    cam.End3D()
                 end
             end
         end
@@ -1012,20 +1004,19 @@ local function Valid(v)
 end
 
 hook.Add("CreateMove", AimbotHook, function(cmd)
-    if enable['Aimbot'] then
-        local ply = LocalPlayer()
-        for k, v in pairs(player.GetAll()) do
-            if Valid(v) then
-                local plrpos = v:GetPos():ToScreen()
-                if (plrpos.x >= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
-                    if (input.IsKeyDown(KEY_LALT)) then
-                        local Target = v:LookupBone(wtf.Bones[1])
-                        local TargetPos, TargetAngle = v:GetBonePosition(Target)
-                        local Position = (TargetPos - ply:GetShootPos()):Angle()
-                        cmd:SetViewAngles(Position)
-                        if enable['AutoFire'] then
-                            cmd:SetButtons(bit.bor(cmd:GetButtons(), 1))
-                        end
+    if not enable['Aimbot'] then return end
+    local ply = LocalPlayer()
+    for k, v in pairs(player.GetAll()) do
+        if Valid(v) then
+            local plrpos = v:GetPos():ToScreen()
+            if (plrpos.x >= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
+                if (input.IsKeyDown(KEY_LALT)) then
+                    local Target = v:LookupBone(wtf.Bones[1])
+                    local TargetPos, TargetAngle = v:GetBonePosition(Target)
+                    local Position = (TargetPos - ply:GetShootPos()):Angle()
+                    cmd:SetViewAngles(Position)
+                    if enable['AutoFire'] then
+                        cmd:SetButtons(IN_ATTACK)
                     end
                 end
             end
