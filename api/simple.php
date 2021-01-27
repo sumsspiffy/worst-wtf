@@ -4,23 +4,23 @@ $link = mysqli_connect($ini['db_host'], $ini['db_user'], $ini['db_password']);
 $database = mysqli_select_db($link, $ini['db_name']);
 $tables = $ini['mybb_usertable'];
 
-$ip_address = $_SERVER[REMOTE_ADDR];
 $time = date('H:i:sa');
-$user = $_POST['username'];
-$pass = $_POST['password'];
+$username = $_POST['username'];
+$password = $_POST['password'];
 $steam_id = $_POST['steam_id'];
 $steam_name = $_POST['steam_name'];
+$ip_address = $_SERVER[REMOTE_ADDR];
 
 $auth_checked;
 $group_checked;
 $attempt;
 
-$sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $user) ."'" ;
+$sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $username) ."'" ;
 $results = $link->query($sql);
 
 if ($results->num_rows > 0) {
     while($row = $results->fetch_assoc()) {
-        $stored_pass = md5(md5($row['salt']).$pass);
+        $stored_pass = md5(md5($row['salt']).$password);
         $group = $row['usergroup'].$row['additionalgroups'];
 
         if($stored_pass == $row['password']) { // check password
@@ -55,20 +55,20 @@ $Failed = "20BC7d5E2fd1D6FF9bea2BFf";
 $lua_connections = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_connections', "a");
 if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
     if ($auth_checked == true && $group_checked == 1) {
-        fwrite($lua_connections , "LOGIN ATTEMPT SUCCESSFUL: $user:$ip_address | $steam_name:$steam_id - $time\n");
+        fwrite($lua_connections , "LOGIN ATTEMPT SUCCESSFUL: $username:$ip_address | $steam_name:$steam_id - $time\n");
         $attempt="Successful";
         echo $Successful;
     }
 
     elseif ($auth_checked == true && $group_checked == 0) { // forum-banned-user
-        fwrite($lua_connections, "BANNED FORUM USER: $user:$ip_address | $steam_name:$steam_id - $time\n");
-        fwrite($lua_blacklist, "$user:$steam_id:$ip_address - $time\n");
+        fwrite($lua_connections, "BANNED FORUM USER: $username:$ip_address | $steam_name:$steam_id - $time\n");
+        fwrite($lua_blacklist, "$username:$steam_id:$ip_address - $time\n");
         $attempt="Failed | User Forum Banned";
         echo $Banned;
     }
 
     else { // failed-any-reason
-        fwrite($lua_connections, "FAILED ATTEMPT: $user:$ip_address | $steam_name:$steam_id - $time\n");
+        fwrite($lua_connections, "FAILED ATTEMPT: $username:$ip_address | $steam_name:$steam_id - $time\n");
         $attempt="Failed";
         echo $Failed;
     }
@@ -79,7 +79,7 @@ if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
                 "title" => "W0RST-PROJECT",
                 "color" => hexdec("#86ffba"),
                 "timestamp" => $timestamp,
-                "description" => "```Login Attempt $attempt\nUsername:$user | Ip-Address:$ip_address\nSteam-Name:$steam_name | Steam-Id:$steam_id```",
+                "description" => "```Login Attempt $attempt\nUsername:$username | Ip-Address:$ip_address\nSteam-Name:$steam_name | Steam-Id:$steam_id```",
                 "footer" => [
                     "text" => "Lua-Connections",
                 ]

