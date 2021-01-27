@@ -19,26 +19,26 @@ local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local enable = {
     ['Ent3DBox'] = false,
-    ['FlashSpam'] = false, 
+    ['FlashSpam'] = false,
     ['PhyRainbow'] = false,
-    ['Tracer'] = false, 
-    ['Distance'] = false, 
+    ['Tracer'] = false,
+    ['Distance'] = false,
     ['Name'] = false,
-    ['Weapon'] = false, 
-    ['Wallhack'] = false, 
+    ['Weapon'] = false,
+    ['Wallhack'] = false,
     ['Chams'] = false,
-    ['Box3D'] = false, 
-    ['Box2D'] = false, 
+    ['Box3D'] = false,
+    ['Box2D'] = false,
     ['Skeleton'] = false,
-    ['ChatSpam'] = false, 
-    ['EntName'] = false, 
+    ['ChatSpam'] = false,
+    ['EntName'] = false,
     ['EntDistance'] = false,
-    ['Aimbot'] = false, 
-    ['AutoFire'] = false, 
+    ['Aimbot'] = false,
+    ['AutoFire'] = false,
     ['AntiRecoil'] = false,
-    ['UseSpam'] = false, 
-    ['Bhop'] = false, 
-    ['FreeCamera'] = false 
+    ['UseSpam'] = false,
+    ['Bhop'] = false,
+    ['FreeCamera'] = false
 }
 
 local color = {
@@ -396,16 +396,16 @@ local function CreateCheckbox(name, tab, x, y, func)
     local Toggled = false
     Button.DoClick = function()
         Toggled = not Toggled; func()
-        if Toggled then 
+        if Toggled then
             Button.Paint = function(self, w, h)
-                surface.SetDrawColor(30, 30, 30, 255)
+                surface.SetDrawColor(25.5, 25.5, 25.5, 255)
                 surface.DrawRect(0, 0, w, h)
                 surface.SetDrawColor(30, 30, 30, 255)
                 surface.DrawOutlinedRect(0,0, w, h)
             end
-        else 
+        else
             Button.Paint = function(self, w, h)
-                surface.SetDrawColor(25.5, 25.5, 25.5, 255)
+                surface.SetDrawColor(30, 30, 30, 255)
                 surface.DrawRect(0, 0, w, h)
                 surface.SetDrawColor(30, 30, 30, 255)
                 surface.DrawOutlinedRect(0,0, w, h)
@@ -439,7 +439,7 @@ local function CreateSlider(name, table, tab, max, min, x, y)
     Slider:SetValue(table[1])
     Slider.Scratch:SetVisible(false)
     Slider.TextArea:SetTextColor(Color(170,170,170,200))
-    function Slider.Slider.Knob:Paint(w, h) end 
+    function Slider.Slider.Knob:Paint(w, h) end
     Slider.OnValueChanged = function(self, value)
         table[1] = self:GetValue()
     end
@@ -475,7 +475,7 @@ local function CreateColorSlider(name, color, tab, x, y)
     ColorR:SetValue(color.r)
     ColorR.Scratch:SetVisible(false)
     ColorR.TextArea:SetTextColor(Color(170,170,170,200))
-    function ColorR.Slider.Knob:Paint(w, h) end 
+    function ColorR.Slider.Knob:Paint(w, h) end
     ColorR.OnValueChanged = function(self, value)
         color.r=self:GetValue()
     end
@@ -494,7 +494,7 @@ local function CreateColorSlider(name, color, tab, x, y)
     ColorG:SetValue(color.g)
     ColorG.Scratch:SetVisible(false)
     ColorG.TextArea:SetTextColor(Color(170,170,170,200))
-    function ColorG.Slider.Knob:Paint(w, h) end 
+    function ColorG.Slider.Knob:Paint(w, h) end
     ColorG.OnValueChanged = function(self, value)
         color.g=self:GetValue()
     end
@@ -513,7 +513,7 @@ local function CreateColorSlider(name, color, tab, x, y)
     ColorB:SetValue(color.b)
     ColorB.Scratch:SetVisible(false)
     ColorB.TextArea:SetTextColor(Color(170,170,170,200))
-    function ColorB.Slider.Knob:Paint(w, h) end 
+    function ColorB.Slider.Knob:Paint(w, h) end
     ColorB.OnValueChanged = function(self, value)
         color.b=self:GetValue()
     end
@@ -847,31 +847,31 @@ end
 hook.Add("CalcView", FreeCamera.Hook, FreeCamera.CalcView)
 hook.Add("CreateMove", FreeCamera.Hook, FreeCamera.CreateMove)
 
-local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
-local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
-hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
-    local view = {
-        x = 0, y = 0,
-        w = ScrW(), h = ScrH(),
-        dopostprocess = true,
-        origin = vOrigin,
-        angles =  vAngle,
-        fov = vFOV,
-        drawhud = true,
-        drawmonitors = true,
-        drawviewmodel = true
-    }
-
-    render.RenderView(view)
-    render.CopyTexture(nil, FakeRenderTarget)
-
-    cam.Start2D()
-        hook.Run("AltHUDPaint")
-    cam.End2D()
-
-    render.SetRenderTarget(FakeRenderTarget)
-    return true
-end)
+-- local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
+-- local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
+-- hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
+--     local view = {
+--         x = 0, y = 0,
+--         w = ScrW(), h = ScrH(),
+--         dopostprocess = true,
+--         origin = vOrigin,
+--         angles =  vAngle,
+--         fov = vFOV,
+--         drawhud = true,
+--         drawmonitors = true,
+--         drawviewmodel = true
+--     }
+--
+--     render.RenderView(view)
+--     render.CopyTexture(nil, FakeRenderTarget)
+--
+--     cam.Start2D()
+--         hook.Run("AltHUDPaint")
+--     cam.End2D()
+--
+--     render.SetRenderTarget(FakeRenderTarget)
+--     return true
+-- end)
 
 local chams01 = CreateMaterial("a", "VertexLitGeneric", {
     ["$ignorez"] = 1,
@@ -1060,7 +1060,7 @@ hook.Add("AltHUDPaint", EspHook, function()
 end)
 
 local function Valid(v)
-    if(not v or  not v:IsValid() or v:Health() < 1 or v:IsDormant() or v == me) then return false; end
+    if(not v or not v:IsValid() or v:Health() < 1 or v:IsDormant() or v == LocalPlayer()) then return false; end
     return true
 end
 
@@ -1847,7 +1847,7 @@ CreateCheckbox("Chat Advertise", MiscTab[1], 20, 70, function()
     end
 end)
 
-CreateSlider("Fov:", FovCircle, MiscTab[1], 975, 5, 260, 70)
+CreateSlider("Fov:", FovCircle, MiscTab[1], 960, 25, 260, 70)
 CreateCheckbox("Fov Aimbot", MiscTab[1], 140, 70, function()
     enable['Aimbot'] = not enable['Aimbot']
     if enable['Aimbot'] then
@@ -1902,4 +1902,3 @@ CreateSoundButtons()
 -- end)
 
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
---/ create new sliders
