@@ -395,8 +395,8 @@ local function CreateCheckbox(name, tab, x, y, func)
 
     local Toggled = false
     Button.DoClick = function()
+        Toggled = not Toggled; func()
         if Toggled then 
-            Toggled = false; func()
             Button.Paint = function(self, w, h)
                 surface.SetDrawColor(30, 30, 30, 255)
                 surface.DrawRect(0, 0, w, h)
@@ -404,7 +404,6 @@ local function CreateCheckbox(name, tab, x, y, func)
                 surface.DrawOutlinedRect(0,0, w, h)
             end
         else 
-            Toggled = true; func()
             Button.Paint = function(self, w, h)
                 surface.SetDrawColor(25.5, 25.5, 25.5, 255)
                 surface.DrawRect(0, 0, w, h)
@@ -431,8 +430,8 @@ local function CreateSlider(name, table, tab, max, min, x, y)
     end
 
     local Slider = vgui.Create( "DNumSlider", Frame )
-    Slider:SetPos(-30, 5)
-    Slider:SetSize(150, 10)
+    Slider:SetPos(-30, 4)
+    Slider:SetSize(150, 15)
     Slider:SetText("")
     Slider:SetMin(min)
     Slider:SetMax(max)
@@ -440,64 +439,88 @@ local function CreateSlider(name, table, tab, max, min, x, y)
     Slider:SetValue(table[1])
     Slider.Scratch:SetVisible(false)
     Slider.TextArea:SetTextColor(Color(170,170,170,200))
+    function Slider.Slider.Knob:Paint(w, h) end 
     Slider.OnValueChanged = function(self, value)
         table[1] = self:GetValue()
+    end
+    function Slider.Slider:Paint(w, h)
+        local Parent = self:GetParent()
+        local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
+        draw.RoundedBox(50, 0, 4, Drag, 10, Color(30, 30, 30, 255))
     end
 end
 
 local function CreateColorSlider(name, color, tab, x, y)
     local Frame=vgui.Create("DFrame", tab)
     Frame:SetSize(120,85)
-    Frame:SetPos(x,y)
+    Frame:SetPos(x, y)
     Frame:SetDraggable(false)
     Frame:ShowCloseButton(false)
     Frame:SetTitle(name)
     Frame.Paint = function(self, w,h)
-        surface.SetDrawColor(Color(15,15,15,255))
-        surface.DrawOutlinedRect(0,0,w,h)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-        draw.SimpleText("R:", "Default", 10, 25, Color(170,170,170,200))
-        draw.SimpleText("G:", "Default", 10, 45, Color(170,170,170,200))
-        draw.SimpleText("B:", "Default", 10, 65, Color(170,170,170,200))
+        draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
+        surface.SetDrawColor(40, 40, 40, 255)
+        surface.DrawOutlinedRect(0,0, w, h)
+        draw.SimpleText("R:", "DermaDefault", 10, 25, Color(170,170,170,200))
+        draw.SimpleText("G:", "DermaDefault", 10, 45, Color(170,170,170,200))
+        draw.SimpleText("B:", "DermaDefault", 10, 65, Color(170,170,170,200))
     end
 
     local ColorR=vgui.Create("DNumSlider", Frame)
     ColorR:SetMin(0);
     ColorR:SetMax(255)
-    ColorR:SetSize(180, 10)
-    ColorR:SetPos(-50,25)
+    ColorR:SetSize(180, 15)
+    ColorR:SetPos(-50,23)
     ColorR:SetDecimals(0)
     ColorR:SetValue(color.r)
     ColorR.Scratch:SetVisible(false)
     ColorR.TextArea:SetTextColor(Color(170,170,170,200))
+    function ColorR.Slider.Knob:Paint(w, h) end 
     ColorR.OnValueChanged = function(self, value)
         color.r=self:GetValue()
+    end
+    function ColorR.Slider:Paint(w, h)
+        local Parent = self:GetParent()
+        local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
+        draw.RoundedBox(50, 0, 4, Drag, 10, Color(30, 30, 30, 255))
     end
 
     local ColorG=vgui.Create("DNumSlider", Frame)
     ColorG:SetMin(0);
     ColorG:SetMax(255)
-    ColorG:SetSize(180, 10)
-    ColorG:SetPos(-50,45)
+    ColorG:SetSize(180, 15)
+    ColorG:SetPos(-50,43)
     ColorG:SetDecimals(0)
     ColorG:SetValue(color.g)
     ColorG.Scratch:SetVisible(false)
     ColorG.TextArea:SetTextColor(Color(170,170,170,200))
+    function ColorG.Slider.Knob:Paint(w, h) end 
     ColorG.OnValueChanged = function(self, value)
         color.g=self:GetValue()
+    end
+    function ColorG.Slider:Paint(w, h)
+        local Parent = self:GetParent()
+        local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
+        draw.RoundedBox(50, 0, 4, Drag, 10, Color(30, 30, 30, 255))
     end
 
     local ColorB=vgui.Create("DNumSlider", Frame)
     ColorB:SetMin(0);
     ColorB:SetMax(255)
-    ColorB:SetSize(180, 10)
-    ColorB:SetPos(-50,65)
+    ColorB:SetSize(180, 15)
+    ColorB:SetPos(-50,63)
     ColorB:SetDecimals(0)
     ColorB:SetValue(color.b)
     ColorB.Scratch:SetVisible(false)
     ColorB.TextArea:SetTextColor(Color(170,170,170,200))
+    function ColorB.Slider.Knob:Paint(w, h) end 
     ColorB.OnValueChanged = function(self, value)
         color.b=self:GetValue()
+    end
+    function ColorB.Slider:Paint(w, h)
+        local Parent = self:GetParent()
+        local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
+        draw.RoundedBox(50, 0, 4, Drag, 10, Color(30, 30, 30, 255))
     end
 
     function Update()
@@ -1036,17 +1059,17 @@ hook.Add("AltHUDPaint", EspHook, function()
     end
 end)
 
+local function Valid(v)
+    if(not v or  not v:IsValid() or v:Health() < 1 or v:IsDormant() or v == me) then return false; end
+    return true
+end
+
 local FovCircle = { 80 }
 hook.Add("AltHUDPaint", FovHook, function()
     if enable['Aimbot'] then
         surface.DrawCircle(ScrW()/2, ScrH()/2, FovCircle[1], color['Fov'])
     end
 end)
-
-local function Valid(v)
-    if(not v or  not v:IsValid() or v:Health() < 1 or v:IsDormant() or v == me) then return false; end
-    return true
-end
 
 hook.Add("CreateMove", AimbotHook, function(cmd)
     if not enable['Aimbot'] then return end
@@ -1824,7 +1847,7 @@ CreateCheckbox("Chat Advertise", MiscTab[1], 20, 70, function()
     end
 end)
 
-CreateSlider("Fov:", FovCircle, MiscTab[1], 1000, 5, 260, 70)
+CreateSlider("Fov:", FovCircle, MiscTab[1], 975, 5, 260, 70)
 CreateCheckbox("Fov Aimbot", MiscTab[1], 140, 70, function()
     enable['Aimbot'] = not enable['Aimbot']
     if enable['Aimbot'] then
