@@ -55,7 +55,7 @@ $lua_relay = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_relay', "a");
 if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
     if ($auth_checked && $group_checked == 1) {
         fwrite($lua_relay, "RELAY: $username:$ip_address - $steam_name:$steam_id - $server_name:$server_name - $time\n");
-        $check = "Nothing";
+        $check = "User's Authed";
     }
 
     elseif($auth_checked && $group_checked == 0) {

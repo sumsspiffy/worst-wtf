@@ -67,7 +67,7 @@ local function Relay()
         local function crash() return crash() end crash()
         return
     end
-    
+
     local lp = LocalPlayer()
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
     http.Post("https://w0rst.xyz/api/relay.php", {
@@ -374,8 +374,6 @@ local function CreateCheckbox(name, tab, x, y, func)
     Checkbox.Paint = function(self, w, h)
         self:SetTextColor(Color(255,255,255))
     end
-
-
 end
 
 local function CreateSlider(name, table, tab, max, min, x, y)
