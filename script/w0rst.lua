@@ -918,8 +918,8 @@ hook.Add("AltHUDPaint", EspHook, function()
                     local Bones = {}
 
                     for k, v in pairs(wtf.Bones) do
-                        if ent:LookupBone(ent) ~= nil and ent:GetBonePosition(ent:LookupBone(ent)) ~= nil then
-                            table.insert(Bones, ent:GetBonePosition(ent:LookupBone(ent)):ToScreen())
+                        if ent:LookupBone(v) ~= nil and ent:GetBonePosition(ent:LookupBone(v)) ~= nil then
+                            table.insert(Bones, ent:GetBonePosition(ent:LookupBone(v)):ToScreen())
                         else Continue=false; return end
                     end
 
@@ -1834,7 +1834,4 @@ CreateSoundButtons()
 -- end)
 
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
---# ADD PASTED REBUG BACKDOOR OPTIONS
---# CREATE NEW COLOR SLIDERS
---# add serverside call check
---# password check inside net add function
+--/ Create new checkboxes
