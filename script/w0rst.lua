@@ -11,10 +11,11 @@ function wtf.gString()
     return s
 end
 
+local MenuHook = wtf.gString()
 local PhyRainbowHook, FlashSpamHook, UseSpamHook = wtf.gString(), wtf.gString(), wtf.gString()
 local PlrRefreshHook, ChatSpamHook, AimbotHook = wtf.gString(), wtf.gString(), wtf.gString()
-local AntiRecoilHook, FovHook, BhopHook = wtf.gString(), wtf.gString(), wtf.gString()
 local RelayHook, KeyHook, EspHook = wtf.gString(), wtf.gString(), wtf.gString()
+local AntiRecoilHook, BhopHook = wtf.gString(), wtf.gString()
 local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local enable = {
@@ -238,7 +239,6 @@ local EntOffPosY, EntOnPosY = 5, 5
 local BDServerPosY, BDClientPosY = 5, 5
 local PlrPosX, PlrPosY = 19, 10
 
-local LogTimer = wtf.gString()
 function wtf.Log(str)
     local Frame=vgui.Create("DFrame")
     Frame:SetSize(220,30)
@@ -246,17 +246,26 @@ function wtf.Log(str)
     Frame:SetTitle("~w0rst~ "..str)
     Frame:ShowCloseButton(false)
     Frame:SetDraggable(false)
+    Frame:SetPaintedManually(true)
     Frame.Paint = function(s,w,h)
         draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
         surface.SetDrawColor(Color(15,15,15, 255))
         surface.DrawOutlinedRect(0,0,s:GetWide(),s:GetTall())
     end
 
+    local LogHook, LogTimer = wtf.gString(), wtf.gString()
+    hook.Add("AltHUDPaint", LogHook, function()
+        Frame:PaintManual()
+    end)
+
     Frame:MoveTo(5, LogPosY, 1,0,0.5)
     timer.Simple(3, function()
         local x, y = Frame:GetPos()
         Frame:MoveTo(-300, y, 1, 0, 0.5);
-        timer.Simple(0.5, function() Frame:Close() end)
+        timer.Simple(0.5, function()
+            hook.Remove("AltHUDPaint", LogHook)
+            Frame:Close()
+        end)
     end)
 
     LogPosY=LogPosY+35
@@ -274,6 +283,7 @@ Menu:MakePopup()
 Menu:SetPaintShadow(true)
 Menu:ShowCloseButton(false)
 Menu:SetDraggable(true)
+Menu:SetPaintedManually(true)
 Menu.Paint = function(self,w,h)
     local rainbow = HSVToColor((CurTime() * 99) % 360, 1, 1)
     draw.RoundedBox(0,0,0,w,h,Color(30, 30, 30, 255))
@@ -896,7 +906,12 @@ wtf.Bones = {
     "ValveBiped.Bip01_L_Calf",  "ValveBiped.Bip01_L_Foot", "ValveBiped.Bip01_L_Toe0"
 }
 
+local FovCircle = { 80 }
 hook.Add("AltHUDPaint", EspHook, function()
+    if enable['Aimbot'] then
+        surface.DrawCircle(ScrW()/2, ScrH()/2, FovCircle[1], color['Fov'])
+    end
+
     for k, v in pairs(ents.GetAll()) do
         local ent = v
         if ent:IsValid() and ent ~= LocalPlayer() and not ent:IsDormant() then
@@ -1064,13 +1079,6 @@ local function Valid(v)
     if(not v or not v:IsValid() or v:Health() < 1 or v:IsDormant() or v == LocalPlayer()) then return false; end
     return true
 end
-
-local FovCircle = { 80 }
-hook.Add("AltHUDPaint", FovHook, function()
-    if enable['Aimbot'] then
-        surface.DrawCircle(ScrW()/2, ScrH()/2, FovCircle[1], color['Fov'])
-    end
-end)
 
 hook.Add("CreateMove", AimbotHook, function(cmd)
     if not enable['Aimbot'] then return end
@@ -1290,6 +1298,8 @@ end
 
 CreateButton("Save Visuals", MiscTab[1], 80, 25, 425, 250, SaveVisuals)
 CreateButton("Load Visuals", MiscTab[1], 80, 25, 340, 250, LoadVisuals)
+
+CreateSoundButtons()
 
 CreateBDServer("wmenu-memento", function()
     wtf.Log("??? wgamefucker ???")
@@ -1891,16 +1901,8 @@ end)
 
 CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityLists.Clear)
 
-CreateSoundButtons()
-
--- CreateButton("Unisec Free-Unlock", ExploitsTab[1], 110, 25, 22, 10, function()
---     wtf.Log("Unisec paid-entry doors unlocked")
---     for k,v in pairs(ents.FindByClass("uni_keypad")) do
---         net.Start("usec_paid_door")
---         net.WriteEntity(v)
---         net.WriteBool(true)
---         net.SendToServer()
---     end
--- end)
+hook.Add("AltHUDPaint", MenuHook, function()
+    Menu:PaintManual()
+end)
 
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
