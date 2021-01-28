@@ -461,6 +461,7 @@ local function CreateColorSlider(name, color, tab, x, y)
         draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
         surface.SetDrawColor(40, 40, 40, 255)
         surface.DrawOutlinedRect(0,0, w, h)
+        draw.SimpleText("O", "DermaDefault", 105, 5, Color(color.r, color.g, color.b))
         draw.SimpleText("R:", "DermaDefault", 10, 25, Color(170,170,170,200))
         draw.SimpleText("G:", "DermaDefault", 10, 45, Color(170,170,170,200))
         draw.SimpleText("B:", "DermaDefault", 10, 65, Color(170,170,170,200))
@@ -847,31 +848,31 @@ end
 hook.Add("CalcView", FreeCamera.Hook, FreeCamera.CalcView)
 hook.Add("CreateMove", FreeCamera.Hook, FreeCamera.CreateMove)
 
-local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
-local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
-hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
-    local view = {
-        x = 0, y = 0,
-        w = ScrW(), h = ScrH(),
-        dopostprocess = true,
-        origin = vOrigin,
-        angles =  vAngle,
-        fov = vFOV,
-        drawhud = true,
-        drawmonitors = true,
-        drawviewmodel = true
-    }
-
-    render.RenderView(view)
-    render.CopyTexture(nil, FakeRenderTarget)
-
-    cam.Start2D()
-        hook.Run("AltHUDPaint")
-    cam.End2D()
-
-    render.SetRenderTarget(FakeRenderTarget)
-    return true
-end)
+-- local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
+-- local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
+-- hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
+--     local view = {
+--         x = 0, y = 0,
+--         w = ScrW(), h = ScrH(),
+--         dopostprocess = true,
+--         origin = vOrigin,
+--         angles =  vAngle,
+--         fov = vFOV,
+--         drawhud = true,
+--         drawmonitors = true,
+--         drawviewmodel = true
+--     }
+--
+--     render.RenderView(view)
+--     render.CopyTexture(nil, FakeRenderTarget)
+--
+--     cam.Start2D()
+--         hook.Run("AltHUDPaint")
+--     cam.End2D()
+--
+--     render.SetRenderTarget(FakeRenderTarget)
+--     return true
+-- end)
 
 local chams01 = CreateMaterial("a", "VertexLitGeneric", {
     ["$ignorez"] = 1,
