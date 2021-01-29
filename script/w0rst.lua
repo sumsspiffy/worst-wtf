@@ -271,24 +271,18 @@ function wtf.Log(str)
     Frame:SetTitle("~w0rst~ "..str)
     Frame:ShowCloseButton(false)
     Frame:SetDraggable(false)
-    Frame:SetPaintedManually(true)
     Frame.Paint = function(s,w,h)
         draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
         surface.SetDrawColor(Color(15,15,15, 255))
         surface.DrawOutlinedRect(0,0,s:GetWide(),s:GetTall())
     end
 
-    local LogHook, LogTimer = wtf.gString(), wtf.gString()
-    hook.Add("AltHUDPaint", LogHook, function()
-        Frame:PaintManual()
-    end)
-
+    local LogTimer = wtf.gString()
     Frame:MoveTo(5, LogPosY, 1,0,0.5)
     timer.Simple(3, function()
         local x, y = Frame:GetPos()
         Frame:MoveTo(-300, y, 1, 0, 0.5);
         timer.Simple(0.5, function()
-            hook.Remove("AltHUDPaint", LogHook)
             Frame:Close()
         end)
     end)
@@ -308,7 +302,6 @@ Menu:MakePopup()
 Menu:SetPaintShadow(true)
 Menu:ShowCloseButton(false)
 Menu:SetDraggable(true)
-Menu:SetPaintedManually(true)
 Menu.Paint = function(self,w,h)
     local rainbow = HSVToColor((CurTime() * 99) % 360, 1, 1)
     draw.RoundedBox(0,0,0,w,h,Color(30, 30, 30, 255))
@@ -457,18 +450,12 @@ local function CreateInputBox(name, func)
     Frame:MakePopup()
     Frame:ShowCloseButton(false)
     Frame:SetBackgroundBlur(true)
-    Frame:SetPaintedManually(true)
     Frame.Paint = function(self,w,h)
         draw.RoundedBox(0,0,0,w,h,Color(30, 30, 30, 255))
         surface.SetDrawColor(25, 25, 25, 255)
         surface.DrawOutlinedRect(0, 0, w, h)
-        draw.SimpleText(name, "DermaDefault", 11, 9, Color(255,255,255,200))
+        draw.SimpleText(name, "DermaDefault", 11, 8, Color(200,200,200,200))
     end
-
-    local InputHook = wtf.gString()
-    hook.Add("AltHUDPaint", InputHook, function()
-        Frame:PaintManual()
-    end)
 
     local Panel = vgui.Create("DFrame", Frame)
     Panel:ShowCloseButton(false)
@@ -496,12 +483,11 @@ local function CreateInputBox(name, func)
 
     local AcceptButton = vgui.Create("DButton", Frame)
     AcceptButton:SetText("Accept")
-    AcceptButton:SetPos(138, 70)
+    AcceptButton:SetPos(148, 70)
     AcceptButton:SetFont("DermaDefault")
-    AcceptButton:SetSize(70, 20)
+    AcceptButton:SetSize(60, 20)
     AcceptButton.DoClick = function()
         func(Entry:GetValue())
-        hook.Remove("AltHUDPaint", InputHook)
         Frame:Close(); 
     end
     AcceptButton.Paint = function(self, w,h)
@@ -511,16 +497,12 @@ local function CreateInputBox(name, func)
         self:SetTextColor(Color(255,255,255))
     end
 
-    local CancelButton = vgui.Create("DButton", Frame)
+    local CancelButton=vgui.Create("DButton", Frame)
     CancelButton:SetText("Cancel")
-    CancelButton:SetPos(63, 70)
-    CancelButton:SetFont("DermaDefault")
-    CancelButton:SetSize(70, 20)
-    CancelButton.DoClick = function()
-        hook.Remove("AltHUDPaint", InputHook)
-        Frame:Close()
-    end
-    CancelButton.Paint = function(self, w,h)
+    CancelButton:SetSize(60, 20)
+    CancelButton:SetPos(84, 70)
+    CancelButton.DoClick = function() Frame:Hide() end
+    CancelButton.Paint = function(self,w,h)
         draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
         surface.SetDrawColor(40, 40, 40, 255)
         surface.DrawOutlinedRect(0,0,w,h)
@@ -1151,23 +1133,40 @@ hook.Add("AltHUDPaint", EspHook, function()
     end
 end)
 
-local function Valid(v)
-    if(not v or not v:IsValid() or v:Health() < 1 or v:IsDormant() or v == LocalPlayer()) then return false; end
-    return true
-end
-
 hook.Add("CreateMove", AimbotHook, function(cmd)
     if not enable['Aimbot'] then return end
     local ply = LocalPlayer()
+
+    local function Valid(ent)
+        if (not ent:IsValid() or ent:Health() < 1 or ent:IsDormant() or ent == ply) then return false end 
+        return true
+    end
+
+    local function GetEntPos(ent)
+        local eyes, pos = ent:LookupAttachment("eyes"), nil
+
+        if ent:GetAttachment(eyes) then 
+            pos = (ent:GetAttachment(eyes).Pos - ply:EyePos()):Angle()
+        else
+            pos = (ent:LocalToWorld(ent:OBBCenter()) - ply:EyePos()):Angle()
+        end
+
+        return pos
+    end
+
+    local closest, last = nil, math.huge
     for k, v in pairs(player.GetAll()) do
-        if Valid(v) then
-            local plrpos = v:GetPos():ToScreen()
+        local ent = v 
+        if Valid(ent) then
+            local plrpos = ent:GetPos():ToScreen()
+            local distance = math.Round(ent:GetPos():Distance(ply:GetPos()))
             if (plrpos.x >= ScrW()/2 - FovCircle[1] and plrpos.x <= ScrW()/2 + FovCircle[1]) and (plrpos.y >= ScrH()/2 - FovCircle[1] and plrpos.y <= ScrH()/2 + FovCircle[1]) then
-                if (input.IsKeyDown(KEY_LALT)) then
-                    local Target = v:LookupBone(wtf.Bones[1])
-                    local TargetPos, TargetAngle = v:GetBonePosition(Target)
-                    local Position = (TargetPos - ply:GetShootPos()):Angle()
-                    cmd:SetViewAngles(Position)
+                if (input.IsKeyDown(KEY_LALT)) then 
+                    if distance < last then 
+                        closest = GetEntPos(ent)
+                    end; last = distance
+
+                    cmd:SetViewAngles(closest)
                     if enable['AutoFire'] then
                         cmd:SetButtons(IN_ATTACK)
                     end
@@ -1821,7 +1820,7 @@ CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
 end)
 
 CreateButton("Add-Net", BackdoorTab[1], 115, 30, 259, 520, function()
-    CreateInputBox("Add Net | Staff Use Only", function(str)
+    CreateInputBox("Add Net", function(str)
         wtf.AddNet(str)
     end)
 end)
@@ -1975,8 +1974,6 @@ CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
     wtf.Log("Stopped Sounds")
 end)
 
-hook.Add("AltHUDPaint", MenuHook, function()
-    Menu:PaintManual()
-end)
-
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
+--/ new backdoor options
+--/ Keybind system
