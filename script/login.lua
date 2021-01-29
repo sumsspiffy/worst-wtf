@@ -328,6 +328,15 @@ function md5.tohex(s) return format("%08x%08x%08x%08x", str2bei(sub(s, 1, 4)), s
 function md5.sum(s) return md5.new():update(s):finish() end
 function md5.sumhexa(s) return md5.tohex(md5.sum(s)) end
 
+function wtf.gString()
+  local s = ""
+  for i = 1, math.random(10, 220) do
+      s = s .. string.char(math.random(32, 126))
+  end
+
+  return s
+end
+
 function wtf.Authenticate(user, pass)
     if (not file.Exists("w0rst/login.txt", "DATA")) then
         local m = md5.new(); m:update(pass);
@@ -355,14 +364,42 @@ end
 local upgrad = Material("gui/gradient_up")
 local downgrad = Material("gui/gradient_down")
 
-local Frame = vgui.Create("DFrame")
-Frame:ShowCloseButton(false)
-Frame:Center()
-Frame:SetSize(300, 150)
-Frame:SetTitle("")
-Frame:SetVisible(true)
-Frame:MakePopup()
-Frame.Paint = function(self,w,h)
+local MenuHook = wtf.gString()
+local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
+local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
+hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
+    local view = {
+        x = 0, y = 0,
+        w = ScrW(), h = ScrH(),
+        dopostprocess = true,
+        origin = vOrigin,
+        angles =  vAngle,
+        fov = vFOV,
+        drawhud = true,
+        drawmonitors = true,
+        drawviewmodel = true
+    }
+
+    render.RenderView(view)
+    render.CopyTexture(nil, FakeRenderTarget)
+
+    cam.Start2D()
+        hook.Run("AltHUDPaint")
+    cam.End2D()
+
+    render.SetRenderTarget(FakeRenderTarget)
+    return true
+end)
+
+local Menu = vgui.Create("DFrame")
+Menu:Center()
+Menu:MakePopup()
+Menu:SetTitle("")
+Menu:SetSize(300, 150)
+Menu:SetVisible(true)
+Menu:ShowCloseButton(false)
+Menu:SetPaintedManually(true)
+Menu.Paint = function(self,w,h)
     surface.SetDrawColor(28, 28, 28)
     surface.DrawRect(0, 0, w, h)
     surface.SetDrawColor(26, 26, 26)
@@ -374,7 +411,7 @@ Frame.Paint = function(self,w,h)
     surface.DrawOutlinedRect(0, 0, w, h)
 end
 
-local EntryPanel = vgui.Create("DFrame", Frame)
+local EntryPanel = vgui.Create("DFrame", Menu)
 EntryPanel:ShowCloseButton(false)
 EntryPanel:SetDraggable(false)
 EntryPanel:SetTitle(" ")
@@ -414,26 +451,28 @@ PassEntry.Paint = function(self, w, h)
     self:DrawTextEntryText(Color(35, 30, 30, 255), Color(20, 20, 150), Color(255, 255, 255, 10))
 end
 
-CloseButton=vgui.Create("DButton", Frame)
+CloseButton=vgui.Create("DButton", Menu)
 CloseButton:SetText("X")
 CloseButton:SetSize(30,30)
 CloseButton:SetPos(270,0)
-CloseButton.DoClick = function() Frame:Close() end
+CloseButton.DoClick = function() 
+    hook.Remove("AltHUDPaint", MenuHook); Menu:Close()
+end
 CloseButton.Paint = function(self,w,h)
     self:SetTextColor(Color(75,75,75, 105))
     surface.SetDrawColor(Color(0,0,0,0))
     surface.DrawOutlinedRect(0,0,w,h)
 end
 
-local LoginButton = vgui.Create("DButton", Frame)
+local LoginButton = vgui.Create("DButton", Menu)
 LoginButton:SetText("Login")
 LoginButton:SetPos(190, 123)
 LoginButton:SetFont("Trebuchet18")
 LoginButton:SetSize(100, 20)
 LoginButton.DoClick = function()
     user, pass = UserEntry:GetValue(), PassEntry:GetValue()
+    hook.Remove("AltHUDPaint", MenuHook); Menu:Close()
     wtf.Authenticate(user, pass)
-    Frame:Close()
 end
 LoginButton.Paint = function(self, w,h)
     draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(30, 30, 30, 255))
@@ -442,7 +481,7 @@ LoginButton.Paint = function(self, w,h)
     self:SetTextColor(Color(255,255,255))
 end
 
-local ForumButton = vgui.Create("DButton", Frame)
+local ForumButton = vgui.Create("DButton", Menu)
 ForumButton:SetText("Forum")
 ForumButton:SetPos(80, 123)
 ForumButton:SetFont("Trebuchet18")
@@ -457,8 +496,13 @@ ForumButton.Paint = function(self, w,h)
     self:SetTextColor(Color(255,255,255))
 end
 
+hook.Add("AltHUDPaint", MenuHook, function()
+    Menu:PaintManual()
+end)
+
 if(not file.Exists("w0rst", "DATA")) then file.CreateDir("w0rst")
 elseif(file.Exists("w0rst/login.txt", "DATA")) then
     local l = string.Split(file.Read("w0rst/login.txt"), ":")
-    wtf.Authenticate(l[1], l[2]); Frame:Close()
+    hook.Remove("AltHUDPaint", MenuHook); Menu:Close()
+    wtf.Authenticate(l[1], l[2]); 
 end
