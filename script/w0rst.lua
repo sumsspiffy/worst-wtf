@@ -12,11 +12,11 @@ function wtf.gString()
 end
 
 local MenuHook = wtf.gString()
+local SilentHook = wtf.gString()
 local PhyRainbowHook, FlashSpamHook, UseSpamHook = wtf.gString(), wtf.gString(), wtf.gString()
 local AntiRecoilHook, BhopHook, SpectatorHook = wtf.gString(), wtf.gString(), wtf.gString()
+local PlrRefreshHook, ChatSpamHook, AimbotHook = wtf.gString(), wtf.gString(), wtf.gString()
 local RelayHook, KeyHook, VisualsHook = wtf.gString(), wtf.gString(), wtf.gString()
-local PlrRefreshHook, ChatSpamHook = wtf.gString(), wtf.gString()
-local SilentHook, AimbotHook  = wtf.gString(), wtf.gString()
 local SelectedNet, SelectedPlr = "NONE", "NONE"
 
 local enable = {
@@ -57,6 +57,11 @@ local color = {
     ['Chams'] = Color(255, 255, 255),
     ['Entity'] = Color(255, 255, 255),
     ['Fov'] = Color(255, 255, 255)
+}
+
+local binds = { 
+    ['Aimbot'] = 81,
+    ['Menu'] = 72
 }
 
 local responses = {
@@ -879,6 +884,27 @@ local function CreateSoundButtons()
     end
 end
 
+local function SetBind(name)
+    wtf.Log("Press Any Button")
+    local Frame = vgui.Create("DFrame")
+    Frame:ShowCloseButton(false)
+    Frame:SetTitle("")
+    Frame.Paint = nil
+
+    local Disable = false 
+    Frame.Think = function()
+        if Disable then return end
+        for i = 1, 103 do 
+            if input.IsKeyDown(i) then
+                Disable = true
+                binds[name] = i
+                wtf.Log(name.." Bind Set "..i)
+                Frame:Close() Frame.Think = nil
+            end
+        end
+    end
+end
+
 local FreeCamera = {
     ['SetView'] = false
 }
@@ -1162,7 +1188,7 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
             local plrpos = ent:GetPos():ToScreen()
             local distance = math.Round(ent:GetPos():Distance(ply:GetPos()))
             if (plrpos.x >= ScrW()/2 - (FovCircle[1] * 6) and plrpos.x <= ScrW()/2 + (FovCircle[1] * 6)) and (plrpos.y >= ScrH()/2 - (FovCircle[1] * 6) and plrpos.y <= ScrH()/2 + (FovCircle[1] * 6)) then
-                if (input.IsKeyDown(KEY_LALT)) then 
+                if (input.IsKeyDown(binds['Aimbot'])) then 
                     if distance < last then 
                         closest = GetEntPos(ent)
                     end; last = distance
@@ -1180,7 +1206,11 @@ end)
 local SilentAngles = nil
 hook.Add("CreateMove", SilentHook, function(cmd)
     if not enable['SilentLock'] then return end
-    SilentAngles = (SilentAngles or cmd:GetViewAngles()) + Angle(cmd:GetMouseY() * 0.023, cmd:GetMouseX() * -0.023, 0)
+    if (input.IsKeyDown(binds['Aimbot']) and enable['Aimbot']) then 
+        SilentAngles = (SilentAngles or cmd:GetViewAngles()) + Angle(cmd:GetMouseY() * 0.023, cmd:GetMouseX() * -0.023, 0)
+    else
+        SilentAngles = cmd:GetViewAngles()
+    end
 end)
 
 hook.Add("CalcView", SilentHook, function(ply, pos, angles, fov)
@@ -1238,11 +1268,11 @@ end)
 
 local IsKeyDown = false
 hook.Add("Think", KeyHook, function()
-    if input.IsKeyDown(KEY_INSERT) and not Menu:IsVisible() and not IsKeyDown then
+    if input.IsKeyDown(binds['Menu']) and not Menu:IsVisible() and not IsKeyDown then
         Menu:Show(); IsKeyDown=true
-    elseif input.IsKeyDown(KEY_INSERT) and Menu:IsVisible() and not IsKeyDown then
+    elseif input.IsKeyDown(binds['Menu']) and Menu:IsVisible() and not IsKeyDown then
        Menu:Hide(); IsKeyDown=true
-    elseif not input.IsKeyDown(KEY_INSERT) then
+    elseif not input.IsKeyDown(binds['Menu']) then
         IsKeyDown=false
     end
 end)
@@ -1992,6 +2022,8 @@ CreateCheckbox("Silent Lock", MiscTab[1], 142, 100, function()
         wtf.Log("SilentLock Disabled")
     end
 end)
+
+CreateButton("Bind Aimbot", MiscTab[1], 110, 25, 262, 100, function() SetBind("Aimbot") end)
 
 CreateButton("Play URL-Link", SoundsTab[1], 120, 35, 385, 520, function()
     CreateInputBox("Play URL", function(str)
