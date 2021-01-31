@@ -11,13 +11,18 @@ function wtf.gString()
     return s
 end
 
-local MenuHook = wtf.gString()
-local SilentHook = wtf.gString()
-local PhyRainbowHook, FlashSpamHook, UseSpamHook = wtf.gString(), wtf.gString(), wtf.gString()
-local AntiRecoilHook, BhopHook, SpectatorHook = wtf.gString(), wtf.gString(), wtf.gString()
-local PlrRefreshHook, ChatSpamHook, AimbotHook = wtf.gString(), wtf.gString(), wtf.gString()
-local RelayHook, KeyHook, VisualsHook = wtf.gString(), wtf.gString(), wtf.gString()
-local SelectedNet, SelectedPlr = "NONE", "NONE"
+local RefreshHook = wtf.gString()
+local AimbotHook = wtf.gString()
+local VisualHook = wtf.gString()
+local ThinkHook = wtf.gString()
+local TickHook = wtf.gString()
+local ChatHook = wtf.gString()
+local ViewHook = wtf.gString()
+local InfoHook = wtf.gString()
+local BhopHook = wtf.gString()
+local KeyHook = wtf.gString()
+local SelectedNet = "NONE"
+local SelectedPlr = "NONE"
 
 local enable = {
     ['Ent3DBox'] = false,
@@ -37,7 +42,6 @@ local enable = {
     ['EntDistance'] = false,
     ['Aimbot'] = false,
     ['AutoFire'] = false,
-    ['AntiRecoil'] = false,
     ['UseSpam'] = false,
     ['Bhop'] = false,
     ['FreeCamera'] = false,
@@ -109,7 +113,7 @@ local function Relay()
 end
 
 local RelayDelay = 0
-hook.Add("Think", RelayHook, function()
+hook.Add("Think", InfoHook, function()
     if CurTime() < RelayDelay then return end
     RelayDelay = CurTime() + 60
     Relay()
@@ -246,9 +250,10 @@ local EntOffPosY, EntOnPosY = 5, 5
 local BDServerPosY, BDClientPosY = 5, 5
 local PlrPosX, PlrPosY = 19, 10
 
-local AntiScreengrabHook, RenderTarget = wtf.gString(), wtf.gString()
-local FakeRenderTarget = GetRenderTarget(RenderTarget..os.time(), ScrW(), ScrH())
-hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
+
+local RenderHook = wtf.gString()
+local RenderTarget = GetRenderTarget(wtf.gString()..os.time(), ScrW(), ScrH())
+hook.Add("RenderScene", RenderHook, function(vOrigin, vAngle, vFOV )
     local view = {
         x = 0, y = 0,
         w = ScrW(), h = ScrH(),
@@ -262,13 +267,13 @@ hook.Add("RenderScene", AntiScreengrabHook, function(vOrigin, vAngle, vFOV )
     }
 
     render.RenderView(view)
-    render.CopyTexture(nil, FakeRenderTarget)
+    render.CopyTexture(nil, RenderTarget)
 
     cam.Start2D()
         hook.Run("AltHUDPaint")
     cam.End2D()
 
-    render.SetRenderTarget(FakeRenderTarget)
+    render.SetRenderTarget(RenderTarget)
     return true
 end)
 
@@ -359,7 +364,7 @@ local function CreateTabButton(mat, x, y)
     Tabs[tab].Paint = function(self, w, h)
         draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
         surface.SetDrawColor(Color(15,15,15,255))
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+        surface.DrawOutlinedRect(0,0,w,h)
     end
 
     return { Tabs[tab], TabButtons[btn] }
@@ -373,7 +378,7 @@ local function CreatePanel(tab, width, height, x, y)
     Pannel.Paint = function(self,w,h)
         surface.SetDrawColor(Color(15,15,15,255))
         surface.DrawOutlinedRect(0,0,w,h)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+        surface.DrawOutlinedRect(0,0,w,h)
     end
     return { Pannel }
 end
@@ -385,9 +390,9 @@ local function CreateButton(name, tab, width, height, x, y, func)
     Button:SetText(name)
     Button.DoClick = func
     Button.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
+        draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
         surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
+        surface.DrawOutlinedRect(0,0,w,h)
         self:SetTextColor(Color(255,255,255))
     end
 end
@@ -450,7 +455,7 @@ local function CreateInputBox(name, func)
         draw.RoundedBox(0,0,0,w,h,Color(30, 30, 30, 255))
         surface.SetDrawColor(25, 25, 25, 255)
         surface.DrawOutlinedRect(0, 0, w, h)
-        draw.SimpleText(name, "DermaDefault", 11, 8, Color(200,200,200,200))
+        draw.SimpleText(name, "DermaDefault", 10, 8, Color(200,200,200,200))
     end
 
     local Panel = vgui.Create("DFrame", Frame)
@@ -518,19 +523,19 @@ local function CreateSlider(name, table, tab, max, min, x, y)
         draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
         surface.SetDrawColor(40, 40, 40, 255)
         surface.DrawOutlinedRect(0,0, w, h)
-        draw.SimpleText(name, "DermaDefault", 7, 5, Color(200,200,200,200))
+        draw.SimpleText(name, "DermaDefault", 7, 5, Color(255,255,255,255))
     end
 
     local Slider = vgui.Create( "DNumSlider", Frame )
-    Slider:SetPos(-37, 4)
-    Slider:SetSize(165, 15)
+    Slider:SetPos(-33, 4)
+    Slider:SetSize(155, 15)
     Slider:SetText("")
     Slider:SetMin(min)
     Slider:SetMax(max)
     Slider:SetDecimals(0)
     Slider:SetValue(table[1])
     Slider.Scratch:SetVisible(false)
-    Slider.TextArea:SetTextColor(Color(170,170,170,200))
+    Slider.TextArea:SetTextColor(Color(255,255,255,255))
     function Slider.Slider.Knob:Paint(w, h) end
     Slider.OnValueChanged = function(self, value)
         table[1] = self:GetValue()
@@ -706,7 +711,7 @@ local function PopulateEntLists()
     return external
 end;
 
-local EntityLists = PopulateEntLists()
+local EntityList = PopulateEntLists()
 
 local function PopulatePlayers()
     for k,v in pairs(player.GetAll()) do
@@ -767,7 +772,7 @@ local function PopulatePlayers()
 end; PopulatePlayers()
 
 local RefreshDelay = 5
-hook.Add("Think", PlrRefreshHook, function()
+hook.Add("Think", RefreshHook, function()
     if CurTime() < RefreshDelay then return end
     RefreshDelay = CurTime() + 5
     PlayerPanel[1]:GetCanvas():Clear()
@@ -884,24 +889,48 @@ local function CreateSoundButtons()
     end
 end
 
-local function SetBind(name)
-    wtf.Log("Press Any Button")
-    local Frame = vgui.Create("DFrame")
-    Frame:ShowCloseButton(false)
-    Frame:SetTitle("")
-    Frame.Paint = nil
+local function SetBind(bind)
+    local BlankFrame = vgui.Create("DFrame")
+    BlankFrame:ShowCloseButton(false)
+    BlankFrame:SetTitle("")
+    BlankFrame.Paint = nil
 
-    local Disable = false 
-    Frame.Think = function()
-        if Disable then return end
+    wtf.Log("Press Any Button")
+    BlankFrame.Think = function()
         for i = 1, 103 do 
             if input.IsKeyDown(i) then
-                Disable = true
-                binds[name] = i
-                wtf.Log(name.." Bind Set "..i)
-                Frame:Close() Frame.Think = nil
+                if i == 70 then i = 0 end
+                binds[bind] = i
+                BlankFrame:Close()
+                BlankFrame.Think = nil
+                wtf.Log(bind.." Bind Set "..i)
             end
         end
+    end
+end
+
+local function CreateBindableButton(name, bind, tab, x, y)
+    local Frame=vgui.Create("DFrame", tab)
+    Frame:SetSize(110, 25)
+    Frame:SetPos(x, y)
+    Frame:SetDraggable(false)
+    Frame:ShowCloseButton(false)
+    Frame:SetTitle("")
+    Frame.Paint = function(self, w, h)
+        draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
+        surface.SetDrawColor(40, 40, 40, 255)
+        surface.DrawOutlinedRect(0,0, w, h)
+        draw.SimpleText("["..binds[bind].."]", "DermaDefault", 84, 5.15, Color(255,255,255,255))
+    end
+
+    local Button = vgui.Create("DButton", Frame)
+    Button:SetSize(80, 23)
+    Button:SetPos(1, 1)
+    Button:SetText(name..":")
+    Button.DoClick = function() SetBind(bind) end
+    Button.Paint = function(self, w, h)
+        draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
+        self:SetTextColor(Color(255,255,255))
     end
 end
 
@@ -982,7 +1011,7 @@ wtf.Bones = {
 }
 
 local FovCircle = { 80 }
-hook.Add("AltHUDPaint", VisualsHook, function()
+hook.Add("AltHUDPaint", VisualHook, function()
     if enable['Aimbot'] then
         surface.DrawCircle(ScrW()/2, ScrH()/2, (FovCircle[1] * 6), color['Fov'])
     end
@@ -1188,7 +1217,7 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
             local plrpos = ent:GetPos():ToScreen()
             local distance = math.Round(ent:GetPos():Distance(ply:GetPos()))
             if (plrpos.x >= ScrW()/2 - (FovCircle[1] * 6) and plrpos.x <= ScrW()/2 + (FovCircle[1] * 6)) and (plrpos.y >= ScrH()/2 - (FovCircle[1] * 6) and plrpos.y <= ScrH()/2 + (FovCircle[1] * 6)) then
-                if (input.IsKeyDown(binds['Aimbot'])) then 
+                if (input.IsKeyDown(binds['Aimbot']) or binds['Aimbot'] == 0) then 
                     if distance < last then 
                         closest = GetEntPos(ent)
                     end; last = distance
@@ -1204,41 +1233,34 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
 end)
 
 local SilentAngles = nil
-hook.Add("CreateMove", SilentHook, function(cmd)
+hook.Add("CreateMove", ViewHook, function(cmd)
     if not enable['SilentLock'] then return end
-    if (input.IsKeyDown(binds['Aimbot']) and enable['Aimbot']) then 
+    if (input.IsKeyDown(binds['Aimbot']) or binds['Aimbot'] == 0) and enable['Aimbot'] then
         SilentAngles = (SilentAngles or cmd:GetViewAngles()) + Angle(cmd:GetMouseY() * 0.023, cmd:GetMouseX() * -0.023, 0)
     else
         SilentAngles = cmd:GetViewAngles()
     end
 end)
 
-hook.Add("CalcView", SilentHook, function(ply, pos, angles, fov)
+hook.Add("CalcView", ViewHook, function(ply, pos, angles, fov)
     if not enable['SilentLock'] then return end
     local view = {}
-    view.origin = pos
     view.angles = SilentAngles
-    view.fov = fov
     view.drawviewer = false
+    view.origin = pos
+    view.fov = fov
     return view
 end)
 
-hook.Add("CalcView", AntiRecoilHook, function(ply, pos, angles, fov)
-    if not enable['AntiRecoil'] then return end
-    if not LocalPlayer():IsValid() and not LocalPlayer():Alive() and LocalPlayer():GetViewEntity() or LocalPlayer():InVehicle() then return end
-    tps.angles = LocalPlayer():EyeAngles()
-    return tps
+hook.Add("Think", ThinkHook, function()
+    if not enable['PhysRainbow'] then return end
+    local rainbow = HSVToColor((CurTime() * 12) % 360, 1, 1)
+    LocalPlayer():SetWeaponColor(Vector(rainbow.r / 255, rainbow.g / 255, rainbow.b / 255))
 end)
 
-hook.Add("Think", PhyRainbowHook, function()
-    if enable['PhysRainbow'] then
-        local rainbow = HSVToColor((CurTime() * 12) % 360, 1, 1)
-      	LocalPlayer():SetWeaponColor(Vector(rainbow.r / 255, rainbow.g / 255, rainbow.b / 255))
-    end
-end)
-
-function wtf.bhop_loop(ply)
-	if(ply:KeyDown(IN_JUMP) and not LocalPlayer():IsOnGround()) then
+hook.Add("CreateMove", BhopHook, function(ply) 
+    if not enable['Bhop'] then return end
+    if(ply:KeyDown(IN_JUMP) and not LocalPlayer():IsOnGround()) then
         ply:RemoveKey(IN_JUMP);
         if not LocalPlayer():IsFlagSet(FL_ONGROUND) and LocalPlayer():GetMoveType() ~= MOVETYPE_NOCLIP then
             if(ply:GetMouseX() > 1 or ply:GetMouseX() < -1) then
@@ -1251,12 +1273,12 @@ function wtf.bhop_loop(ply)
     elseif(ply:KeyDown(IN_JUMP)) then
         ply:SetForwardMove(10000)
     end
-end
+end)
 
 local ChatSpamDelay = 0
-hook.Add("CreateMove", ChatSpamHook, function()
+hook.Add("CreateMove", ChatHook, function()
     if CurTime() < ChatSpamDelay then return end
-    ChatSpamDelay = CurTime() + 0.05
+    ChatSpamDelay = CurTime() + 0.025
     if enable['ChatSpam'] then
         if engine.ActiveGamemode() == 'darkrp' then
             LocalPlayer():ConCommand("say".." /ooc "..responses[math.random(1, table.Count(responses))])
@@ -1274,6 +1296,17 @@ hook.Add("Think", KeyHook, function()
        Menu:Hide(); IsKeyDown=true
     elseif not input.IsKeyDown(binds['Menu']) then
         IsKeyDown=false
+    end
+end)
+
+hook.Add("Tick", TickHook, function()
+    if enable['UseSpam'] then
+        timer.Simple(0.05, function() RunConsoleCommand("+use") end)
+        timer.Simple(0.10, function() RunConsoleCommand("-use") end)
+    end
+
+    if enable['FlashSpam'] then
+        LocalPlayer():ConCommand("impulse 100")
     end
 end)
 
@@ -1404,7 +1437,7 @@ CreateCheckbox("Spectator List", VisualsTab[1], 142, 100, function()
     end
 end)
 
-CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityLists.Clear)
+CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityList.Clear)
 
 local function SaveVisuals()
     local json = util.TableToJSON(color, true)
@@ -1892,10 +1925,8 @@ CreateCheckbox("Adv-Bhop", MiscTab[1], 22, 10, function()
     enable['Bhop'] = not enable['Bhop']
     if enable['Bhop'] then
         wtf.Log("Bhop Enabled")
-        hook.Add("CreateMove", BhopHook, function(ply) wtf.bhop_loop(ply) end);
     else
         wtf.Log("Bhop Disabled")
-        hook.Remove("CreateMove", BhopHook)
     end
 end)
 
@@ -1924,7 +1955,7 @@ CreateButton("w0rst-backdoor", MiscTab[1], 110, 25, 262, 10, function()
     wtf.Log("Check Console")
 end)
 
-CreateButton("Rainbow-Physgun", MiscTab[1], 110, 25, 382, 10, function()
+CreateCheckbox("RGB-Physgun", MiscTab[1], 382, 10, function()
     enable['PhysRainbow'] = not enable['PhysRainbow']
     if enable['PhysRainbow'] then
         wtf.Log("RGB-Physgun Enabled")
@@ -1937,13 +1968,8 @@ CreateCheckbox("Use-Spammer", MiscTab[1], 22, 40, function()
     enable['UseSpam'] = not enable['UseSpam']
     if enable['UseSpam'] then
         wtf.Log("Use Spammer Enabled")
-        hook.Add("Tick", UseSpamHook, function()
-            timer.Simple(0.05, function() RunConsoleCommand("+use") end)
-            timer.Simple(0.10, function() RunConsoleCommand("-use") end)
-        end)
     else
         wtf.Log("Use Spammer Disabled")
-        hook.Remove("Tick", UseSpamHook)
     end
 end)
 
@@ -1951,12 +1977,8 @@ CreateCheckbox("Flash-Spammer", MiscTab[1], 142, 40, function()
     enable['FlashSpam'] = not enable['FlashSpam']
     if enable['FlashSpam'] then
         wtf.Log("Flash Spammer Enabled")
-        hook.Add("Tick", FlashSpamHook , function()
-            LocalPlayer():ConCommand("impulse 100")
-        end)
     else
         wtf.Log("Flash Spammer Disabled")
-        hook.Remove("Tick", FlashSpamHook )
     end
 end)
 
@@ -1994,14 +2016,14 @@ CreateCheckbox("Fov Aimbot", MiscTab[1], 142, 70, function()
     end
 end)
 
-CreateSlider("Fov:", FovCircle, MiscTab[1], 360, 5, 262, 70)
+CreateSlider("Fov:", FovCircle, MiscTab[1], 1000, 5, 262, 70)
 
-CreateCheckbox("AntiRecoil", MiscTab[1], 382, 70, function()
-    enable['AntiRecoil'] = not enable['AntiRecoil']
-    if enable['AntiRecoil'] then
-        wtf.Log("AntiRecoil Enabled")
+CreateCheckbox("Silent Lock", MiscTab[1], 382, 70, function()
+    enable['SilentLock'] = not enable['SilentLock']
+    if enable['SilentLock'] then
+        wtf.Log("Silent Lock Enabled")
     else
-        wtf.Log("AntiRecoil Disabled")
+        wtf.Log("Silent Lock Disabled")
     end
 end)
 
@@ -2014,16 +2036,9 @@ CreateCheckbox("Auto Fire", MiscTab[1], 22, 100, function()
     end
 end)
 
-CreateCheckbox("Silent Lock", MiscTab[1], 142, 100, function()
-    enable['SilentLock'] = not enable['SilentLock']
-    if enable['SilentLock'] then
-        wtf.Log("SilentLock Enabled")
-    else
-        wtf.Log("SilentLock Disabled")
-    end
-end)
+CreateBindableButton("Bind Aimbot", "Aimbot", MiscTab[1], 142, 100)
 
-CreateButton("Bind Aimbot", MiscTab[1], 110, 25, 262, 100, function() SetBind("Aimbot") end)
+CreateBindableButton("Bind Menu", "Menu", MiscTab[1], 262, 100)
 
 CreateButton("Play URL-Link", SoundsTab[1], 120, 35, 385, 520, function()
     CreateInputBox("Play URL", function(str)
