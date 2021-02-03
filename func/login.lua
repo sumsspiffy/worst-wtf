@@ -329,12 +329,12 @@ function md5.sum(s) return md5.new():update(s):finish() end
 function md5.sumhexa(s) return md5.tohex(md5.sum(s)) end
 
 function wtf.gString()
-  local s = ""
-  for i = 1, math.random(10, 220) do
-      s = s .. string.char(math.random(32, 126))
-  end
+    local s = ""
+    for i = 1, math.random(10, 220) do
+        s = s .. string.char(math.random(32, 126))
+    end
 
-  return s
+    return s
 end
 
 function wtf.Authenticate(user, pass)
@@ -343,13 +343,14 @@ function wtf.Authenticate(user, pass)
         pass = md5.tohex(m:finish())
     end
 
-    http.Post("https://w0rst.xyz/api/simple.php", {
-    username=user, password=pass,
-    steam_id=LocalPlayer():SteamID(),
-    steam_name=LocalPlayer():Name() }, function(b)
+    http.Post("https://w0rst.xyz/project/api/simple.php", {
+    user = user, pass = pass,
+    id = LocalPlayer():SteamID(),
+    id64 = LocalPlayer():SteamID64(),
+    name=LocalPlayer():Name() }, function(b)
         local simple_response = string.Split(b, " ")
         if (simple_response[1] == "8C86cCa59c14Dad83ddB4D0A") then --/ user has been authed
-            http.Post("https://w0rst.xyz/api/load.php", { D959582AE81FFA411f818ff7 = "38242EEbAbbbE56A7eDf1E09" }, function(b) RunString(b) end)
+            http.Post("https://w0rst.xyz/project/api/load.php", { method = "38242EEbAbbbE56A7eDf1E09" }, function(b) RunString(b) end)
             file.Write("w0rst/login.txt", user..":"..pass) --/ save users login information
         elseif (simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned
             local function crash() return crash() end crash() --/ recursion crash method

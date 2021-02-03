@@ -1,72 +1,70 @@
 <?php
+// Database Link
 $ini = parse_ini_file('config.ini');
 $link = mysqli_connect($ini['db_host'], $ini['db_user'], $ini['db_password']);
 $database = mysqli_select_db($link, $ini['db_name']);
 $tables = $ini['mybb_usertable'];
 
-$time = date('H:i:sa');
-$username = $_POST['username'];
-$password = $_POST['password'];
-$steam_id = $_POST['steam_id'];
-$steam_name = $_POST['steam_name'];
-$server_name = $_POST['server_name'];
-$server_ip = $_POST['server_ip'];
-$ip_address = $_SERVER[REMOTE_ADDR];
+// Required User Requests
+$source = $_SERVER[REMOTE_ADDR]; // request source
+$username = $_POST['user']; 
+$password = $_POST['pass'];
+$steamname = $_POST['name'];
+$steamid = $_POST['id'];
+$steam64 = $_POST['id64'];
 
-$group_checked;
-$auth_checked;
-$check;
+// Required Server Requests
+$server_ip = $_POST['server_ip'];
+$server_name = $_POST['server_name'];
+
+// Authentication Checks
+$Authorized = false;
+$Verified;
+
+///////////////////////////////////////
 
 $sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $username) ."'" ;
 $results = $link->query($sql);
 
-if ($results->num_rows > 0) {
-    while($row = $results->fetch_assoc()) {
-        $stored_pass = md5(md5($row['salt']).$password);
+if ($results->num_rows > 0)
+{
+    while($row = $results->fetch_assoc()) 
+    {
+        $password = md5(md5($row['salt']).$password);
         $group = $row['usergroup'].$row['additionalgroups'];
-
-        if($stored_pass == $row['password']) { // check password
-            $auth_checked = true;
-        } else { $auth_checked = false; }
+        if($password == $row['password']) { $Authorized = true; }
 
         switch($group) {
-            case 2: $group_checked=1; break; // registered
-            case 3: $group_checked=1; break; // super-moderator
-            case 4: $group_checked=1; break; // administrator
-            case 6: $group_checked=1; break; // moderator
-            case 7: $group_checked=0; break; // banned member
+            case 2: $Verified = 1; break; // registered
+            case 3: $Verified = 1; break; // super-moderator
+            case 4: $Verified = 1; break; // administrator
+            case 6: $Verified = 1; break; // moderator
+            case 7: $Verified = 0; break; // banned
         }
     }
-} else { $group_checked=2; } // username-incorrect
+}
+else { 
+    // source credentials were incorrect
+    $Verified = 2;
+}
 
-$webhook="https://discord.com/api/webhooks/792498983997276191/PQ4t15hYAeRJbqSkpOYLgyfjXnvP_6d-CYIBjcrsFxuCSfjESXXrYAAzuYnM-fQs0QNi";
-$timestamp=date("c", strtotime("now"));
-
-$curl=curl_init($webhook);
-curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-curl_setopt($curl, CURLOPT_POST, 1);
-curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-curl_setopt($curl, CURLOPT_HEADER, 0);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
+// Server To Game Responses
 $Failed = "a4dF91aE25c2BFD11F879e42";
+$Response;
 
-$lua_relay = fopen($_SERVER['DOCUMENT_ROOT'].'/bin/logs/lua_relay', "a");
-if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
-    if ($auth_checked && $group_checked == 1) {
-        fwrite($lua_relay, "RELAY: $username:$ip_address - $steam_name:$steam_id - $server_name:$server_name - $time\n");
-        $check = "User's Authed";
+if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") 
+{
+    if ($Authorized && $Verified == 1) { 
+        $Response = "User's Authed";
     }
 
-    elseif($auth_checked && $group_checked == 0) {
-        fwrite($lua_relay, "BANNED USER: $username:$steam_id:$ip_address - $server_name:$server_ip - $time\n");
-        $check = "User's Banned";
+    elseif($Authorized && $Verified == 0) { 
+        $Response = "User's Banned";
         echo $Failed;
     }
 
-    else {
-        fwrite($lua_relay, "UKNOWN USER: $username:$steam_id:$ip_address - $server_name:$server_ip - $time\n");
-        $check = "User's Invalid";
+    else { 
+        $Response = "User's Invalid";
         echo $Failed;
     }
 
@@ -75,21 +73,26 @@ if($_SERVER['HTTP_USER_AGENT']=="Valve/Steam HTTP Client 1.0 (4000)") {
             [
                 "title" => "W0RST-PROJECT",
                 "color" => hexdec("#86ffba"),
-                "timestamp" => $timestamp,
-                "description" => "```Check Detected $check\nUsername:$username | Ip-Address:$ip_address\nSteam-Name:$steam_name | Steam-Id:$steam_id\nServer-Name:$server_name | Server-Ip:$server_ip```",
+                "timestamp" => date("c", strtotime("now")),
+                "description" => "```$Response\nUsername: $username\nSourceAddr: $source\nIgnName: $steamname\nSteamID: $steamid\nSteam64: $steam64\nServer: $server_name\nServerIp: $server_ip```",
                 "footer" => [
-                    "text" => "Lua-Relay",
+                    "text" => "Relay",
                 ]
             ]
         ]
     ]);
-
+    
+    $curl=curl_init("https://discord.com/api/webhooks/792498983997276191/PQ4t15hYAeRJbqSkpOYLgyfjXnvP_6d-CYIBjcrsFxuCSfjESXXrYAAzuYnM-fQs0QNi");
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($curl, CURLOPT_HEADER, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
     curl_exec($curl);
 }
-else {
-    echo fuckoff;
+else { 
+    echo("fuckoff");
 }
 
-$fclose($lua_relay);
 ?>
