@@ -182,14 +182,6 @@ surface.CreateFont('Font', {
     shadow = true, additive = false, outline = false,
 })
 
-surface.CreateFont('Sounds', {
-    font = 'Marlett', extended = false, size = 17,
-    weight = 1000, blursize = 0, scanlines = 0,
-    antialias = true, underline = false, italic = false,
-    strikeout = false, symbol = false, rotary = false,
-    shadow = true, additive = true, outline = true,
-})
-
 local RenderTarget = GetRenderTarget(wtf.gString()..os.time(), ScrW(), ScrH())
 HookFunc("RenderScene", wtf.hook['Render'], function(vOrigin, vAngle, vFOV )
     local view = {
@@ -944,7 +936,7 @@ for i = 1, #Sounds do
     Button:SetSize(145, 100)
     Button:SetPos(Position['Sound'].x, Position['Sound'].y)
     Button:SetText(Song[1])
-    Button:SetFont("Sounds")
+    Button:SetFont("Font")
     Button.Paint = function(self, w,h)
         draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
         surface.SetDrawColor(wtf.theme['ButtonBorder'])
