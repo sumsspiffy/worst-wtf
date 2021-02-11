@@ -43,7 +43,7 @@ if(get('code')) {
 
 if(session('access_token')) {
   $user = apiRequest($apiURLBase);
-  header('Location: ./dashboard.php');
+  header('Location: ./dashboard.php?authed=1');
 } else {
   header('Location: ?action=login');
 }
