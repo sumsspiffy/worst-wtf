@@ -35,14 +35,20 @@ if(get('code')) {
     'redirect_uri' => 'https://w0rst.xyz/panel/login.php',
     'code' => get('code')
   ));
+
   $logout_token = $token->access_token;
   $_SESSION['access_token'] = $token->access_token;
-
   header('Location: ' . $_SERVER['PHP_SELF']);
 }
 
 if(session('access_token')) {
   $user = apiRequest($apiURLBase);
+
+  // store user information
+  // $username = $user->username;
+  // $userId = $user->id;
+  // $password = null;
+
   header('Location: ./dashboard.php?authed=1');
 } else {
   header('Location: ?action=login');
@@ -65,7 +71,6 @@ function apiRequest($url, $post=FALSE, $headers=array()) {
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
   $response = curl_exec($ch);
-
 
   if($post)
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));

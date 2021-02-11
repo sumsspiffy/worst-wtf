@@ -10,7 +10,8 @@
 </html>
 
 <?php
-if(!$_GET['authed'] == "1") { 
-    header('Location: ./404.html');
-}
+
+
+
+
 ?>
