@@ -1,61 +1,71 @@
-
 <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
+ini_set('max_execution_time', 300); //300 seconds = 5 minutes. In case if your CURL is slow and is loading too much (Can be IPv6 problem)
 
 error_reporting(E_ALL);
 
-define('OAUTH2_CLIENT_ID', '808574107058569216');
-define('OAUTH2_CLIENT_SECRET', 'JKmuW0a680cNdH1ROVXMVn7u5Msjc3rK');
+define('OAUTH2_CLIENT_ID', '1234567890');
+define('OAUTH2_CLIENT_SECRET', 'verysecretclientcode');
 
-$authorizeURL = 'https://discord.com/api/oauth2/authorize?client_id=808574107058569216&redirect_uri=https%3A%2F%2Fw0rst.xyz%2Fpanel%2Flogin.php&response_type=code&scope=identify';
+$authorizeURL = 'https://discord.com/api/oauth2/authorize';
 $tokenURL = 'https://discord.com/api/oauth2/token';
 $apiURLBase = 'https://discord.com/api/users/@me';
 
 session_start();
 
+// Start the login process by sending the user to Discord's authorization page
 if(get('action') == 'login') {
 
   $params = array(
     'client_id' => OAUTH2_CLIENT_ID,
-    'redirect_uri' => 'https://w0rst.xyz/panel/login.php',
+    'redirect_uri' => 'https://yoursite.location/ifyouneedit',
     'response_type' => 'code',
     'scope' => 'identify guilds'
   );
 
+  // Redirect the user to Discord's authorization page
   header('Location: https://discordapp.com/api/oauth2/authorize' . '?' . http_build_query($params));
   die();
 }
 
+
+// When Discord redirects the user back here, there will be a "code" and "state" parameter in the query string
 if(get('code')) {
+
+  // Exchange the auth code for a token
   $token = apiRequest($tokenURL, array(
     "grant_type" => "authorization_code",
     'client_id' => OAUTH2_CLIENT_ID,
     'client_secret' => OAUTH2_CLIENT_SECRET,
-    'redirect_uri' => 'https://w0rst.xyz/panel/login.php',
+    'redirect_uri' => 'https://yoursite.location/ifyouneedit',
     'code' => get('code')
   ));
-
   $logout_token = $token->access_token;
   $_SESSION['access_token'] = $token->access_token;
+
+
   header('Location: ' . $_SERVER['PHP_SELF']);
 }
 
 if(session('access_token')) {
   $user = apiRequest($apiURLBase);
 
-  // store user information
-  // $username = $user->username;
-  // $userId = $user->id;
-  // $password = null;
+  echo '<h3>Logged In</h3>';
+  echo '<h4>Welcome, ' . $user->username . '</h4>';
+  echo '<pre>';
+    print_r($user);
+  echo '</pre>';
 
-  header('Location: ./dashboard.php?authed=1');
 } else {
-  header('Location: ?action=login');
+  echo '<h3>Not logged in</h3>';
+  echo '<p><a href="?action=login">Log In</a></p>';
 }
+
 
 if(get('action') == 'logout') {
   // This must to logout you, but it didn't worked(
+
   $params = array(
     'access_token' => $logout_token
   );
@@ -71,6 +81,7 @@ function apiRequest($url, $post=FALSE, $headers=array()) {
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
   $response = curl_exec($ch);
+
 
   if($post)
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
