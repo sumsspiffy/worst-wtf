@@ -47,7 +47,7 @@ body {
     height: 70px;
     background-image: linear-gradient(to right top, #003ba8, #6e1b87);
     position: absolute;
-    transform: translate(5.5%, -50%);
+    transform: translate(5.25%, -50%);
     border-radius: 10px;
     box-shadow: 5px 5px 3px rgba(0,0,0, 0.10);
 }
@@ -57,7 +57,7 @@ body {
     transform: translate(10%, 35%);
     text-decoration: none;
     text-align: center;
-    border-radius: 24px;
+    border-radius: 10px;
     overflow: hidden;
     font-size: 16px;
     width: 200px;
@@ -67,12 +67,30 @@ body {
     border: none;
 }
 
+.nav-button:focus { outline: none; }
+
 .nav-button:nth-child(2) { 
     position: absolute;
-    transform: translate(115%, 35%);
+    transform: translate(115.2%, 35%);
 }
 
-.nav-button:focus { outline: none; }
+.post-button { 
+    position: absolute;
+    transform: translate(125%, 300%);
+    background-color: #a61d8c;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 5px;
+    overflow: hidden;
+    font-size: 16px;
+    width: 140px;
+    height: 45px;
+    padding: 15px;
+    color: white;
+    border: none;
+}
+
+.post-button:focus { outline: none; }
 
 .container { 
     background-color: rgba(0,0,0, 0.25);
@@ -93,6 +111,12 @@ body {
     width: 500px;
     height: 320px;
 }
+
+.login-tab { visibility: hidden; }
+.register-tab { visibility: hidden; }
+
+.login-tab.active { visibility: visible; }
+.register-tab.active { visibility: visible; }
 
 .user-label {
     color:white;
