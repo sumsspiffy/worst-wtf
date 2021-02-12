@@ -76,7 +76,7 @@ body {
 
 .post-button { 
     position: absolute;
-    transform: translate(125%, 300%);
+    transform: translate(130%, 460%);
     background-color: #a61d8c;
     text-decoration: none;
     text-align: center;
@@ -88,6 +88,10 @@ body {
     padding: 15px;
     color: white;
     border: none;
+}
+
+.post-button:nth-child(4) { 
+    transform: translate(130%, 610%);
 }
 
 .post-button:focus { outline: none; }
@@ -108,8 +112,9 @@ body {
     background-color: rgb(25,25,25);
     border-radius: 5px;
     position: absolute;
+    align-items: center;
     width: 500px;
-    height: 320px;
+    height: 280px;
 }
 
 .login-tab { visibility: hidden; }
@@ -118,41 +123,67 @@ body {
 .login-tab.active { visibility: visible; }
 .register-tab.active { visibility: visible; }
 
-.user-label {
-    color:white;
-    font-size: 25px;
-}
 .user-input {
     position: absolute;
-    transform: translate(0%, 15%);
+    transform: translate(12%, 120%);
     text-align: center;
     color:white;
     background-color: rgb(30,30,30);
+    height: 50px;
+    width: 400px;
     border-radius: 5px;
     border-color: white;
     border: thin;
-    padding: 10px;
-}
-
-.pass-label {
-    color:white;
+    padding: 15px;
     font-size: 25px;
 }
+
+.user-input:nth-child(2) { transform: translate(12%, 260%); }
+
+.email-input {
+    position: absolute;
+    transform: translate(12%, 120%);
+    text-align: center;
+    color:white;
+    background-color: rgb(30,30,30);
+    height: 50px;
+    width: 400px;
+    border-radius: 5px;
+    border-color: white;
+    border: thin;
+    padding: 15px;
+    font-size: 25px;
+}
+
 .pass-input {
     -webkit-text-security: disc !important;
     position: absolute;
-    transform: translate(0%, 15%);
+    transform: translate(12%, 260%);
     text-align: center;
     color:white;
     background-color: rgb(30,30,30);
+    height: 50px;
+    width: 400px;
     border-radius: 5px;
     border-color: white;
     border: thin;
-    padding: 10px;
+    padding: 15px;
+    font-size: 25px;
 }
 
-.user-input:focus { outline: none; }
-.pass-input:focus { outline: none; }
+.pass-input:nth-child(3) { 
+    transform: translate(12%, 400%);
+}
+
+.user-input:focus {
+    outline: none; 
+}
+.email-input:focus {
+    outline: none; 
+}
+.pass-input:focus { 
+    outline: none; 
+}
 
 /* Click effect */
 .ripple {
