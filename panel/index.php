@@ -21,8 +21,8 @@
                 <div class="login-tab">
                     <form method="post">
                         <div class="frame">
-                            <input type="text" id="username" class="input user" name="username" placeholder="username">
-                            <input type="text" id="password" class="input pass" name="password" placeholder="password">
+                            <input type="text" id="username" class="input user" name="username" placeholder="username" autocomplete="on">
+                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="on">
                         </div>
                         <button type="submit" name="login" class="btn login">Login</button>
                     </form>
@@ -30,10 +30,13 @@
                 <div class="register-tab">
                     <form method="post">
                         <div class="frame">
-                            <input type="text" id="email" class="input email" name="email" placeholder="email">
-                            <input type="text" id="username" class="input user" name="username" placeholder="username">
-                            <input type="text" id="password" class="input pass" name="password" placeholder="password">
+                            <input type="text" id="email" class="input email" name="email" placeholder="email" autocomplete="on">
+                            <input type="text" id="username" class="input user" name="username" placeholder="username" autocomplete="on">
+                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="on">
                         </div>
+                        <div id="g-recaptcha" class="recaptcha" data-sitekey="6LcGMlYaAAAAAMS0U3qaBpNZM10D1C8mSXq_4yPq"></div>
+                        <script>var onloadCallback = function() {grecaptcha.render("g-recaptcha", {'sitekey' :'6LcGMlYaAAAAAMS0U3qaBpNZM10D1C8mSXq_4yPq','theme':'dark'})};</script>
+                        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"async defer></script>
                         <button type="submit" name="register" class="btn register">Sign Up</button>
                     </form>
                 </div>
@@ -58,6 +61,22 @@ if (isset($_POST['register'])) {
     $emailaddr = $_POST['email'];
     $Alert; // needed for alerts 
     $Valid = true;
+
+    // ReCaptcha verification
+    $response = $_POST["g-recaptcha-response"];
+
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+	$data = array( 'secret' => '6LcGMlYaAAAAAF1CRRQuUQ-5wHDdJzigH7nfjgWb', 'response' => $_POST["g-recaptcha-response"]);
+	$options = array('http' => array ( 'method' => 'POST', 'content' => http_build_query($data)));
+
+    $context  = stream_context_create($options);
+	$verify = file_get_contents($url, false, $context);
+	$captcha_success=json_decode($verify);
+
+    if ($captcha_success->success==false) {
+        $Alert = '<div class="notification">Failed ReCaptcha.</div>';
+        $Valid = false;
+    }
 
     // User's currently logged in 
     if ($_SESSION['AUTHENTICATED'] == true) { 
@@ -92,6 +111,7 @@ if (isset($_POST['register'])) {
 
     // Sql query
     if ($Valid) { 
+        $Alert = '<div class="notification">Registered successfully.</div>';
         $link->query($sql);
     }
 
@@ -108,6 +128,7 @@ if (isset($_POST['login'])) {
 
     if ($result->num_rows > 0) { 
         $_SESSION['AUTHENTICATED'] = true;
+        $_SESSION['USERNAME'] = $username;
         header('Location: dashboard.php');
     }
     else { $Alert = '<div class="notification">Invalid credentials.</div>'; }

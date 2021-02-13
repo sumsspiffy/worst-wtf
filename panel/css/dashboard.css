@@ -1,6 +1,4 @@
-body {
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-color: rgb(32, 32, 32);
-    font-family: Roboto, sans-serif;
-}
+body { color: #444; margin:0;font: normal 14px/20px Arial, Helvetica, sans-serif; height:100%; background: url(../img/shrug.png) no-repeat center center fixed; background-size: cover }
+h1 { text-align:center; margin:0; font-size:150px; line-height:150px; font-weight:bold; }
+h2 { text-align:center; margin-top:20px;font-size: 30px; }
+p { text-align:center; }

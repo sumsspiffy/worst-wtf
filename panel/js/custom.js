@@ -38,10 +38,10 @@ $(document).ready(function() {
     content.fadeIn(450);
   })
 
-  // 410px
-
   $('#login').click(function() {
     // update active tabs
+    $('#register').fadeTo("fast", 0.55);
+    $('#login').fadeTo("fast", 1);
     $('.login-tab').fadeIn(0);
     $('.register-tab').fadeOut(0);
 
@@ -52,11 +52,13 @@ $(document).ready(function() {
 
   $('#register').click(function() {
     // update active tabs 
+    $('#register').fadeTo("fast", 1);
+    $('#login').fadeTo("fast", 0.55);
     $('.login-tab').fadeOut(0);
     $('.register-tab').fadeIn(0);
 
     // update sizes
     $('.frame').height("235px");
-    $('.card').height("410px");
+    $('.card').height("440px");
   })
 })

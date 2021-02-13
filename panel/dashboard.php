@@ -2,10 +2,11 @@
     <head>
         <title>Worst</title>
         <link rel='stylesheet' href='./css/dashboard.css'>
-        <script src="./js/jquery.min.js"></script>
     </head>
     <body>
-        
+        <h1>404</h1>
+        <h2>Site Currently Under Construction.</h2>
+        <p>for more information join our discord!<br><a href="./discord.php?action=login">Click Me!</a></p>
     </body>
 </html>
 
@@ -13,8 +14,9 @@
 session_start();
 require_once("config.php");
 
+// don't think about coming here un announced :flushed:
 if($_SESSION['AUTHENTICATED'] == false) { 
-    header('Location: 404.html');
+    header('Location: http://www.pornhub.com/'); 
 }
 
 ?>

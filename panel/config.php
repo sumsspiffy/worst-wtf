@@ -14,7 +14,8 @@ $link = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 //     password VARCHAR(255) NOT NULL,
 //     ipaddress VARCHAR(255) NOT NULL,
 //     usergroup INT(10) NOT NULL,
-//     avatar VARCHAR(255)
+//     avatar VARCHAR(255),
+//     discord VARCHAR(255)
 // )
 
 ?>

@@ -5,10 +5,10 @@ ini_set('max_execution_time', 300); //300 seconds = 5 minutes. In case if your C
 
 error_reporting(E_ALL);
 
-define('OAUTH2_CLIENT_ID', '1234567890');
-define('OAUTH2_CLIENT_SECRET', 'verysecretclientcode');
+define('OAUTH2_CLIENT_ID', '808574107058569216');
+define('OAUTH2_CLIENT_SECRET', 'JKmuW0a680cNdH1ROVXMVn7u5Msjc3rK');
 
-$authorizeURL = 'https://discord.com/api/oauth2/authorize';
+$authorizeURL = 'https://discord.com/api/oauth2/authorize?client_id=808574107058569216&redirect_uri=https%3A%2F%2Fw0rst.xyz%2Fpanel%2Flogin.php&response_type=code&scope=identify';
 $tokenURL = 'https://discord.com/api/oauth2/token';
 $apiURLBase = 'https://discord.com/api/users/@me';
 
@@ -19,7 +19,7 @@ if(get('action') == 'login') {
 
   $params = array(
     'client_id' => OAUTH2_CLIENT_ID,
-    'redirect_uri' => 'https://yoursite.location/ifyouneedit',
+    'redirect_uri' => 'https://w0rst.xyz/panel/discord.php',
     'response_type' => 'code',
     'scope' => 'identify guilds'
   );
@@ -38,28 +38,29 @@ if(get('code')) {
     "grant_type" => "authorization_code",
     'client_id' => OAUTH2_CLIENT_ID,
     'client_secret' => OAUTH2_CLIENT_SECRET,
-    'redirect_uri' => 'https://yoursite.location/ifyouneedit',
+    'redirect_uri' => 'https://w0rst.xyz/panel/discord.php',
     'code' => get('code')
   ));
   $logout_token = $token->access_token;
   $_SESSION['access_token'] = $token->access_token;
-
-
   header('Location: ' . $_SERVER['PHP_SELF']);
 }
 
 if(session('access_token')) {
-  $user = apiRequest($apiURLBase);
+  // link database & insert values
+  require_once('config.php'); // link
+  $user = apiRequest($apiURLBase); // request info
 
-  echo '<h3>Logged In</h3>';
-  echo '<h4>Welcome, ' . $user->username . '</h4>';
-  echo '<pre>';
-    print_r($user);
-  echo '</pre>';
+  // define user->variables
+  $id = $user->id;
+  $avatar = $user->avatar; // for later updates
+  $username = $_SESSION['USERNAME']; // passed from login
 
-} else {
-  echo '<h3>Not logged in</h3>';
-  echo '<p><a href="?action=login">Log In</a></p>';
+  $sql = "UPDATE usertable SET discordid = '$id' WHERE username = '$username'";
+  $link->query($sql); // link query ^
+
+  // finally send user to the discord
+  header('Location: https://discord.gg/6Sy3AktdvC');
 }
 
 
