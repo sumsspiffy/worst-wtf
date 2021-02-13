@@ -145,15 +145,21 @@ body {
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
     background-color: rgba(10, 10, 10, 0.3);
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5); 
+    border-radius: 0.4rem;
     font-size: 2rem;
     color: white;
-    width: 100%;
+    width: 400px;
     height: 35px;
-    position: absolute;
     padding-top: 5px;
     padding-bottom: 5px;
-    top: 0%;
-    left: 0%;
+    position: absolute; 
+    left: 0; 
+    right: 0; 
+    margin-top: -3%;
+    margin-left: auto; 
+    margin-right: auto; 
+    user-select: none;
 }
 
 /* ripple effect */

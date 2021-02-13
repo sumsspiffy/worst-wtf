@@ -61,13 +61,13 @@ if (isset($_POST['register'])) {
 
     // User's currently logged in 
     if ($_SESSION['AUTHENTICATED'] == true) { 
-        $Alert = '<div class="notification">Already registered</div>';
+        $Alert = '<div class="notification">Failed logout.</div>';
         $Valid = false; 
     }
 
     // Data was empty
     if (empty($emailaddr) || empty($username) || empty($password)) { 
-        $Alert = '<div class="notification">Empty values</div>';
+        $Alert = '<div class="notification">Empty values.</div>';
         $Valid = false; 
     }
 
@@ -77,13 +77,13 @@ if (isset($_POST['register'])) {
 
     // Usernames taken
     if ($result->num_rows > 0) { 
-        $Alert = '<div class="notification">Usernames taken</div>';
+        $Alert = '<div class="notification">Usernames taken.</div>';
         $Valid = false; 
     }
 
     // Email valid check
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) { 
-        $Alert = '<div class="notification">Invalid email</div>';
+        $Alert = '<div class="notification">Invalid email.</div>';
         $Valid  = false; 
     } // only letters no white-spaces
     
@@ -110,7 +110,7 @@ if (isset($_POST['login'])) {
         $_SESSION['AUTHENTICATED'] = true;
         header('Location: dashboard.php');
     }
-    else { $Alert = '<div class="notification">Invalid credentials</div>' }
+    else { $Alert = '<div class="notification">Invalid credentials.</div>'; }
 
     if($Alert != NULL) { echo $Alert; }
 }
