@@ -64,9 +64,8 @@ if (isset($_POST['register'])) {
 
     // ReCaptcha verification
     $response = $_POST["g-recaptcha-response"];
-
     $url = 'https://www.google.com/recaptcha/api/siteverify';
-	$data = array( 'secret' => '6LcGMlYaAAAAAF1CRRQuUQ-5wHDdJzigH7nfjgWb', 'response' => $_POST["g-recaptcha-response"]);
+	$data = array('secret' => '6LcGMlYaAAAAAF1CRRQuUQ-5wHDdJzigH7nfjgWb', 'response' => $_POST["g-recaptcha-response"]);
 	$options = array('http' => array ( 'method' => 'POST', 'content' => http_build_query($data)));
 
     $context  = stream_context_create($options);
@@ -79,7 +78,7 @@ if (isset($_POST['register'])) {
     }
 
     // User's currently logged in 
-    if ($_SESSION['AUTHENTICATED'] == true) { 
+    if ($_SESSION['active'] == true) { 
         $Alert = '<div class="notification">Failed logout.</div>';
         $Valid = false; 
     }
@@ -105,13 +104,22 @@ if (isset($_POST['register'])) {
         $Alert = '<div class="notification">Invalid email.</div>';
         $Valid  = false; 
     } // only letters no white-spaces
-    
+
     $sql = "INSERT INTO `usertable` (username, password, email, ipaddress) 
     VALUES ('$username', '$password', '$emailaddr', '$ipaddr')";
 
     // Sql query
     if ($Valid) { 
         $Alert = '<div class="notification">Registered successfully.</div>';
+        // mail user that the registration worked.
+        $subject = "Registration Completed.";
+        $text = "$username, thank you for registering.\n\nUsername: $username\nEmail address: $emailaddr";
+        $header = "From: Worst webmaster@w0rst.xyz";
+
+        // now send defined values ^
+        mail($emailaddr, $subject, $text, $header);
+
+        // finaly query data
         $link->query($sql);
     }
 
@@ -127,8 +135,8 @@ if (isset($_POST['login'])) {
     $result = $link->query($sql);
 
     if ($result->num_rows > 0) { 
-        $_SESSION['AUTHENTICATED'] = true;
-        $_SESSION['USERNAME'] = $username;
+        $_SESSION['active'] = true;
+        $_SESSION['username'] = $username;
         header('Location: dashboard.php');
     }
     else { $Alert = '<div class="notification">Invalid credentials.</div>'; }

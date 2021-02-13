@@ -54,15 +54,17 @@ if(session('access_token')) {
   // define user->variables
   $id = $user->id;
   $avatar = $user->avatar; // for later updates
-  $username = $_SESSION['USERNAME']; // passed from login
+  $username = $_SESSION['username']; // passed from login
 
-  $sql = "UPDATE usertable SET discordid = '$id' WHERE username = '$username'";
-  $link->query($sql); // link query ^
+  $link->query("UPDATE usertable SET discordid = '$id' WHERE username = '$username'"); // query data
+  $link->query("UPDATE usertable SET avatar = '$avatar' WHERE username = '$username' AND avatar IS NULL");
+
+  // how to actually access the avatar
+  // $avatar = "https://cdn.discordapp.com/avatars/".$id."/".$avatar;
 
   // finally send user to the discord
   header('Location: https://discord.gg/6Sy3AktdvC');
 }
-
 
 if(get('action') == 'logout') {
   // This must to logout you, but it didn't worked(

@@ -15,8 +15,6 @@ session_start();
 require_once("config.php");
 
 // don't think about coming here un announced :flushed:
-if($_SESSION['AUTHENTICATED'] == false) { 
-    header('Location: http://www.pornhub.com/'); 
-}
+if($_SESSION['active'] != true) { header('Location: http://www.pornhub.com/'); }
 
 ?>
