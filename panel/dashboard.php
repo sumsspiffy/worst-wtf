@@ -9,4 +9,12 @@
     </body>
 </html>
 
-<?php?>
+<?php
+session_start();
+require_once("config.php");
+
+if($_SESSION['AUTHENTICATED'] == false) { 
+    header('Location: 404.html');
+}
+
+?>
