@@ -54,10 +54,10 @@ if(session('access_token')) {
   // define user->variables
   $id = $user->id;
   $avatar = $user->avatar; // for later updates
-  $username = $_SESSION['username']; // passed from login
+  $userkey = $_SESSION['userkey']; // passed from login
 
-  $link->query("UPDATE usertable SET discordid = '$id' WHERE username = '$username'"); // query data
-  $link->query("UPDATE usertable SET avatar = '$avatar' WHERE username = '$username' AND avatar IS NULL");
+  $link->query("UPDATE usertable SET discordid = '$id' WHERE userkey = '$userkey'"); // query data
+  $link->query("UPDATE usertable SET avatar = '$avatar' WHERE userkey = '$userkey' AND avatar IS NULL");
 
   // how to actually access the avatar
   // $avatar = "https://cdn.discordapp.com/avatars/".$id."/".$avatar;
@@ -84,7 +84,6 @@ function apiRequest($url, $post=FALSE, $headers=array()) {
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
   $response = curl_exec($ch);
-
 
   if($post)
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));

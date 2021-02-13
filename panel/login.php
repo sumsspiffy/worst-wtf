@@ -105,8 +105,12 @@ if (isset($_POST['register'])) {
         $Valid  = false; 
     } // only letters no white-spaces
 
-    $sql = "INSERT INTO `usertable` (username, password, email, ipaddress) 
-    VALUES ('$username', '$password', '$emailaddr', '$ipaddr')";
+    // create user private session key
+    $num = mt_rand(100000, 999999);
+    $userkey = md5($num);
+
+    $sql = "INSERT INTO `usertable` (username, password, email, ipaddress, userkey) 
+    VALUES ('$username', '$password', '$emailaddr', '$ipaddr', '$userkey')";
 
     // Sql query
     if ($Valid) { 
@@ -132,16 +136,27 @@ if (isset($_POST['login'])) {
     $Alert;
 
     $sql = "SELECT * FROM `usertable` WHERE username = '$username' AND password = '$password'";
+    $link->query("UPDATE usertable SET  ipaddress = '$ipaddr"); // log ip on login ;0
+
     $result = $link->query($sql);
 
     if ($result->num_rows > 0) { 
-        $_SESSION['active'] = true;
-        $_SESSION['username'] = $username;
+        // grab users key and redirect them over to the dashboard
+        while($row = $result->fetch_assoc()) { $_SESSION['userkey'] = $row['userkey']; }
+        $_SESSION['active'] = true; // set the session as active
+
         header('Location: dashboard.php');
     }
     else { $Alert = '<div class="notification">Invalid credentials.</div>'; }
 
     if($Alert != NULL) { echo $Alert; }
+}
+
+if (isset($_POST['logout'])) {
+    $Alert = '<div class="notification">Logged out successfully.</div>';
+    $_SESSION['active'] = false; // de-activate session!
+    unset($_SESSION['userkey']);
+    echo $Alert; // echo alert
 }
 
 ?>

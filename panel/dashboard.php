@@ -14,7 +14,9 @@
 session_start();
 require_once("config.php");
 
-// don't think about coming here un announced :flushed:
-if($_SESSION['active'] != true) { header('Location: http://www.pornhub.com/'); }
+$userkey = $_SESSION['userkey'];
+$active = $_SESSION['active'];
 
+// don't think about coming here un announced :flushed:
+if($active != true) { header('Location: http://www.pornhub.com/'); }
 ?>

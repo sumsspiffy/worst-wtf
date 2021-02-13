@@ -14,8 +14,20 @@ $link = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 //     password VARCHAR(255) NOT NULL,
 //     ipaddress VARCHAR(255) NOT NULL,
 //     usergroup INT(10) NOT NULL,
+//     discordid VARCHAR(255),
 //     avatar VARCHAR(255),
-//     discord VARCHAR(255)
+//     description VARCHAR(255),
+//     userkey VARCHAR(255) NOT NULL
 // )
+
+// CREATE NICE LOOKING THEME
+// MODERATION PANEL & BANS
+// DISCORD o2Auth intergration
+// server command options
+// edit user info - create password/username/avatar changer
+// create shoutbox for users to talk - MAYBE!!!
+// current users on display
+// ^ and a memberlist to view profiles
+// descriptions for profiles
 
 ?>
