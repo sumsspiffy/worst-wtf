@@ -22,7 +22,7 @@
                     <form method="post">
                         <div class="frame">
                             <input type="text" id="username" class="input user" name="username" placeholder="username" autocomplete="on">
-                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="on">
+                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="off">
                         </div>
                         <button type="submit" name="login" class="btn login">Login</button>
                     </form>
@@ -32,7 +32,7 @@
                         <div class="frame">
                             <input type="text" id="email" class="input email" name="email" placeholder="email" autocomplete="on">
                             <input type="text" id="username" class="input user" name="username" placeholder="username" autocomplete="on">
-                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="on">
+                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="off">
                         </div>
                         <div id="g-recaptcha" class="recaptcha" data-sitekey="6LcGMlYaAAAAAMS0U3qaBpNZM10D1C8mSXq_4yPq"></div>
                         <script>var onloadCallback = function() {grecaptcha.render("g-recaptcha", {'sitekey' :'6LcGMlYaAAAAAMS0U3qaBpNZM10D1C8mSXq_4yPq','theme':'dark'})};</script>
