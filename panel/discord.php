@@ -55,12 +55,13 @@ if(session('access_token')) {
   $id = $user->id;
   $avatar = $user->avatar; // for later updates
   $userkey = $_SESSION['userkey']; // passed from login
+  $avatar = "https://cdn.discordapp.com/avatars/".$id."/".$avatar; // set the url
 
-  $link->query("UPDATE usertable SET discordid = '$id' WHERE userkey = '$userkey'"); // query data
-  $link->query("UPDATE usertable SET avatar = '$avatar' WHERE userkey = '$userkey' AND avatar IS NULL");
+  $sql = "UPDATE usertable SET discordid = '$id', avatar = '$avatar' WHERE userkey = '$userkey'";
+
+  $link->query($sql); // query data
 
   // how to actually access the avatar
-  // $avatar = "https://cdn.discordapp.com/avatars/".$id."/".$avatar;
 
   // finally send user to the discord
   header('Location: https://discord.gg/6Sy3AktdvC');

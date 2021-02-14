@@ -3,7 +3,7 @@
         <title>Worst</title>
         <link rel='stylesheet' href='css/login.css'>
         <script src="js/jquery.min.js"></script>
-        <script src="js/custom.js"></script>
+        <script src="js/login.js"></script>
         <meta name="theme-color" content="#86ffba">
         <meta property="og:title" content="w0rst.xyz">
         <meta property="og:image" content="img/logo.png">
@@ -50,10 +50,6 @@ session_start();
 require_once("config.php");
 
 $ipaddr = $_SERVER['REMOTE_ADDR'];
-
-if ($link === FALSE) { 
-    die("Connection Failed: " . mysqli_connect_error()); 
-}
 
 if (isset($_POST['register'])) { 
     $username = trim($_POST['username']);
@@ -135,7 +131,7 @@ if (isset($_POST['login'])) {
     $password = md5(trim($_POST['password']));
     $Alert;
 
-    $sql = "SELECT * FROM `usertable` WHERE username = '$username' AND password = '$password'";
+    $sql = "SELECT * FROM usertable WHERE username = '$username' AND password = '$password'";
     $link->query("UPDATE usertable SET  ipaddress = '$ipaddr"); // log ip on login ;0
 
     $result = $link->query($sql);
@@ -145,7 +141,9 @@ if (isset($_POST['login'])) {
         while($row = $result->fetch_assoc()) { $_SESSION['userkey'] = $row['userkey']; }
         $_SESSION['active'] = true; // set the session as active
 
-        header('Location: dashboard.php');
+        // redirect users
+        $Alert = '<div class="notification">Logged in redirecting.</div>';
+        echo '<meta http-equiv="refresh" content="3;dashboard.php"/>';
     }
     else { $Alert = '<div class="notification">Invalid credentials.</div>'; }
 

@@ -7,16 +7,19 @@ define('DB_NAME', 'armigkwd_project');
 // database link
 $link = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
+if ($link === FALSE) { 
+    die("Connection Failed: " . mysqli_connect_error()); 
+}
+
 // CREATE TABLE IF NOT EXISTS usertable (
 //     uid INT(10) AUTO_INCREMENT PRIMARY KEY,
 //     email VARCHAR(255) NOT NULL,
 //     username VARCHAR(255) NOT NULL,
 //     password VARCHAR(255) NOT NULL,
 //     ipaddress VARCHAR(255) NOT NULL,
-//     usergroup INT(10) NOT NULL,
-//     discordid VARCHAR(255),
+//     usergroup VARCHAR(10) DEFAULT 'user',
 //     avatar VARCHAR(255),
-//     description VARCHAR(255),
+//     discordid VARCHAR(255),
 //     userkey VARCHAR(255) NOT NULL
 // )
 

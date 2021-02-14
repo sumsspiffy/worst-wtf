@@ -4,19 +4,6 @@
         <link rel='stylesheet' href='./css/dashboard.css'>
     </head>
     <body>
-        <h1>404</h1>
-        <h2>Site Currently Under Construction.</h2>
-        <p>for more information join our discord!<br><a href="./discord.php?action=login">Click Me!</a></p>
+        <?php include_once('inc/navbar.php') ?>
     </body>
 </html>
-
-<?php
-session_start();
-require_once("config.php");
-
-$userkey = $_SESSION['userkey'];
-$active = $_SESSION['active'];
-
-// don't think about coming here un announced :flushed:
-if($active != true) { header('Location: http://www.pornhub.com/'); }
-?>
