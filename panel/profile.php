@@ -68,7 +68,7 @@ if($row = $user) {
         $discordinfo = "<p class='info-text'><strong class='info-item'>Discord-Id: </strong><span class='info-value'>$discordid</span></p>";
         $card_height = "46.5rem";
         $info_height = "18.5rem";
-        $position = "3.2%";
+        $position = "1.2%";
     }
 }
 

@@ -7,12 +7,6 @@ $active = $_SESSION['active'];
 
 if($active != true) { header('Location: http://www.pornhub.com/'); }
 
-// define important user variables
-$username;
-$usergroup;
-$avatar;
-$uid;
-
 $result = $link->query("SELECT * FROM usertable");
 $rows = $result->num_rows;
 
@@ -27,7 +21,7 @@ $rows = $result->num_rows;
     </head>
     <body>
         <?php include_once('inc/navbar.php'); ?>
-        <div class="member-card">
+        <div class="middle-card">
             <?php
                 echo("<span class='member-count'>Total Members: $rows</span>"); // total members
                 foreach (range(1, $rows) as $id) { // loop though for each user

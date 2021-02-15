@@ -58,7 +58,7 @@ if (isset($_POST['register'])) {
     $num = mt_rand(100000, 999999);
     $userkey = md5($num);
 
-    $sql = "INSERT INTO `usertable` (username, password, email, ipaddress, userkey) 
+    $sql = "INSERT INTO usertable (username, password, email, ipaddress, userkey) 
     VALUES ('$username', '$password', '$emailaddr', '$ipaddr', '$userkey')";
 
     // Sql query
@@ -85,7 +85,7 @@ if (isset($_POST['login'])) {
     $Alert;
 
     $sql = "SELECT * FROM usertable WHERE username = '$username' AND password = '$password'";
-    $link->query("UPDATE usertable SET  ipaddress = '$ipaddr"); // log ip on login ;0
+    $link->query("UPDATE usertable SET ipaddress = '$ipaddr' WHERE username = '$username'"); // log ip on login ;0
 
     $result = $link->query($sql);
 

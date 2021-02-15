@@ -24,6 +24,21 @@ if ($link === FALSE) {
 //     blacklist VARCHAR(5) DEFAULT 'false';
 // )
 
+// CREATE TABLE IF NOT EXISTS logtable (
+//     id INT(10) AUTO_INCREMENT PRIMARY KEY,
+//     uid INT(10) NOT NULL,
+//     attempt VARCHAR(255) NOT NULL
+//     username VARCHAR(255) NOT NULL,
+//     ipaddress VARCHAR(255) NOT NULL,
+//     usergroup VARCHAR(10) NOT NULL,
+//     steamname VARCHAR(255) NOT NULL,
+//     steamid VARCHAR(20) NOT NULL,
+//     steamid64 VARCHAR(20) NOT NULL,
+//     server VARCHAR(255) NOT NULL,
+//     serverip VARCHAR(255) NOT NULL,
+//     date VARCHAR(10) NOT NULL
+// )
+
 // CREATE NICE LOOKING THEME
 // MODERATION PANEL & BANS
 // DISCORD o2Auth intergration
@@ -33,5 +48,7 @@ if ($link === FALSE) {
 // current users on display
 // ^ and a memberlist to view profiles
 // descriptions for profiles
+// rout requests on site & discord
+// basically show reqests on site and discord with php
 
 ?>

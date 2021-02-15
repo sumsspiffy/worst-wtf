@@ -8,6 +8,7 @@ $active = $_SESSION['active'];
 // don't think about coming here un announced :flushed:
 $result = $link->query("SELECT * FROM usertable WHERE userkey = '$userkey'");
 
+$usergroup;
 $discordid;
 $username;
 $avatar;
@@ -15,11 +16,15 @@ $avatar;
 if ($result->num_rows > 0) { 
     while($row = $result->fetch_assoc()) { 
         $discordid = $row['discordid'];
+        $usergroup = $row['usergroup'];
         $username = $row['username'];
         $avatar = $row['avatar'];
         $uid = $row['uid'];
 
         if(empty($avatar)) { $avatar = "./img/avatar.png"; }
+        if($usergroup == "admin") { 
+            $Buttons = "<a href='connections.php' class='nav'>Connections</a>";
+        }
     }
 }
 
@@ -38,7 +43,8 @@ echo("<div class='navbar-header'>
     </div>
 </div>
 <div class='bottom-navbar'>
-    <form action='members.php' method='post'><button class='btn nav'>Members</button></form>
+    <a href='members.php' class='nav'>Members</a>
+    $Buttons
 </div>
 ");
 
