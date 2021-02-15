@@ -254,20 +254,8 @@ body {
 .profile { font-size: 20px; background-image: none; background-color: purple; position: absolute; top: 0; bottom: 0; margin-top: auto; margin-bottom: auto; right: 30px; width: 13rem; height: 5rem; }
 .nav { background-color: rgba(0,0,0,0);font-size: 14px;font-weight: bold;background-image: none;position: relative;margin-top: 0%;right: 0; left: 0;width: 7.5rem;height: 2.5rem; color: rgba(255,255,255, 0.5); }
 .nav:hover { color: rgba(255,255,255, 0.9); }
+.admin-edit { background-image: none; background-color: purple; position: absolute; font-size: 20px; left: 0; right: 0;  top:0; margin-top: 84.3%; margin-right: auto; margin-left:auto; width: 50rem; }
 
-.admin-blacklist {
-    background-image: none; 
-    background-color: purple;
-    position: absolute; 
-    font-size: 20px; 
-    left: 0; 
-    right: 0; 
-    top:0;
-    margin-top: 84.3%;
-    margin-right: auto; 
-    margin-left:auto; 
-    width: 15rem; 
-}
 
 .input { 
     -webkit-text-security: none;

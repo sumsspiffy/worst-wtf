@@ -44,15 +44,26 @@ $info_height = "12.5rem";
 $button;
 $ipinfo;
 
-if(isset($_POST['blacklist'])) { 
-    if ($blacklist == "false") { $link->query("UPDATE usertable SET blacklist = 'true' where uid = '$uid'"); }
-    else { $link->query("UPDATE usertable SET blacklist = 'false' where uid = '$uid'"); }
+if(isset($_POST['update'])) { 
+
+    // gotta assign a new variable name ;()
+    $blacklist_change = $_POST['blacklist'];
+    $usergroup_change = $_POST['usergroup'];
+    $Valid = true;
+
+    $sql = "UPDATE usertable SET usergroup = '$usergroup_change', blacklist = '$blacklist_change' WHERE uid = '$uid'";
+    if (empty($blacklist_change)) { $sql = "UPDATE usertable SET usergroup = '$usergroup_change' WHERE uid = '$uid'"; }
+    if (empty($usergroup_change)) { $sql = "UPDATE usertable SET blacklist = '$blacklist_change' WHERE uid = '$uid'"; }
+
+    if($Valid) { 
+        $link->query($sql);
+    }
 }
 
 if($row = $user) { 
     if($row['usergroup'] == "admin") {
         $ipinfo = "<p class='info-text'><strong>Ip-Address: </strong><span>$ipaddress</span></p>";
-        $button = "<form method='post'><button type='submit' name='blacklist' class='btn admin-blacklist'>Blacklist</button>";
+        $button = "<button class='btn admin-edit'>Edit Information</button>";
         $emailinfo = "<p class='info-text'><strong>Email: </strong><span>$emailaddr</span></p>";
         $discordinfo = "<p class='info-text'><strong class='info-item'>Discord-Id: </strong><span class='info-value'>$discordid</span></p>";
         $card_height = "46.5rem";
@@ -70,11 +81,22 @@ $html = "
         $ipinfo
         $emailinfo
         $discordinfo
-        <p class='info-text'><strong>Blacklisted: </strong><span>$blacklist</span></p>
         <p class='info-text'><strong>Usergroup: </strong><span>$usergroup</span></p>
+        <p class='info-text'><strong>Blacklisted: </strong><span>$blacklist</span></p>
         <p class='info-text'><strong>UID: </strong><span>$uid</span></p>
     </div>
     $button
+</div>
+<div class='fade-background'>
+    <div class='password-card' style='width: 36rem; height: 14rem;'>
+        <form method='post'>
+            <div class='settings-frame' style='height: 145px;'>
+                <input type='text' class='input' name='usergroup' placeholder='admin/user' autocomplete='off'>
+                <input type='text' class='input' name='blacklist' placeholder='true/false' autocomplete='off'>
+            </div>
+            <button type='submit' name='update' class='btn save' style='width: 35rem;'>Update Information</button>
+        </form>
+    </div>
 </div>";
 
 ?>
@@ -86,5 +108,12 @@ $html = "
     </head>
     <body>
         <?php include_once('inc/navbar.php'); echo($html); ?>
+        <script>
+            var background = $('.fade-background'); var card = $('.password-card');
+            $('.admin-edit').click(function() { background.fadeIn(350); });
+            $(document).mouseup(function(e) { 
+                if(!card.is(e.target) && card.has(e.target).length === 0 && background.css('display') != 'none') { background.fadeOut(350); }
+            })
+        </script>
     </body>
 </html>
