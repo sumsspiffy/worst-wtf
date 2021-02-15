@@ -36,6 +36,10 @@ echo("<div class='navbar-header'>
         <form action='settings.php' method='post'><button type='submit' class='btn dropdown effect-click'>Settings</button></form>
         <form action='login.php' method='post'><button type='submit' name='logout' class='btn dropdown effect-click'>Logout</button></form> 
     </div>
-</div>");
+</div>
+<div class='bottom-navbar'>
+    <form action='members.php' method='post'><button class='btn nav'>Members</button></form>
+</div>
+");
 
 ?>

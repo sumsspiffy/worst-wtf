@@ -13,6 +13,7 @@ $emailaddr;
 $username;
 $usergroup;
 $avatar;
+$blacklist;
 $uid = $_GET['uid'];
 
 $result = $link->query("SELECT * FROM usertable WHERE uid = '$uid'");
@@ -21,6 +22,7 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) { 
         $uid = $row['uid'];
         $emailaddr = $row['email'];
+        $blacklist = $row['blacklist'];
         $username = $row['username']; 
         $usergroup = $row['usergroup'];
         $discordid = $row['discordid'];
@@ -37,29 +39,42 @@ if ($result->num_rows > 0) {
 $user = $link->query("SELECT usergroup FROM usertable WHERE userkey = '$userkey'")->fetch_assoc();
 
 // size vars for $html
-$card_height = "39rem";
-$info_height = "15rem";
+$card_height = "37rem";
+$info_height = "12.5rem";
+$button;
+$ipinfo;
+
+if(isset($_POST['blacklist'])) { 
+    if ($blacklist == "false") { $link->query("UPDATE usertable SET blacklist = 'true' where uid = '$uid'"); }
+    else { $link->query("UPDATE usertable SET blacklist = 'false' where uid = '$uid'"); }
+}
 
 if($row = $user) { 
     if($row['usergroup'] == "admin") {
         $ipinfo = "<p class='info-text'><strong>Ip-Address: </strong><span>$ipaddress</span></p>";
-        $card_height = "41rem";
-        $info_height = "17rem";
+        $button = "<form method='post'><button type='submit' name='blacklist' class='btn admin-blacklist'>Blacklist</button>";
+        $emailinfo = "<p class='info-text'><strong>Email: </strong><span>$emailaddr</span></p>";
+        $discordinfo = "<p class='info-text'><strong class='info-item'>Discord-Id: </strong><span class='info-value'>$discordid</span></p>";
+        $card_height = "46.5rem";
+        $info_height = "18.5rem";
+        $position = "3.2%";
     }
 }
 
 $html = "
-<div class='profile-card' style='height:$card_height;'>
+<div class='profile-card' style='margin-top:$position;height:$card_height;'>
     <img class='rounded-circle profile-pfp' src='$avatar'>
     <span class='profile-name'>$username</span>
     <div class='profile-info' style='height:$info_height;'>
         <h4 class='info-header'>User-Information</h4>
         $ipinfo
-        <p class='info-text'><strong>Email: </strong><span>$emailaddr</span></p>
-        <p class='info-text'><strong class='info-item'>Discord-Id: </strong><span class='info-value'>$discordid</span></p>
+        $emailinfo
+        $discordinfo
+        <p class='info-text'><strong>Blacklisted: </strong><span>$blacklist</span></p>
         <p class='info-text'><strong>Usergroup: </strong><span>$usergroup</span></p>
         <p class='info-text'><strong>UID: </strong><span>$uid</span></p>
     </div>
+    $button
 </div>";
 
 ?>
@@ -70,6 +85,6 @@ $html = "
         <link rel='stylesheet' href='./css/dashboard.css'>
     </head>
     <body>
-        <?php include_once('inc/navbar.php'); include_once('inc/sidebar.php'); echo($html); ?>
+        <?php include_once('inc/navbar.php'); echo($html); ?>
     </body>
 </html>

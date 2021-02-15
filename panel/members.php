@@ -16,6 +16,8 @@ $uid;
 $result = $link->query("SELECT * FROM usertable");
 $rows = $result->num_rows;
 
+// ADD BAN SYSTEM NEXT
+// THIS IS A FUCKING MUST!!!
 ?>
 
 <html>
@@ -24,9 +26,10 @@ $rows = $result->num_rows;
         <link rel='stylesheet' href='./css/dashboard.css'>
     </head>
     <body>
-        <?php include_once('inc/navbar.php'); include_once('inc/sidebar.php'); ?>
+        <?php include_once('inc/navbar.php'); ?>
         <div class="member-card">
             <?php
+                echo("<span class='member-count'>Total Members: $rows</span>"); // total members
                 foreach (range(1, $rows) as $id) { // loop though for each user
                     // takes the rows & checks for that user in the range of every user
                     $result = $link->query("SELECT * FROM usertable WHERE uid = '$id'")->fetch_assoc();

@@ -111,7 +111,7 @@ $html = "
         <script src="js/jquery.min.js"></script>
     </head>
     <body>
-        <?php include_once('inc/navbar.php'); include_once('inc/sidebar.php'); echo($html); ?>
+        <?php include_once('inc/navbar.php'); echo($html); ?>
         <script>
             var pass = $('.pass'); var link = $('.link'); var background = $('.fade-background'); var card = $('.password-card');
             pass.click(function() { background.fadeIn(350); });

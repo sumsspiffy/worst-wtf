@@ -20,7 +20,8 @@ if ($link === FALSE) {
 //     usergroup VARCHAR(10) DEFAULT 'user',
 //     avatar VARCHAR(255),
 //     discordid VARCHAR(255),
-//     userkey VARCHAR(255) NOT NULL
+//     userkey VARCHAR(255) NOT NULL,
+//     blacklist VARCHAR(5) DEFAULT 'false';
 // )
 
 // CREATE NICE LOOKING THEME
