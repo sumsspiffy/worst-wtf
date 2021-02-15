@@ -14,6 +14,7 @@ body {
     line-height: 1.5;
     color: #fff;
     background-color: #181818;
+    overflow-y: auto;
 }
 
 .navbar-header { 
@@ -35,6 +36,15 @@ body {
     overflow: hidden;
 }
 
+.sidebar {
+    background-color: rgba(26,26,26,0.8);
+    box-shadow: 0 0 0.1rem rgba(0, 0, 0, 0.1);
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 4%;
+}
+
 .banner { 
     vertical-align: middle;
     border-style: none;
@@ -50,6 +60,7 @@ body {
     font-size: 0.875rem;
     line-height: 1.5;
     border-style: none;
+    cursor: pointer;
 }
 
 .btn:focus { outline: none; }
@@ -84,6 +95,7 @@ body {
     width: 12rem;
     height: 12rem;
     display: none;
+    z-index : 1;
 }
 
 .dropdown { 
@@ -96,6 +108,77 @@ body {
     top: 10px;
     right: 0;
     left: 8px;
+}
+
+.member-card {
+    background-color: rgb(34,34,34);
+    box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.2);
+    border-radius: 0.3rem;
+    border: 5px solid rgb(34,34,34);
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 2.5%;
+    margin-right: auto;
+    margin-left: auto;
+    width: 70%;
+    height: 85%;
+    overflow:auto;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #2b2b2b;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #575757;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.member-select {
+    background-color: rgb(40,40,40);
+    box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    position: relative;
+    left: 0;
+    right: 0;
+    margin-top: 2.5%;
+    margin-right: auto;
+    margin-left: auto;
+    width: 70%;
+    height: 10rem;
+}
+
+.member-name { 
+    font-size: 55px;
+    position: absolute;
+    margin-top: 4%;
+    margin-left: 5%;
+    margin-bottom: auto;
+}
+
+.member-pfp {
+    background-color: rgba(255,255,255,.5);
+    vertical-align: middle;
+    position: relative;
+    border-style: none;
+    padding: 3px;
+    margin-top: 0.9rem;
+    margin-left: 0;
+    width: 8rem;
+    left: 15px;
 }
 
 .settings-card {
@@ -159,6 +242,9 @@ body {
 .save { position: absolute; font-size: 20px; left: 0; right: 0; bottom: 15px; margin-right: auto; margin-left: auto; width: 40rem; }
 .link { font-size: 16px; background-image: none; background-color: purple; position: absolute; bottom: 10px; left: 30px; width: 15rem; height: 3rem; }
 .pass { font-size: 16px; background-image: none; background-color: purple; position: absolute; bottom: 10px; right: 30px; width: 15rem; height: 3rem; }
+.profile { font-size: 20px; background-image: none; background-color: purple; position: absolute; top: 0; bottom: 0; margin-top: auto; margin-bottom: auto; right: 30px; width: 13rem; height: 5rem; }
+.members { background-color: rgba(0,0,0,0);font-size: 14px;font-weight: bold;background-image: none;position: relative;margin-top: 0%;right: 0; left: 0;width: 7.5rem;height: 2.5rem; color: rgba(255,255,255, 0.5); }
+.members:hover { color: rgba(255,255,255, 0.9); }
 
 .input { 
     -webkit-text-security: none;

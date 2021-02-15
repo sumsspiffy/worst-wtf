@@ -1,50 +1,3 @@
-<html>
-    <head>
-        <title>Worst</title>
-        <link rel='stylesheet' href='css/login.css'>
-        <script src="js/jquery.min.js"></script>
-        <script src="js/login.js"></script>
-        <meta name="theme-color" content="#86ffba">
-        <meta property="og:title" content="w0rst.xyz">
-        <meta property="og:image" content="img/logo.png">
-        <meta property="og:description" content="Worst-Project | Backdoor Panel/Script">
-    </head>
-    <body>
-        <img class="img" src="img/logo.png">
-        <button id="show" class="btn ripple">LOGIN/REGISTER</button>
-        <div class="content">
-            <div class="card"> 
-                <div class="nav">
-                    <button id="login" class="btn tab">LOGIN</button>
-                    <button id="register" class="btn tab">REGISTER</button>
-                </div>
-                <div class="login-tab">
-                    <form method="post">
-                        <div class="frame">
-                            <input type="text" id="username" class="input user" name="username" placeholder="username" autocomplete="on">
-                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="off">
-                        </div>
-                        <button type="submit" name="login" class="btn login">Login</button>
-                    </form>
-                </div>
-                <div class="register-tab">
-                    <form method="post">
-                        <div class="frame">
-                            <input type="text" id="email" class="input email" name="email" placeholder="email" autocomplete="on">
-                            <input type="text" id="username" class="input user" name="username" placeholder="username" autocomplete="on">
-                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="off">
-                        </div>
-                        <div id="g-recaptcha" class="recaptcha" data-sitekey="6LcGMlYaAAAAAMS0U3qaBpNZM10D1C8mSXq_4yPq"></div>
-                        <script>var onloadCallback = function() {grecaptcha.render("g-recaptcha", {'sitekey' :'6LcGMlYaAAAAAMS0U3qaBpNZM10D1C8mSXq_4yPq','theme':'dark'})};</script>
-                        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"async defer></script>
-                        <button type="submit" name="register" class="btn register">Sign Up</button>
-                    </form>
-                </div>
-            </div> 
-        </div>
-    </body>
-</html>
-
 <?php
 session_start();
 require_once("config.php");
@@ -158,3 +111,50 @@ if (isset($_POST['logout'])) {
 }
 
 ?>
+
+<html>
+    <head>
+        <title>Worst</title>
+        <link rel='stylesheet' href='css/login.css'>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/login.js"></script>
+        <meta name="theme-color" content="#86ffba">
+        <meta property="og:title" content="w0rst.xyz">
+        <meta property="og:image" content="img/logo.png">
+        <meta property="og:description" content="Worst-Project | Backdoor Panel/Script">
+    </head>
+    <body>
+        <img class="img" src="img/logo.png">
+        <button id="show" class="btn ripple">LOGIN/REGISTER</button>
+        <div class="content">
+            <div class="card"> 
+                <div class="nav">
+                    <button id="login" class="btn tab">LOGIN</button>
+                    <button id="register" class="btn tab">REGISTER</button>
+                </div>
+                <div class="login-tab">
+                    <form method="post">
+                        <div class="frame">
+                            <input type="text" id="username" class="input user" name="username" placeholder="username" autocomplete="on">
+                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="off">
+                        </div>
+                        <button type="submit" name="login" class="btn login">Login</button>
+                    </form>
+                </div>
+                <div class="register-tab">
+                    <form method="post">
+                        <div class="frame">
+                            <input type="text" id="email" class="input email" name="email" placeholder="email" autocomplete="on">
+                            <input type="text" id="username" class="input user" name="username" placeholder="username" autocomplete="on">
+                            <input type="text" id="password" class="input pass" name="password" placeholder="password" autocomplete="off">
+                        </div>
+                        <div id="g-recaptcha" class="recaptcha" data-sitekey="6LcGMlYaAAAAAMS0U3qaBpNZM10D1C8mSXq_4yPq"></div>
+                        <script>var onloadCallback = function() {grecaptcha.render("g-recaptcha", {'sitekey' :'6LcGMlYaAAAAAMS0U3qaBpNZM10D1C8mSXq_4yPq','theme':'dark'})};</script>
+                        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"async defer></script>
+                        <button type="submit" name="register" class="btn register">Sign Up</button>
+                    </form>
+                </div>
+            </div> 
+        </div>
+    </body>
+</html>

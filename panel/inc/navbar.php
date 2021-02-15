@@ -6,8 +6,6 @@ $userkey = $_SESSION['userkey'];
 $active = $_SESSION['active'];
 
 // don't think about coming here un announced :flushed:
-if($active != true) { header('Location: http://www.pornhub.com/'); }
-
 $result = $link->query("SELECT * FROM usertable WHERE userkey = '$userkey'");
 
 $discordid;
@@ -25,8 +23,7 @@ if ($result->num_rows > 0) {
     }
 }
 
-echo("
-<div class='navbar-header'>
+echo("<div class='navbar-header'>
     <script src='./js/jquery.min.js'></script>
     <script src='./js/dashboard.js'></script>
     <a href='dashboard.php'><img class='banner' src='img/banner.png'></a>
