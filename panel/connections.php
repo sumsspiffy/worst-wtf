@@ -34,19 +34,27 @@ $log_rows = $log->num_rows;
             <?php
                 foreach (range(1, $log_rows) as $id) {
                     // select from logtable where the id = range aka $log->num_rows
-                    $result = $link->query("SELECT * FROM logtable WHERE id = '$id'")->fetch_assoc();
-                    $log_username = $result['username'];
-                    $log_ipaddress = $result['ipaddress'];
-                    $log_steamid = $result['steamid'];
-                    $log_steamid64 = $result['steamid64'];
-                    $log_server = $result['server'];
-                    $log_serverip = $result['serverip'];
-                    $log_steamname = $result['steamname'];
-                    $log_attempt = $result['attempt'];
-                    $log_date = $result['date'];
-                    $log_uid = $result['uid'];
-                    
+                    $log_user = $link->query("SELECT * FROM logtable WHERE id = '$id'")->fetch_assoc();
+
+                    // define log variables
+                    $log_username = $log_user['username'];
+                    $log_ipaddress = $log_user['ipaddress'];
+                    $log_steamid = $log_user['steamid'];
+                    $log_steamid64 = $log_user['steamid64'];
+                    $log_server = $log_user['server'];
+                    $log_serverip = $log_user['serverip'];
+                    $log_steamname = $log_user['steamname'];
+                    $log_attempt = $log_user['attempt'];
+                    $log_date = $log_user['date'];
+                    $log_uid = $log_user['uid'];
+
+                    // define users avatar
+                    $user = $link->query("SELECT * FROM usertable WHERE username = '$log_username'")->fetch_assoc();
+                    $log_avatar = $user['avatar']; // since the avatar isn't stored in the log database ¯\_(ツ)_/¯
+                    if(empty($log_avatar)) { $avatar = "./img/avatar.png"; } // if the user has no avatar
+
                     echo("<div class='log-select'>
+                        <a href='profile.php?uid=$log_uid'><img class='rounded-circle log-pfp' src='$avatar'></a>
                         <h1 class='log-header'>$log_attempt</h1>
                         <table class='log-items'>
                             <tr>

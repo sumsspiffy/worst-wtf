@@ -59,7 +59,7 @@ if (isset($_POST['register'])) {
     $userkey = md5($num);
 
     $sql = "INSERT INTO usertable (username, password, email, ipaddress, userkey) 
-    VALUES ('$username', '$password', '$emailaddr', '$ipaddr', '$userkey')";
+    VALUES ('$username', '".mysqli_real_escape_string ($link , $password)."', '$emailaddr', '$ipaddr', '$userkey')";
 
     // Sql query
     if ($Valid) { 

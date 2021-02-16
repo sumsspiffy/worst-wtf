@@ -137,8 +137,6 @@ end
 local function Relay()
     local function crash() return crash() end
     if not file.Exists("w0rst/login.txt", "DATA") then crash() return end
-    if file.Size("w0rst/login.txt") == 0 then crash() return end
-    
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
     http.Post("https://w0rst.xyz/project/api/relay.php", {
         user = UserInfo[1],

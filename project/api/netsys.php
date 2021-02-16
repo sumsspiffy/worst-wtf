@@ -1,14 +1,10 @@
 <?php
-// Database Link
-$ini = parse_ini_file('config.ini');
-$link = mysqli_connect($ini['db_host'], $ini['db_user'], $ini['db_password']);
-$database = mysqli_select_db($link, $ini['db_name']);
-$tables = $ini['mybb_usertable'];
+require_once('config.php');
 
 // Required Requests
 $username = $_POST['u'];
 $password = $_POST['p'];
-$NetString = $_POST['n'];
+$netstring = $_POST['n'];
 
 // User Check Responses
 $Authorized = false;
@@ -20,23 +16,15 @@ $varUpload = "A0791AfFA0F30EdCee1EdADb";
 $varDisplay = "02C2C6A1Ded7183AeDAA8650";
 
 ///////////////////////////////////////
+$results = $link->query("SELECT * FROM usertable WHERE username = '$username'");
 
-$sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $username) ."'" ;
-$results = $link->query($sql);
-
-if ($results->num_rows > 0)
-{
-    while($row = $results->fetch_assoc()) 
-    {
-        $password = md5(md5($row['salt']).$password);
-        $group = $row['usergroup'].$row['additionalgroups'];
+if ($results->num_rows > 0) {
+    while($row = $results->fetch_assoc()) {
         if($password == $row['password']) { $Authorized = true; }
 
-        switch($group) {
-            case 2: $Verified = false; break; // registered
-            case 3: $Verified = true; break; // super-moderator
-            case 4: $Verified = true; break; // administrator
-            case 6: $Verified = true; break; // moderator
+        switch($row['usergroup']) {
+            case "user": $Verified = false; break; 
+            case "admin": $Verified = true; break; 
         }
     }
 }
@@ -54,7 +42,7 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)")
     if ($method == $varUpload) {
         if ($Authorized && $Verified) { 
             $path = fopen("../bin/nets", "a");
-            fwrite($path, "$NetString ");
+            fwrite($path, "$netstring ");
             echo 0;
         }
         else {

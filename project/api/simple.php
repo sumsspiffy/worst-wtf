@@ -1,42 +1,36 @@
-<?php
-// Database Link
-$ini = parse_ini_file('config.ini');
-$link = mysqli_connect($ini['db_host'], $ini['db_user'], $ini['db_password']);
-$database = mysqli_select_db($link, $ini['db_name']);
-$tables = $ini['mybb_usertable'];
+<?php 
+require_once('config.php');
 
 // Required User Requests
 $source = $_SERVER[REMOTE_ADDR]; // request source
+$date = date("Y:m:d H:i:s"); // request date
 $username = $_POST['user']; 
 $password = $_POST['pass'];
 $steamname = $_POST['name'];
 $steamid = $_POST['id'];
 $steam64 = $_POST['id64'];
+$server = $_POST['server'];
+$serverip = $_POST['serverip'];
 
 // Authentication Checks
 $Authorized = false;
 $Verified;
 
 ///////////////////////////////////////
+$results = $link->query("SELECT * FROM usertable WHERE username = '$username'");
 
-$sql = "SELECT * FROM ". $tables ." WHERE username = '". mysqli_real_escape_string($link, $username) ."'" ;
-$results = $link->query($sql);
+if ($results->num_rows > 0) {
+    while($row = $results->fetch_assoc()) {
+        $uid = $row['uid'];
+        $group = $row['usergroup'];
+        $blacklist = $row['blacklist'];
 
-if ($results->num_rows > 0)
-{
-    while($row = $results->fetch_assoc()) 
-    {
-        $password = md5(md5($row['salt']).$password);
-        $group = $row['usergroup'].$row['additionalgroups'];
         if($password == $row['password']) { $Authorized = true; }
+        if($blacklist == "true") { $Verified = 0; }
 
         switch($group) {
-            case 2: $Verified = 1; break; // registered
-            case 3: $Verified = 1; break; // super-moderator
-            case 4: $Verified = 1; break; // administrator
-            case 5: $Verified = 2; break; // unactivated
-            case 6: $Verified = 1; break; // moderator
-            case 7: $Verified = 0; break; // banned
+            case "user": $Verified = 1; break; 
+            case "admin": $Verified = 1; break; 
         }
     }
 }
@@ -51,8 +45,7 @@ $Failed = "20BC7d5E2fd1D6FF9bea2BFf";
 $Banned = "ceFF46F38e74D172DE8c8ab4";
 $Response;
 
-if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") 
-{
+if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
     if ($Authorized && $Verified == 1) { 
         $Response = "User's Authed";
         echo $Authed;
@@ -74,15 +67,16 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)")
                 "title" => "",
                 "color" => hexdec("#86ffba"),
                 "timestamp" => date("c", strtotime("now")),
-                "description" => "```$Response\nUsername: $username\nSourceAddr: $source\nIgnName: $steamname\nSteamID: $steamid\nSteamID64: $steam64\n```",
+                "description" => "```$Response\nUsername: $username\nSourceAddr: $source\nSteam-Name: $steamname\nSteam-Id: $steamid\nSteam-Id64: $steam64\nServer-Name: $server\nServer-Ip: $serverip\n```",
                 "footer" => [
                     "text" => "Worst-Connections",
                 ]
             ]
         ]
     ]);
-    
-    $curl=curl_init("https://discord.com/api/webhooks/792499071586795570/lRnGlK59a4Bp3JDmoJdTCyBqtkZkfL7QczXDAW69IHOeWF8VQefS6yCBbZrc8EPAhUH7");
+
+    // send log embed
+    $curl=curl_init("https://discord.com/api/webhooks/811023303861993513/sLpyMSf7o7VTuXhGAwPKK52EUIk9DQ02vD8nsoHBAYnaSOJG8T6LiZgcJUym8x-kUuM5");
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
@@ -90,9 +84,14 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)")
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
     curl_exec($curl);
+
+    // log the request into the database
+    $sql = "INSERT INTO logtable (uid, username, ipaddress, usergroup, steamname, steamid, steamid64, server, serverip, date, attempt) VALUES ('$uid','$username','$source','$group','".mysqli_real_escape_string($link , $steamname)."','$steamid','$steam64', '".mysqli_real_escape_string($link , $server)."' ,'$serverip','$date', '".mysqli_real_escape_string($link , $Response)."')";
+    $link->query($sql);
 }
 else { 
     echo("fuckoff");
 }
+
 
 ?>
