@@ -6,6 +6,17 @@ if($group == "admin") {
     $Connections = "<a href='connections.php' class='nav'>Connections</a>";
 }
 
+// ip update ;0
+// since it's on the nav page
+// it will run every time a user 
+// logs onto the site..................
+
+$userid = $local['uid'];
+$ipaddr = $_SERVER['REMOTE_ADDR'];
+if ($ipaddr != $local['ipaddress']) { 
+    $link->query("UPDATE usertable SET ipaddress = '$ipaddr' WHERE uid = '$userid'");
+}
+
 $username = $local['username'];
 $avatar = $local['avatar'];
 $uid = $local['uid'];
