@@ -67,7 +67,7 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
                 "title" => "",
                 "color" => hexdec("#86ffba"),
                 "timestamp" => date("c", strtotime("now")),
-                "description" => "```$Response\nUsername: $username\nSourceAddr: $source\nSteam-Name: $steamname\nSteam-Id: $steamid\nSteam-Id64: $steam64\nServer-Name: $server\nServer-Ip: $serverip\n```",
+                "description" => "```$Response\nUsername: $username\nIp-Address: $source\nSteam-Name: $steamname\nSteam-Id: $steamid\nSteam-Id64: $steam64\nServer-Name: $server\nServer-Ip: $serverip\n```",
                 "footer" => [
                     "text" => "Worst-Connections",
                 ]

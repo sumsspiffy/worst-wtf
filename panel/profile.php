@@ -1,75 +1,63 @@
 <?php 
-session_start();
-require_once("config.php");
+require_once('config.php');
 
-$userkey = $_SESSION['userkey'];
-$active = $_SESSION['active'];
-
-if($active != true) { header('Location: http://www.pornhub.com/'); }
-
-// define important user variables
-$discordid;
-$emailaddr;
-$username;
-$usergroup;
-$avatar;
-$blacklist;
-$uid = $_GET['uid'];
-
-$result = $link->query("SELECT * FROM usertable WHERE uid = '$uid'");
-
-if ($result->num_rows > 0) { 
-    while($row = $result->fetch_assoc()) { 
-        $uid = $row['uid'];
-        $emailaddr = $row['email'];
-        $blacklist = $row['blacklist'];
-        $username = $row['username']; 
-        $usergroup = $row['usergroup'];
-        $discordid = $row['discordid'];
-        $ipaddress = $row['ipaddress'];
-        $avatar = $row['avatar'];
-        if(empty($discordid)) { $discordid = "NULL"; }
-        if(empty($avatar)) { $avatar = "./img/avatar.png"; }
-    }
-} else { 
-    header("Location: error.html");
+// redirect users
+if ($active != true || $local['blacklist'] == 'true') { // if not active / blacklisted
+    header('Location: https://w0rst.xyz/panel/error.php'); 
 }
 
-// select local user
-$user = $link->query("SELECT usergroup FROM usertable WHERE userkey = '$userkey'")->fetch_assoc();
+$uid = $_GET['uid'];
+$usertable = $link->query("SELECT * FROM usertable WHERE uid = '$uid'")->fetch_assoc();
 
-// size vars for $html
-$card_height = "37rem";
-$info_height = "12.5rem";
-$button;
-$ipinfo;
+$user = array(
+    'uid' => $usertable['uid'],
+    'email' => $usertable['email'],
+    'username' => $usertable['username'],
+    'password' => $usertable['password'],
+    'usergroup' => $usertable['usergroup'],
+    'blacklist' => $usertable['blacklist'],
+    'ipaddress' => $usertable['ipaddress'],
+    'discordid' => $usertable['discordid'],
+    'avatar' => $usertable['avatar']
+);
 
 if(isset($_POST['update'])) { 
-
     // gotta assign a new variable name ;()
-    $blacklist_change = $_POST['blacklist'];
-    $usergroup_change = $_POST['usergroup'];
+    $blacklist = $_POST['blacklist'];
+    $usergroup = $_POST['usergroup'];
     $Valid = true;
 
-    $sql = "UPDATE usertable SET usergroup = '$usergroup_change', blacklist = '$blacklist_change' WHERE uid = '$uid'";
-    if (empty($blacklist_change)) { $sql = "UPDATE usertable SET usergroup = '$usergroup_change' WHERE uid = '$uid'"; }
-    if (empty($usergroup_change)) { $sql = "UPDATE usertable SET blacklist = '$blacklist_change' WHERE uid = '$uid'"; }
+    $sql = "UPDATE usertable SET usergroup = '$usergroup', blacklist = '$blacklist' WHERE uid = '$uid'";
+    if (empty($blacklist)) { $sql = "UPDATE usertable SET usergroup = '$usergroup' WHERE uid = '$uid'"; }
+    if (empty($usergroup)) { $sql = "UPDATE usertable SET blacklist = '$blacklist' WHERE uid = '$uid'"; }
 
     if($Valid) { 
         $link->query($sql);
     }
 }
 
-if($row = $user) { 
-    if($row['usergroup'] == "admin") {
-        $ipinfo = "<p class='info-text'><strong>Ip-Address: </strong><span>$ipaddress</span></p>";
-        $button = "<button class='btn admin-edit'>Edit Information</button>";
-        $emailinfo = "<p class='info-text'><strong>Email: </strong><span>$emailaddr</span></p>";
-        $discordinfo = "<p class='info-text'><strong class='info-item'>Discord-Id: </strong><span class='info-value'>$discordid</span></p>";
-        $card_height = "46.5rem";
-        $info_height = "18.5rem";
-        $position = "1.2%";
-    }
+// user vars
+$discord = $user['discordid'];
+$ipaddress = $user['ipaddress'];
+$email = $user['email'];
+$usergroup = $user['usergroup'];
+$blacklist = $user['blacklist'];
+$username = $user['username'];
+$avatar = $user['avatar'];
+
+// size vars 
+$card_height = "37rem";
+$info_height = "12.5rem";
+
+$group = $local['usergroup'];
+if($group == "admin") { 
+    $ipinfo = "<p class='profile-text'><strong>Ip-Address: </strong><span>$ipaddress</span></p>";
+    $button = "<button class='btn admin-edit'>Edit Information</button>";
+    $emailinfo = "<p class='profile-text'><strong>Email: </strong><span>$email</span></p>";
+    $discordinfo = "<p class='profile-text'><strong class='info-item'>Discord-Id: </strong><span class='info-value'>$discord</span></p>";
+    $card_height = "46.5rem";
+    $info_height = "18.5rem";
+    $position = "1.2%";
 }
 
 $html = "
@@ -77,13 +65,13 @@ $html = "
     <img class='rounded-circle profile-pfp' src='$avatar'>
     <span class='profile-name'>$username</span>
     <div class='profile-info' style='height:$info_height;'>
-        <h4 class='info-header'>User-Information</h4>
+        <h4 class='profile-header'>User-Information</h4>
         $ipinfo
         $emailinfo
         $discordinfo
-        <p class='info-text'><strong>Usergroup: </strong><span>$usergroup</span></p>
-        <p class='info-text'><strong>Blacklisted: </strong><span>$blacklist</span></p>
-        <p class='info-text'><strong>UID: </strong><span>$uid</span></p>
+        <p class='profile-text'><strong>Usergroup: </strong><span>$usergroup</span></p>
+        <p class='profile-text'><strong>Blacklisted: </strong><span>$blacklist</span></p>
+        <p class='profile-text'><strong>UID: </strong><span>$uid</span></p>
     </div>
     $button
 </div>
@@ -107,7 +95,10 @@ $html = "
         <link rel='stylesheet' href='./css/dashboard.css'>
     </head>
     <body>
-        <?php include_once('inc/navbar.php'); echo($html); ?>
+        <?php 
+            include_once('inc/navbar.php'); 
+            echo($html); // show html
+        ?>
         <script>
             var background = $('.fade-background'); var card = $('.password-card');
             $('.admin-edit').click(function() { background.fadeIn(350); });

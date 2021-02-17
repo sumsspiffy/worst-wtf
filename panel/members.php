@@ -1,17 +1,14 @@
 <?php 
-session_start();
-require_once("config.php");
+require_once('config.php');
 
-$userkey = $_SESSION['userkey'];
-$active = $_SESSION['active'];
-
-if($active != true) { header('Location: http://www.pornhub.com/'); }
+// redirect users
+if ($active != true || $local['blacklist'] == 'true') { // if not active / blacklisted
+    header('Location: https://w0rst.xyz/panel/error.php'); 
+}
 
 $result = $link->query("SELECT * FROM usertable");
 $rows = $result->num_rows;
 
-// ADD BAN SYSTEM NEXT
-// THIS IS A FUCKING MUST!!!
 ?>
 
 <html>
@@ -33,9 +30,6 @@ $rows = $result->num_rows;
                     $avatar = $result['avatar'];
                     $username = $result['username'];
 
-                    // just so it doesn't give shitty avatars
-                    if(empty($avatar)) { $avatar = "./img/avatar.png"; }
-                    
                     echo("<div class='member-select'>
                         <img class='rounded-circle member-pfp' src='$avatar'>
                         <span class='member-name'>$username</span>

@@ -1,32 +1,14 @@
 <?php
-session_start();
 require_once("config.php");
 
-$userkey = $_SESSION['userkey'];
-$active = $_SESSION['active'];
-
-// don't think about coming here un announced :flushed:
-$result = $link->query("SELECT * FROM usertable WHERE userkey = '$userkey'");
-
-$usergroup;
-$discordid;
-$username;
-$avatar;
-
-if ($result->num_rows > 0) { 
-    while($row = $result->fetch_assoc()) { 
-        $discordid = $row['discordid'];
-        $usergroup = $row['usergroup'];
-        $username = $row['username'];
-        $avatar = $row['avatar'];
-        $uid = $row['uid'];
-
-        if(empty($avatar)) { $avatar = "./img/avatar.png"; }
-        if($usergroup == "admin") { 
-            $Buttons = "<a href='connections.php' class='nav'>Connections</a>";
-        }
-    }
+$group = $local['usergroup'];
+if($group == "admin") { 
+    $Connections = "<a href='connections.php' class='nav'>Connections</a>";
 }
+
+$username = $local['username'];
+$avatar = $local['avatar'];
+$uid = $local['uid'];
 
 echo("<div class='navbar-header'>
     <script src='./js/jquery.min.js'></script>
@@ -43,8 +25,9 @@ echo("<div class='navbar-header'>
     </div>
 </div>
 <div class='bottom-navbar'>
+    <a href='info.php' class='nav'>Info</a>
     <a href='members.php' class='nav'>Members</a>
-    $Buttons
+    $Connections
 </div>
 ");
 

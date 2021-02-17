@@ -6,20 +6,21 @@
 // FOR ADDING TO THE LOG TABLE INSERT DATA LIKE LOGIN.PHP
 // ADD time & date as well $date = date("Y:m:d H:i:s")
 
-session_start();
-require_once("config.php");
+require_once('config.php');
 
-$userkey = $_SESSION['userkey'];
-$active = $_SESSION['active'];
+// redirect users
+if ($active != true || $local['blacklist'] == 'true') { // if not active / blacklisted
+    header('Location: https://w0rst.xyz/panel/error.php'); 
+}
+
 
 // go to usertable and look for the user connection to the site
 $user = $link->query("SELECT * FROM usertable WHERE userkey = '$userkey'")->fetch_assoc();
 
-if($active != true) { header('Location: http://www.pornhub.com/'); }
-if ($user['usergroup'] != 'admin') { header('Location: http://www.pornhub.com/'); }
+if($user['usergroup'] != 'admin') { echo $redirect; }
 
 $log = $link->query("SELECT * FROM logtable");
-$log_rows = $log->num_rows;
+$rows = $log->num_rows;
 
 ?>
 
@@ -32,29 +33,29 @@ $log_rows = $log->num_rows;
         <?php include_once('inc/navbar.php'); ?>
         <div class="middle-card" style="width:50%;height:75%;left: 0;right: 0;top: 0;bottom: 0;margin-top: 8.5%;margin-bottom:auto;margin-right: auto;margin-left: auto;">
             <?php
-                foreach (range(1, $log_rows) as $id) {
+                foreach (range(1, $rows) as $id) {
                     // select from logtable where the id = range aka $log->num_rows
-                    $log_user = $link->query("SELECT * FROM logtable WHERE id = '$id'")->fetch_assoc();
+                    $info = $link->query("SELECT * FROM logtable WHERE id = '$id'")->fetch_assoc();
 
                     // define log variables
-                    $log_username = $log_user['username'];
-                    $log_ipaddress = $log_user['ipaddress'];
-                    $log_steamid = $log_user['steamid'];
-                    $log_steamid64 = $log_user['steamid64'];
-                    $log_server = $log_user['server'];
-                    $log_serverip = $log_user['serverip'];
-                    $log_steamname = $log_user['steamname'];
-                    $log_attempt = $log_user['attempt'];
-                    $log_date = $log_user['date'];
-                    $log_uid = $log_user['uid'];
+                    $log_username = $info['username'];
+                    $log_ipaddress = $info['ipaddress'];
+                    $log_steamid = $info['steamid'];
+                    $log_steamid64 = $info['steamid64'];
+                    $log_server = $info['server'];
+                    $log_serverip = $info['serverip'];
+                    $log_steamname = $info['steamname'];
+                    $log_attempt = $info['attempt'];
+                    $log_date = $info['date'];
+                    $log_uid = $info['uid'];
 
                     // define users avatar
                     $user = $link->query("SELECT * FROM usertable WHERE username = '$log_username'")->fetch_assoc();
                     $log_avatar = $user['avatar']; // since the avatar isn't stored in the log database ¯\_(ツ)_/¯
-                    if(empty($log_avatar)) { $avatar = "./img/avatar.png"; } // if the user has no avatar
+                    if(empty($log_avatar)) { $log_avatar = "./img/avatar.png"; } // if the user has no avatar
 
                     echo("<div class='log-select'>
-                        <a href='profile.php?uid=$log_uid'><img class='rounded-circle log-pfp' src='$avatar'></a>
+                        <a href='profile.php?uid=$log_uid'><img class='rounded-circle log-pfp' src='$log_avatar'></a>
                         <h1 class='log-header'>$log_attempt</h1>
                         <table class='log-items'>
                             <tr>
