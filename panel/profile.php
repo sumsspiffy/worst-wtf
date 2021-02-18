@@ -1,11 +1,6 @@
 <?php 
 require_once('config.php');
 
-// redirect users
-if ($active != true || $local['blacklist'] == 'true') { // if not active / blacklisted
-    header('Location: https://w0rst.xyz/panel/error.php'); 
-}
-
 $uid = $_GET['uid'];
 $usertable = $link->query("SELECT * FROM usertable WHERE uid = '$uid'")->fetch_assoc();
 

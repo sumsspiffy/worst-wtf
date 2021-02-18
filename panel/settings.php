@@ -1,68 +1,6 @@
 <?php 
 require_once('config.php');
 
-// update settings like I did with the login
-// fix the centering issues and also submit 
-// within the same page not using forms
-
-// this should be the focus drawn
-// thing that you work on for a little
-
-// redirect users
-if ($active != true || $local['blacklist'] == 'true') { // if not active / blacklisted
-    header('Location: https://w0rst.xyz/panel/error.php'); 
-}
-
-if (isset($_POST['update_pass'])) {
-    $oldpass = md5(trim($_POST['oldpass']));
-    $newpass = md5(trim($_POST['newpass']));
-    $Valid = true;
-    $Error;
-
-    // check if data's empty
-    if (empty($oldpass) || empty($newpass)) { 
-        $Error = "Empty values.";
-        $Valid = false; 
-    }
-
-    $result = $link->query("SELECT * FROM usertable WHERE userkey = '$userkey'")->fetch_assoc();
-
-    if ($oldpass == $row['password']) { $Valid = true; }
-    else {
-        $Error = "Incorrect password.";
-        $Valid = false;
-    }
-
-    if ($Valid == true) { $link->query("UPDATE usertable SET password = '$newpass' WHERE userkey = '$userkey'"); }
-    else { echo "<script>alert('$Error')</script>"; }
-}
-
-if (isset($_POST['update'])) { 
-    $username = trim($_POST['username']);
-    $avatar = $_POST['avatar'];
-    $emailaddr = $_POST['email'];
-    $Valid = true;
-
-    // Data was empty
-    if (empty($emailaddr) || empty($username) || empty($avatar)) { 
-        $Valid = false; 
-    }
-
-    // Check if data is valid & not in database
-    $result = $link->query("SELECT * FROM `usertable` WHERE username = '$username'");
-
-    if ($result->num_rows > 0) { 
-        // if users key isn't the same then it's another user
-        while($row = $result->fetch_assoc()) {
-            if ($userkey != $row['userkey']){ $Valid = false; }
-        }
-    }
-
-    if($Valid == true) { 
-        $link->query("UPDATE usertable SET email = '$emailaddr', username = '$username', avatar = '$avatar' WHERE userkey = '$userkey'");
-    }
-}
-
 $username = $local['username'];
 $email = $local['email'];
 $avatar = $local['avatar'];

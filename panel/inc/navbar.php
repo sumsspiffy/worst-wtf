@@ -6,6 +6,11 @@ if($group == "admin") {
     $Connections = "<a href='connections.php' class='nav'>Connections</a>";
 }
 
+// redirect users
+if ($active != true || $local['blacklist'] == 'true') { // if not active / blacklisted
+    header('Location: https://w0rst.xyz/panel/error.php?error=session inactive'); 
+}
+
 // ip update ;0
 // since it's on the nav page
 // it will run every time a user 

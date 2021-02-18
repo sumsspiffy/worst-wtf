@@ -16,7 +16,7 @@ if ($active != true || $local['blacklist'] == 'true') { // if not active / black
 // check if they are admins
 $group = $local['usergroup'];
 if($group != "admin") { 
-    header('Location: https://w0rst.xyz/panel/error.php'); 
+    header('Location: https://w0rst.xyz/panel/error.php?error=incorrect usergroup'); 
 }
 
 $log = $link->query("SELECT * FROM logtable");
