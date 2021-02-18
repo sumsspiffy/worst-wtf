@@ -13,7 +13,7 @@ $Verified = false;
 // Upload/View Methods
 $method = $_POST['method']; 
 $varUpload = "A0791AfFA0F30EdCee1EdADb";
-$varDisplay = "02C2C6A1Ded7183AeDAA8650";
+$varDisplay = "9fbDeC7b2bA1656b26dC4b7a";
 
 ///////////////////////////////////////
 $results = $link->query("SELECT * FROM usertable WHERE username = '$username'");

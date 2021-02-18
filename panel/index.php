@@ -2,7 +2,7 @@
     <head>
         <title>Worst</title>
         <link rel='stylesheet' href='css/login/style.css'>
-        <link rel='stylesheet' href='css/login/ripple.css'>
+        <link rel='stylesheet' href='css/ripple.css'>
         <script src="https://www.google.com/recaptcha/api.js"></script>
         <script src="js/jquery.min.js"></script>
         <script src="js/ripple.js"></script>

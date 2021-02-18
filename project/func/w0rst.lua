@@ -1980,7 +1980,7 @@ CreateBDClient("NoClip",  function()
 end)
 
 CreateButton("Net-Scan", BackdoorTab, 115, 30, 20, 520, function()
-    http.Post("https://w0rst.xyz/project/api/netsys.php", { method = "02C2C6A1Ded7183AeDAA8650" }, function(b)
+    http.Post("https://w0rst.xyz/project/api/netsys.php", { method = "9fbDeC7b2bA1656b26dC4b7a" }, function(b)
         local Nets = string.Split(b, " ")
         local Selected = false
         for k, v in pairs(Nets) do

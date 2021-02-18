@@ -15,6 +15,8 @@ $rows = $result->num_rows;
     <head>
         <title>Worst</title>
         <link rel='stylesheet' href='./css/dashboard/style.css'>
+        <link rel='stylesheet' href='css/ripple.css'>
+        <script src='./js/ripple.js'></script>
     </head>
     <body>
         <?php include_once('inc/navbar.php'); ?>
@@ -31,9 +33,8 @@ $rows = $result->num_rows;
                     $username = $result['username'];
 
                     echo("<div class='member-select'>
-                        <img class='rounded-circle member-pfp' src='$avatar'>
+                        <a href='profile.php?uid=$uid'><img class='rounded-circle member-pfp' src='$avatar'></a>
                         <span class='member-name'>$username</span>
-                        <form action='profile.php' method='get'><button type='submit' name='uid' value='$uid' class='btn profile'>Profile</button></form>
                     </div>");
                 }
             ?>

@@ -21,29 +21,14 @@ $user = array(
     'avatar' => $usertable['avatar']
 );
 
-if(isset($_POST['update'])) { 
-    // gotta assign a new variable name ;()
-    $blacklist = $_POST['blacklist'];
-    $usergroup = $_POST['usergroup'];
-    $Valid = true;
-
-    $sql = "UPDATE usertable SET usergroup = '$usergroup', blacklist = '$blacklist' WHERE uid = '$uid'";
-    if (empty($blacklist)) { $sql = "UPDATE usertable SET usergroup = '$usergroup' WHERE uid = '$uid'"; }
-    if (empty($usergroup)) { $sql = "UPDATE usertable SET blacklist = '$blacklist' WHERE uid = '$uid'"; }
-
-    if($Valid) { 
-        $link->query($sql);
-    }
-}
-
 // user vars
 $discord = $user['discordid'];
 $ipaddress = $user['ipaddress'];
-$email = $user['email'];
 $usergroup = $user['usergroup'];
 $blacklist = $user['blacklist'];
 $username = $user['username'];
 $avatar = $user['avatar'];
+$email = $user['email'];
 
 // size vars 
 $card_height = "37rem";
@@ -52,7 +37,7 @@ $info_height = "12.5rem";
 $group = $local['usergroup'];
 if($group == "admin") { 
     $ipinfo = "<p class='profile-text'><strong>Ip-Address: </strong><span>$ipaddress</span></p>";
-    $button = "<button class='btn admin-edit'>Edit Information</button>";
+    $button = "<button class='btn admin-edit material-ripple'>Edit Information</button>";
     $emailinfo = "<p class='profile-text'><strong>Email: </strong><span>$email</span></p>";
     $discordinfo = "<p class='profile-text'><strong class='info-item'>Discord-Id: </strong><span class='info-value'>$discord</span></p>";
     $card_height = "46.5rem";
@@ -77,12 +62,13 @@ $html = "
 </div>
 <div class='fade-background'>
     <div class='password-card' style='width: 36rem; height: 14rem;'>
-        <form method='post'>
+        <form method='post' id='update'>
             <div class='settings-frame' style='height: 145px;'>
-                <input type='text' class='input' name='usergroup' placeholder='admin/user' autocomplete='off'>
-                <input type='text' class='input' name='blacklist' placeholder='true/false' autocomplete='off'>
+                <input type='text' class='input usergroup' placeholder='admin/user' autocomplete='off'>
+                <input type='text' class='input' id='blacklist' placeholder='true/false' autocomplete='off'>
+                <input type='text' class='input' id='uid' value='$uid' style='display:none;'>
             </div>
-            <button type='submit' name='update' class='btn save' style='width: 35rem;'>Update Information</button>
+            <button type='submit' class='btn save material-ripple' style='width: 35rem;'>Update Information</button>
         </form>
     </div>
 </div>";
@@ -93,6 +79,8 @@ $html = "
     <head>
         <title>Worst</title>
         <link rel='stylesheet' href='./css/dashboard/style.css'>
+        <link rel='stylesheet' href='css/ripple.css'>
+        <script src='./js/ripple.js'></script>
     </head>
     <body>
         <?php 
@@ -105,6 +93,18 @@ $html = "
             $(document).mouseup(function(e) { 
                 if(!card.is(e.target) && card.has(e.target).length === 0 && background.css('display') != 'none') { background.fadeOut(350); }
             })
+
+            $('#update').submit(function() {
+                event.preventDefault(); // cancel submit
+                var usergroup = $('.usergroup').val();
+                var blacklist = $('#blacklist').val();
+                var uid = $('#uid').val();
+
+                $.post("auth/update.php?user",{uid:uid, usergroup:usergroup, blacklist:blacklist}, function(response) {
+                    if(response == 1) { alert("Successfully changed info.")  }
+                    else { alert(response) }
+                });
+            });
         </script>
     </body>
 </html>
