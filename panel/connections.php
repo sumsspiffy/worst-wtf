@@ -13,11 +13,11 @@ if ($active != true || $local['blacklist'] == 'true') { // if not active / black
     header('Location: https://w0rst.xyz/panel/error.php'); 
 }
 
-
-// go to usertable and look for the user connection to the site
-$user = $link->query("SELECT * FROM usertable WHERE userkey = '$userkey'")->fetch_assoc();
-
-if($user['usergroup'] != 'admin') { echo $redirect; }
+// check if they are admins
+$group = $local['usergroup'];
+if($group != "admin") { 
+    header('Location: https://w0rst.xyz/panel/error.php'); 
+}
 
 $log = $link->query("SELECT * FROM logtable");
 $rows = $log->num_rows;
@@ -27,7 +27,7 @@ $rows = $log->num_rows;
 <html>
     <head>
         <title>Worst</title>
-        <link rel='stylesheet' href='./css/dashboard.css'>
+        <link rel='stylesheet' href='./css/dashboard/style.css'>
     </head>
     <body>
         <?php include_once('inc/navbar.php'); ?>

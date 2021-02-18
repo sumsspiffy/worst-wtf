@@ -1,64 +1,30 @@
-function createRipple(event) {
-  const button = event.currentTarget;
-
-  const circle = document.createElement("span");
-  const diameter = Math.max(button.clientWidth, button.clientHeight);
-  const radius = diameter / 2;
-
-  circle.style.width = circle.style.height = `${diameter}px`;
-  circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-  circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-  circle.classList.add("circle");
-
-  const ripple = button.getElementsByClassName("circle")[0];
-
-  if (ripple) {
-    ripple.remove();
-  }
-
-  button.appendChild(circle);
-}
-
 $(document).ready(function() { 
-  const card = $(".card");
-  const content = $(".content");
-  const buttons = $(".ripple");
+    $('#login').submit(function() {
+        event.preventDefault(); // cancel submit
+        const username = $('#l-username').val();
+        const password = $('#l-password').val();
 
-  for (const button of buttons) {
-    button.addEventListener("click", createRipple);
-  }
+        $.post("auth/login.php",{username: username, password: password}, function(response) {
+            if(response == 1) { window.location.replace("dashboard.php")  }
+            else { alert(response) }
+        });
+    });
 
-  $(document).mouseup(function(e) { 
-    if(!card.is(e.target) && card.has(e.target).length === 0 && content.css('display') != 'none') { 
-      content.fadeOut(450);
-    }
-  })
+    $('#register').submit(function() {
+        event.preventDefault(); // cancel submit
+        const email = $('#r-email').val();
+        const username = $('#r-username').val();
+        const password = $('#r-password').val();
 
-  $('#show').click(function() {
-    content.fadeIn(450);
-  })
-
-  $('#login').click(function() {
-    // update active tabs
-    $('#register').fadeTo("fast", 0.55);
-    $('#login').fadeTo("fast", 1);
-    $('.login-tab').fadeIn(0);
-    $('.register-tab').fadeOut(0);
-
-    // update sizes
-    $('.frame').height("175px");
-    $('.card').height("350px");
-  })
-
-  $('#register').click(function() {
-    // update active tabs 
-    $('#register').fadeTo("fast", 1);
-    $('#login').fadeTo("fast", 0.55);
-    $('.login-tab').fadeOut(0);
-    $('.register-tab').fadeIn(0);
-
-    // update sizes
-    $('.frame').height("235px");
-    $('.card').height("440px");
-  })
+        grecaptcha.ready(function() {
+            // do request for recaptcha token
+            // response is promise with passed token
+            grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
+                $.post("auth/register.php",{email: email, username: username, password: password, token: token}, function(response) {
+                    if(response == 1) { window.location.replace("dashboard.php")  }
+                    else { alert(response) }
+                })
+            });
+        });
+    });
 })

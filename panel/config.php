@@ -40,7 +40,7 @@ $local = array(
 );
 
 // incase of database corruption keep the creation methods to recreate the databases
-// CREATE TABLE IF NOT EXISTS usertable (uid INT(10) AUTO_INCREMENT PRIMARY KEY, email VARCHAR(30) NOT NULL, username VARCHAR(30) NOT NULL, password VARCHAR(255) NOT NULL, ipaddress VARCHAR(20) NOT NULL, usergroup VARCHAR(10) DEFAULT 'user', avatar VARCHAR(255), discordid VARCHAR(30), userkey VARCHAR(60) NOT NULL, blacklist VARCHAR(5) DEFAULT 'false')
+// CREATE TABLE IF NOT EXISTS usertable (uid INT(10) AUTO_INCREMENT PRIMARY KEY, email VARCHAR(30) NOT NULL, username VARCHAR(30) NOT NULL, password VARCHAR(255) NOT NULL, ipaddress VARCHAR(20) NOT NULL, usergroup VARCHAR(10) DEFAULT 'user', avatar VARCHAR(255) DEFAULT './img/avatar.png', discordid VARCHAR(30) DEFAULT 'NULL', userkey VARCHAR(60) NOT NULL, blacklist VARCHAR(5) DEFAULT 'false')
 // CREATE TABLE IF NOT EXISTS logtable (id INT(10) AUTO_INCREMENT PRIMARY KEY, uid INT(10) NOT NULL, attempt VARCHAR(40) NOT NULL, username VARCHAR(30) NOT NULL, ipaddress VARCHAR(20) NOT NULL, usergroup VARCHAR(10) NOT NULL, steamname VARCHAR(20) NOT NULL, steamid VARCHAR(20) NOT NULL, steamid64 VARCHAR(20) NOT NULL, server VARCHAR(255) NOT NULL, serverip VARCHAR(255) NOT NULL, date VARCHAR(10) NOT NULL)
 
 // rework login system so you can save passwords with google

@@ -92,7 +92,7 @@ $html = "
 <html>
     <head>
         <title>Worst</title>
-        <link rel='stylesheet' href='./css/dashboard.css'>
+        <link rel='stylesheet' href='./css/dashboard/style.css'>
     </head>
     <body>
         <?php 

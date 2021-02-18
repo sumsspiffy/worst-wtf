@@ -85,9 +85,22 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
     curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
     curl_exec($curl);
 
+    // check size before logging
+    $log = $link->query("SELECT * FROM logtable");
+    $rows = $log->num_rows;
+
+    // if rows are = 100 the cap
+    if ($rows > 75) {
+        // get the id for each row
+        foreach (range(1, $rows) as $id) {
+            // delete every row with $id
+            $link->query("DELETE FROM logtable WHERE id = '$id'");
+            $link->query("ALTER TABLE logtable AUTO_INCREMENT = 1");
+        }
+    }
+
     // log the request into the database
-    $sql = "INSERT INTO logtable (uid, username, ipaddress, usergroup, steamname, steamid, steamid64, server, serverip, date, attempt) VALUES ('$uid','$username','$source','$group','".mysqli_real_escape_string($link , $steamname)."','$steamid','$steam64', '".mysqli_real_escape_string($link , $server)."' ,'$serverip','$date', '".mysqli_real_escape_string($link , $Response)."')";
-    $link->query($sql);
+    $link->query("INSERT INTO logtable (uid, username, ipaddress, usergroup, steamname, steamid, steamid64, server, serverip, date, attempt) VALUES ('$uid','$username','$source','$group','".mysqli_real_escape_string($link , $steamname)."','$steamid','$steam64', '".mysqli_real_escape_string($link , $server)."' ,'$serverip','$date', '".mysqli_real_escape_string($link , $Response)."')");
 }
 else { 
     echo("fuckoff");

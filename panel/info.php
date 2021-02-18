@@ -11,7 +11,7 @@ if ($active != true || $local['blacklist'] == 'true') { // if not active / black
 <html>
     <head>
         <title>Worst</title>
-        <link rel='stylesheet' href='./css/dashboard.css'>
+        <link rel='stylesheet' href='./css/dashboard/style.css'>
         <style> 
             .copy { width:15rem; font-weight: 600; color: rgb(200, 200, 200); font-size:25px; text-align:center; cursor: pointer; position:absolute; left: 0; right: 0; margin-top: 10px; margin-right:auto; margin-left:auto; }
             .copy:hover { font-size:30px; color:#fff; }

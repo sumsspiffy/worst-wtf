@@ -32,7 +32,7 @@ echo("<div class='navbar-header'>
     <div class='dropdown-settings'>
         <form action='profile.php' method='get'><button type='submit' name='uid' value='$uid' class='btn dropdown effect-click'>Profile</button></form>
         <form action='settings.php' method='post'><button type='submit' class='btn dropdown effect-click'>Settings</button></form>
-        <form action='login.php' method='post'><button type='submit' name='logout' class='btn dropdown effect-click'>Logout</button></form> 
+        <form action='auth/logout.php' method='post'><button type='submit' name='logout' class='btn dropdown effect-click'>Logout</button></form> 
     </div>
 </div>
 <div class='bottom-navbar'>
