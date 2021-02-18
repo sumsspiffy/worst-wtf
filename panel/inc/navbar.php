@@ -32,9 +32,9 @@ echo("<div class='navbar-header'>
         <span id='name'>$username</span>
     </button>
     <div class='dropdown-settings'>
-        <a href='profile.php?uid=$uid'><button type='submit' class='btn dropdown material-ripple' style='margin-top:2.5%;'>Profile</button></a>
-        <a href='settings.php'><button type='submit' class='btn dropdown material-ripple' style='margin-top:2.5%;'>Settings</button></a>
-        <a href='auth/logout.php'><button type='submit' name='logout' class='btn dropdown material-ripple' style='margin-top:2.5%;'>Logout</button></a>
+        <a href='profile.php?uid=$uid'><button class='btn dropdown material-ripple' style='margin-top:2.5%;'>Profile</button></a>
+        <a href='settings.php'><button class='btn dropdown material-ripple' style='margin-top:2.5%;'>Settings</button></a>
+        <a href='auth/logout.php'><button name='logout' class='btn dropdown material-ripple' style='margin-top:2.5%;'>Logout</button></a>
     </div>
 </div>
 <div class='bottom-navbar'>

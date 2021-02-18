@@ -419,18 +419,19 @@ body {
 
 .dropdown:nth-child(3) { margin-top: 60px; }
 
-.info-header { text-align: center; font-size: 50px; }
-.info-span { 
-    font-weight: 400;
-    font-size: 23px;
+.info-header {text-align: center; font-size: 40px;}
+.info-span {
+    font-weight: 540;
+    font-size: 22px;
     line-height: 1.3em;
-    width:65rem;
+    width: 70rem;
     display:block;
     -webkit-line-clamp: 3;
     text-overflow: ellipsis;
     word-wrap: break-word;
     right: 0;
     left: 0;
+    margin-top: -15px;
     margin-left:auto;
     margin-right:auto;
     text-align:center;

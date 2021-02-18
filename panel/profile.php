@@ -64,8 +64,8 @@ $html = "
     <div class='password-card' style='width: 36rem; height: 14rem;'>
         <form method='post' id='update'>
             <div class='settings-frame' style='height: 145px;'>
-                <input type='text' class='input usergroup' placeholder='admin/user' autocomplete='off'>
-                <input type='text' class='input' id='blacklist' placeholder='true/false' autocomplete='off'>
+                <input type='text' class='input usergroup' value='$usergroup' autocomplete='off'>
+                <input type='text' class='input' id='blacklist' value='$blacklist' autocomplete='off'>
                 <input type='text' class='input' id='uid' value='$uid' style='display:none;'>
             </div>
             <button type='submit' class='btn save material-ripple' style='width: 35rem;'>Update Information</button>

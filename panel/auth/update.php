@@ -64,15 +64,19 @@ if(isset($_GET['user'])) {
     $usergroup = $_POST['usergroup'];
     $uid = $_POST['uid'];
     $Valid = true;
-
+    $Error;
+    
     $sql = "UPDATE usertable SET usergroup = '$usergroup', blacklist = '$blacklist' WHERE uid = '$uid'";
-    if (empty($blacklist)) { $sql = "UPDATE usertable SET usergroup = '$usergroup' WHERE uid = '$uid'"; }
-    if (empty($usergroup)) { $sql = "UPDATE usertable SET blacklist = '$blacklist' WHERE uid = '$uid'"; }
+    if (empty($blacklist) || empty($usergroup)) { 
+        $Error = "Empty values.";
+        $Valid = false; 
+    }
 
     if($Valid) { 
         $link->query($sql);
         echo 1;
     }
+    else { echo $Error; }
 }
 
 ?>
