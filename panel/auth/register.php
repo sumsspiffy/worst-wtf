@@ -17,8 +17,8 @@ $recaptcha_response = $_POST['token'];
 $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response);
 $recaptcha = json_decode($recaptcha);
 
-// Take action based on the score returned:
-if ($recaptcha->success == 0) {
+// if the success return was 0 it failed or score is lower than 5
+if ($recaptcha->success == 0 || $recaptcha->score < 0.5) {
     $Error = "Failed ReCaptcha.";
     $Valid = false;
 } 

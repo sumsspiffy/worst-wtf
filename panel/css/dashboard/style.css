@@ -34,6 +34,7 @@ body {
     box-shadow: 0 5px 5px -3px rgb(0 0 0 / 15%);
     padding: 0 20px;
     overflow: hidden;
+    z-index: 1;
 }
 
 .bottom-navbar {
@@ -43,6 +44,7 @@ body {
     left: 0;
     width: 100%;
     height: 40px;
+    z-index: 1;
 }
 
 .banner { 
@@ -96,7 +98,7 @@ body {
     width: 12rem;
     height: 11.5rem;
     display: none;
-    z-index : 1;
+    z-index : 2;
 }
 
 .dropdown { 
@@ -424,7 +426,7 @@ body {
     font-weight: 540;
     font-size: 22px;
     line-height: 1.3em;
-    width: 70rem;
+    width: 65%;
     display:block;
     -webkit-line-clamp: 3;
     text-overflow: ellipsis;

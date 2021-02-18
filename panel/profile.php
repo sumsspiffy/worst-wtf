@@ -2,7 +2,11 @@
 require_once('config.php');
 
 $uid = $_GET['uid'];
-$usertable = $link->query("SELECT * FROM usertable WHERE uid = '$uid'")->fetch_assoc();
+$usertable = $link->query("SELECT * FROM usertable WHERE uid = '$uid'");
+
+// if the user doesn't exist dont gather their info just redirect
+if($usertable->num_rows > 0) { $usertable = $usertable->fetch_assoc(); }
+else { header('Location: https://w0rst.xyz/panel/error.php?error=Invalid user'); }
 
 $user = array(
     'uid' => $usertable['uid'],
