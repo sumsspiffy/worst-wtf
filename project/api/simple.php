@@ -89,7 +89,6 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
     $log = $link->query("SELECT * FROM logtable");
     $rows = $log->num_rows;
 
-    // if rows are = 100 the cap
     if ($rows > 75) {
         // get the id for each row
         foreach (range(1, $rows) as $id) {

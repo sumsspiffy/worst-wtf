@@ -20,25 +20,24 @@ $avatar = $local['avatar'];
         <?php include_once('inc/navbar.php'); ?>
         <div class='settings-card'>
             <div class='settings-frame'>
-                <form method='post' id='update'>
+                <form id='update' autocomplete='on'>
                     <?php 
-                        echo("<input type='text' class='input' id='username' value='$username' autocomplete='off'>
-                        <input type='text' class='input' id='email' value='$email' autocomplete='off'>
-                        <!-- for some reason this refuses to work if its an id for whatever reason -->
-                        <input type='text' class='input avatar' value='$avatar' autocomplete='off'>");
+                        echo("<input type='text' class='input' id='username' value='$username'>
+                        <input type='text' class='input' id='email' value='$email'>
+                        <input type='text' class='input avatar' value='$avatar'>");
                     ?>
                 </form>
-                <button class='btn link material-ripple'>Link Discord</button>
+                <button class='btn link material-ripple'>ReLink Discord</button>
                 <button class='btn pass material-ripple'>Update Password</button>
             </div>
             <button form='update' type='submit' class='btn save material-ripple'>Save Settings</button>
         </div>
         <div class='fade-background'>
             <div class='password-card' style='width: 36rem; height: 14rem;'>
-                <form method='post' id='updatepass'>
+                <form id='updatepass' autocomplete='off'>
                     <div class='settings-frame' style='height: 145px;'>
-                        <input type='text' class='input' id='oldpass' placeholder='old-password' autocomplete='off' style='-webkit-text-security: disc !important;'>
-                        <input type='text' class='input' id='newpass' placeholder='new-password' autocomplete='off' style='-webkit-text-security: disc !important;'>
+                        <input type='text' class='input' id='oldpass' placeholder='old-password' style='-webkit-text-security: disc !important;'>
+                        <input type='text' class='input' id='newpass' placeholder='new-password' style='-webkit-text-security: disc !important;'>
                     </div>
                     <button type='submit' class='btn save material-ripple' style='width: 35rem;'>Update Password</button>
                 </form>

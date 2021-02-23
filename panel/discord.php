@@ -14,6 +14,9 @@ $apiURLBase = 'https://discord.com/api/users/@me';
 
 session_start();
 
+// Redirect users to our discord if the actions 
+if(get('action') == 'join') { header('Location: https://discord.gg/6Sy3AktdvC'); }
+
 // Start the login process by sending the user to Discord's authorization page
 if(get('action') == 'login') {
 
@@ -29,7 +32,6 @@ if(get('action') == 'login') {
   die();
 }
 
-
 // When Discord redirects the user back here, there will be a "code" and "state" parameter in the query string
 if(get('code')) {
 
@@ -43,15 +45,10 @@ if(get('code')) {
   ));
   $logout_token = $token->access_token;
   $_SESSION['access_token'] = $token->access_token;
-  header('Location: ' . $_SERVER['PHP_SELF']);
-}
-
-if(session('access_token')) {
-  // link database & insert values
+  
   require_once('config.php'); // link
   $user = apiRequest($apiURLBase); // request info
-
-  // define user->variables
+  
   $id = $user->id;
   $avatar = $user->avatar; // for later updates
   $userkey = $_SESSION['userkey']; // passed from login
@@ -60,11 +57,7 @@ if(session('access_token')) {
   $sql = "UPDATE usertable SET discordid = '$id', avatar = '$avatar' WHERE userkey = '$userkey'";
 
   $link->query($sql); // query data
-
-  // how to actually access the avatar
-
-  // finally send user to the discord
-  header('Location: https://discord.gg/6Sy3AktdvC');
+  header('Location: dashboard.php');
 }
 
 if(get('action') == 'logout') {
