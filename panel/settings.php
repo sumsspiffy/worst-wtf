@@ -10,11 +10,11 @@ $avatar = $local['avatar'];
 <html>
     <head>
         <title>Worst</title>
-        <link rel='stylesheet' href='./css/dashboard/style.css'>
+        <link rel='stylesheet' href='css/dashboard/style.css'>
         <link rel='stylesheet' href='css/ripple.css'>
         <script src="js/jquery.min.js"></script>
-        <script src="js/settings.js"></script>
-        <script src='./js/ripple.js'></script>
+        <script src="core/settings.js"></script>
+        <script src='js/ripple.js'></script>
     </head>
     <body>
         <?php include_once('inc/navbar.php'); ?>
@@ -32,7 +32,7 @@ $avatar = $local['avatar'];
             </div>
             <button form='update' type='submit' class='btn save material-ripple'>Save Settings</button>
         </div>
-        <div class='fade-background'>
+        <div class='fade-background1'>
             <div class='password-card' style='width: 36rem; height: 14rem;'>
                 <form id='updatepass' autocomplete='off'>
                     <div class='settings-frame' style='height: 145px;'>
@@ -44,9 +44,9 @@ $avatar = $local['avatar'];
             </div>
         </div>
         <script>
-            var pass = $('.pass'); var link = $('.link'); var background = $('.fade-background'); var card = $('.password-card');
+            var pass = $('.pass'); var link = $('.link'); var background = $('.fade-background1'); var card = $('.password-card');
             pass.click(function() { background.fadeIn(350); });
-            link.click(function() { location.href = "discord.php?action=login"; });
+            link.click(function() { location.href = "discord?action=login"; });
             $(document).mouseup(function(e) { 
                 if(!card.is(e.target) && card.has(e.target).length === 0 && background.css('display') != 'none') { background.fadeOut(350); }
             })

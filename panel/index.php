@@ -6,7 +6,7 @@
         <script src="https://www.google.com/recaptcha/api.js"></script>
         <script src="js/jquery.min.js"></script>
         <script src="js/ripple.js"></script>
-        <script src="js/login.js"></script>
+        <script src="core/login.js"></script>
         <script src="js/effects.js"></script>
         <meta name="theme-color" content="#86ffba">
         <meta property="og:title" content="w0rst.xyz">

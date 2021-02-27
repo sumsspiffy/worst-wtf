@@ -11,7 +11,7 @@ $(document).ready(function() {
             // response is promise with passed token
             grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
                 $.post("auth/login.php",{username: username, password: password, token: token}, function(response) {
-                    if(response == 1) { window.location.replace("dashboard.php")  }
+                    if(response == 1) { window.location.replace("dashboard")  }
                     else { alert(response) }
                 });
             });
@@ -31,7 +31,7 @@ $(document).ready(function() {
             // response is promise with passed token
             grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
                 $.post("auth/register.php",{email: email, username: username, password: password, token: token}, function(response) {
-                    if(response == 1) { window.location.replace("dashboard.php")  }
+                    if(response == 1) { window.location.replace("dashboard")  }
                     else { alert(response) }
                 });
             });

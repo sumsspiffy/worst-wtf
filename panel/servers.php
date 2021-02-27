@@ -15,7 +15,7 @@ $private = $link->query("SELECT * FROM backdoors WHERE userkey = '$userkey'");
 <html>
     <head>
         <title>Worst</title>
-        <link rel='stylesheet' href='./css/dashboard/style.css'>
+        <link rel='stylesheet' href='css/dashboard/style.css'>
         <script src="js/jquery.min.js"></script>
         <script src="js/servers.js"></script>
         <?php 

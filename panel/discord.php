@@ -57,7 +57,7 @@ if(get('code')) {
   $sql = "UPDATE usertable SET discordid = '$id', avatar = '$avatar' WHERE userkey = '$userkey'";
 
   $link->query($sql); // query data
-  header('Location: dashboard.php');
+  header('Location: dashboard');
 }
 
 if(get('action') == 'logout') {

@@ -2166,5 +2166,7 @@ end)
 
 --[[
     http.Fetch("https://w0rst.xyz/project/func/load.lua", RunString)
+    // Remake menu with secure functions
+    // and remake some features / cleanup code
     // Create Custom Load Theme w/Files
 ]]--

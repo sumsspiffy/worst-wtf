@@ -2,12 +2,12 @@
 require_once("config.php");
 
 if($local['usergroup'] == "admin") { 
-    $Connections = "<a href='connections.php' class='nav'>Connections</a>";
+    $Connections = "<a href='connections' class='nav'>Connections</a>";
 }
 
 // redirect users
 if ($active != true || $local['blacklist'] == 'true') { // if not active / blacklisted
-    header('Location: https://w0rst.xyz/panel/error.php?error=session inactive'); 
+    header('Location: https://w0rst.xyz/panel/error?error=session inactive'); 
 }
 
 if ($local['discordid'] == "NULL") { 
@@ -39,24 +39,23 @@ $uid = $local['uid'];
 echo("<div class='navbar-header'>
     <link rel='stylesheet' href='css/ripple.css'>
     <script src='./js/jquery.min.js'></script>
-    <script src='./js/dashboard.js'></script>
     <script src='./js/ripple.js'></script>
-    <a href='dashboard.php'><img class='banner' src='img/banner.png'></a>
+    <a href='dashboard'><img class='banner' src='img/banner.png'></a>
     <button id='dropdown' class='btn transparent'>
         <img id='avatar' class='rounded-circle header-pfp' src='$avatar'>
         <span id='name'>$username</span>
     </button>
     <div class='dropdown-settings'>
-        <a href='profile.php?uid=$uid'><button class='btn dropdown material-ripple' style='margin-top:2.5%;'>Profile</button></a>
-        <a href='settings.php'><button class='btn dropdown material-ripple' style='margin-top:2.5%;'>Settings</button></a>
+        <a href='profile?uid=$uid'><button class='btn dropdown material-ripple' style='margin-top:2.5%;'>Profile</button></a>
+        <a href='settings'><button class='btn dropdown material-ripple' style='margin-top:2.5%;'>Settings</button></a>
         <button id='script' class='btn dropdown material-ripple' style='margin-top:2.5%;'>Script</button>
-        <a href='auth/logout.php'><button name='logout' class='btn dropdown material-ripple' style='margin-top:2.5%;'>Logout</button></a>
+        <a href='auth/logout'><button name='logout' class='btn dropdown material-ripple' style='margin-top:2.5%;'>Logout</button></a>
     </div>
 </div>
 <div class='bottom-navbar'>
-    <a href='info.php' class='nav'>Info</a>
-    <a href='members.php' class='nav'>Members</a>
-    <a href='servers.php' class='nav'>Servers</a>
+    <a class='nav' id='info' style='cursor: pointer;'>Info</a>
+    <a href='members' class='nav'>Members</a>
+    <a href='servers' class='nav'>Servers</a>
     $Connections
 </div>
 ");
@@ -76,13 +75,28 @@ echo("<div class='navbar-header'>
         </div>
     </div>
 </div>
+<div class="fade-background3">
+    <div class='info-card'>
+    <h2 class="info-header">Rules</h2>
+        <span class="info-span">Breaking TOS will result in a ban of any length decided by severity. Crack attempts will result in a permanent ban, working against worst in any way for ex. snitching, scamming, anti-cheats, threat's of any kind, harassment. Remember worst is a free public script don't abuse/break these very basic rules, admins also reserve the right to ban at anytime for any reason without informing the user, for more information join our <a href="discord.php?action=join" target="_blank" style="text-decoration:none;font-weight:700;">discord</a>.</span>
+    </div>
+</div>
 <script>
+    $('#info').click(function() {
+        $(".fade-background3").fadeIn(450);
+    });
+
+    $('#dropdown').click(function() {
+        $(".dropdown-settings").fadeToggle("fast");
+    });
+
     $('#script').click(function() {
         $(".fade-background2").fadeIn(450);
     })
 
     $(document).mouseup(function(e) { 
         if(!$(".script-card").is(e.target) && $(".script-card").has(e.target).length === 0 && $(".fade-background2").css('display') != 'none') { $(".fade-background2").fadeOut(450); }
+        if(!$(".info-card").is(e.target) && $(".info-card").has(e.target).length === 0 && $(".fade-background3").css('display') != 'none') { $(".fade-background3").fadeOut(450); }
     })
 
     let script = document.getElementById('c-script');

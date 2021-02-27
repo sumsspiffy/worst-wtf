@@ -6,7 +6,7 @@ $usertable = $link->query("SELECT * FROM usertable WHERE uid = '$uid'");
 
 // if the user doesn't exist dont gather their info just redirect
 if($usertable->num_rows > 0) { $usertable = $usertable->fetch_assoc(); }
-else { header('Location: https://w0rst.xyz/panel/error.php?error=Invalid user'); }
+else { header('Location: https://w0rst.xyz/panel/error?error=Invalid user'); }
 
 $user = array(
     'uid' => $usertable['uid'],
@@ -59,7 +59,7 @@ $html = "
     </div>
     $button
 </div>
-<div class='fade-background'>
+<div class='fade-background1'>
     <div class='password-card' style='width: 36rem; height: 14rem;'>
         <form method='post' id='update'>
             <div class='settings-frame' style='height: 145px;'>
@@ -77,9 +77,11 @@ $html = "
 <html>
     <head>
         <title>Worst</title>
-        <link rel='stylesheet' href='./css/dashboard/style.css'>
+        <link rel='stylesheet' href='css/dashboard/style.css'>
         <link rel='stylesheet' href='css/ripple.css'>
-        <script src='./js/ripple.js'></script>
+        <script src="js/jquery.min.js"></script>
+        <script src='core/update.js'></script>
+        <script src='js/ripple.js'></script>
     </head>
     <body>
         <?php 
@@ -87,23 +89,11 @@ $html = "
             echo($html); // show html
         ?>
         <script>
-            var background = $('.fade-background'); var card = $('.password-card');
+            var background = $('.fade-background1'); var card = $('.password-card');
             $('.admin-edit').click(function() { background.fadeIn(350); });
             $(document).mouseup(function(e) { 
                 if(!card.is(e.target) && card.has(e.target).length === 0 && background.css('display') != 'none') { background.fadeOut(350); }
             })
-
-            $('#update').submit(function() {
-                event.preventDefault(); // cancel submit
-                var usergroup = $('.usergroup').val();
-                var blacklist = $('#blacklist').val();
-                var uid = $('#uid').val();
-
-                $.post("auth/update.php?user",{uid:uid, usergroup:usergroup, blacklist:blacklist}, function(response) {
-                    if(response == 1) { alert("Successfully changed info.")  }
-                    else { alert(response) }
-                });
-            });
         </script>
     </body>
 </html>

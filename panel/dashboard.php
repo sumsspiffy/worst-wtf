@@ -1,8 +1,4 @@
-<?php 
-require_once('config.php');
-
-?>
-
+<?php require_once('config.php'); ?>
 <html>
     <title>Worst</title>
     <link rel='stylesheet' href='./css/dashboard/style.css'>

@@ -382,7 +382,7 @@ body {
     height: 275px;
 }
 
-.fade-background, .fade-background2 { 
+.fade-background1, .fade-background2, .fade-background3 { 
     position: absolute;
     top: 0;
     right: 0;
@@ -528,7 +528,7 @@ body {
     font-weight: 540;
     font-size: 22px;
     line-height: 1.3em;
-    width: 65%;
+    width: 85%;
     display:block;
     -webkit-line-clamp: 3;
     text-overflow: ellipsis;
@@ -541,7 +541,7 @@ body {
     text-align:center;
 }
 
-.script-card {
+.script-card, .info-card {
     top:0;left:0;right:0;bottom:0; 
     position:absolute;
     display:block;
@@ -555,6 +555,8 @@ body {
     box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.2);
     border-radius: 0.3rem;
 }
+
+.info-card { width: 40rem; height: 25rem; } 
 
 h1 { text-align: center; font-size: 40px; }
 h2 { text-align: center; font-size: 25px;}
