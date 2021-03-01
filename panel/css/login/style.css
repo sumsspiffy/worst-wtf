@@ -16,7 +16,7 @@ body {
 }
 
 .btn {
-    background-image: linear-gradient(to top left, #eb23d7ed, #0f7fff);
+    background-image: linear-gradient(to top left, #770692ed, #5e0fff);
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
     text-decoration: none;
     border-radius: 2rem;

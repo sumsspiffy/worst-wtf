@@ -1,7 +1,7 @@
 <?php
 require_once("config.php");
 
-if($local['usergroup'] == "admin") { 
+if(in_array($local['usergroup'], $staff)) { 
     $Connections = "<a href='connections' class='nav'>Connections</a>";
 }
 

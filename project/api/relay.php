@@ -7,7 +7,7 @@ $password = $_POST['pass'];
 
 // Authentication Checks
 $Authorized = false;
-$Verified;
+$Verified = 1;
 
 ///////////////////////////////////////
 $results = $link->query("SELECT * FROM usertable WHERE username = '$username'");
@@ -20,11 +20,6 @@ if ($results->num_rows > 0) {
 
         if($password == $row['password']) { $Authorized = true; }
         if($blacklist == "true") { $Verified = 0; }
-
-        switch($group) {
-            case "user": $Verified = 1; break; 
-            case "admin": $Verified = 1; break; 
-        }
     }
 }
 else { 

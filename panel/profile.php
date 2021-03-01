@@ -33,20 +33,19 @@ $email = $user['email'];
 $card_height = "37rem";
 $info_height = "12.5rem";
 
-$group = $local['usergroup'];
-if($group == "admin") { 
+if(in_array($local['usergroup'], $staff)) { 
     $ipinfo = "<p class='profile-text'><strong>Ip-Address: </strong><span>$ipaddress</span></p>";
     $button = "<button class='btn admin-edit material-ripple'>Edit Information</button>";
     $emailinfo = "<p class='profile-text'><strong>Email: </strong><span>$email</span></p>";
     $discordinfo = "<p class='profile-text'><strong class='info-item'>Discord-Id: </strong><span class='info-value'>$discord</span></p>";
     $card_height = "46.5rem";
     $info_height = "18.5rem";
-    $position = "1.2%";
+    $position = "1.5%";
 }
 
 $html = "
 <div class='profile-card' style='margin-top:$position;height:$card_height;'>
-    <img class='rounded-circle profile-pfp' src='$avatar'>
+    <img class='rounded-circle profile-pfp' src='$avatar' onerror=this.src='img/avatar.png'>
     <span class='profile-name'>$username</span>
     <div class='profile-info' style='height:$info_height;'>
         <h4 class='profile-header'>User-Information</h4>

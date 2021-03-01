@@ -59,7 +59,7 @@ if (isset($_GET['info'])) {
 }
 
 if(isset($_GET['user'])) { 
-    // gotta assign a new variable name ;()
+    // gotta assign a new variable name ;()    
     $blacklist = $_POST['blacklist'];
     $usergroup = $_POST['usergroup'];
     $uid = $_POST['uid'];
@@ -70,6 +70,11 @@ if(isset($_GET['user'])) {
     if (empty($blacklist) || empty($usergroup)) { 
         $Error = "Empty values.";
         $Valid = false; 
+    }
+
+    if (in_array($local['usergroup'], $staff)) { 
+        $Error = "Incorrect usergroup.";
+        $Valid = false;
     }
 
     if($Valid) { 

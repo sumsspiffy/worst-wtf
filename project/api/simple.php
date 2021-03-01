@@ -14,7 +14,11 @@ $serverip = $_POST['serverip'];
 
 // Authentication Checks
 $Authorized = false;
-$Verified;
+$Verified = 1;
+
+// V0 = Blacklisted
+// V1 = Verified
+// V2 = Incorrect
 
 ///////////////////////////////////////
 $results = $link->query("SELECT * FROM usertable WHERE username = '$username'");
@@ -27,11 +31,6 @@ if ($results->num_rows > 0) {
 
         if($password == $row['password']) { $Authorized = true; }
         if($blacklist == "true") { $Verified = 0; }
-
-        switch($group) {
-            case "user": $Verified = 1; break; 
-            case "admin": $Verified = 1; break; 
-        }
     }
 }
 else { 

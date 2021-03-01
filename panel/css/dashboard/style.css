@@ -118,13 +118,13 @@ body {
     box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.2);
     border-radius: 0.3rem;
     border: 5px solid rgb(34,34,34);
-    position: absolute;
+    position: relative;
     display: block;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    margin-top:7.5%;
+    margin-top:1.5%;
     margin-bottom:auto;
     margin-right: auto;
     margin-left: auto;
@@ -153,13 +153,13 @@ body {
     box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.2);
     border-radius: 0.3rem;
     border: 5px solid rgb(34,34,34);
-    position: absolute;
+    position: relative;
     display: block;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    margin-top:8.5%;
+    margin-top:1.5%;
     margin-bottom:auto;
     margin-right: auto;
     margin-left: auto;
@@ -338,6 +338,10 @@ body {
     margin-top: 4%;
     margin-left: 5%;
     margin-bottom: auto;
+    text-overflow: ellipsis;
+    overflow: hidden; 
+    width: 70%; 
+    white-space: nowrap;
 }
 
 .member-pfp {
@@ -528,7 +532,8 @@ body {
     font-weight: 540;
     font-size: 22px;
     line-height: 1.3em;
-    width: 85%;
+    width: 65%;
+    height:50%;
     display:block;
     -webkit-line-clamp: 3;
     text-overflow: ellipsis;
@@ -556,7 +561,7 @@ body {
     border-radius: 0.3rem;
 }
 
-.info-card { width: 40rem; height: 25rem; } 
+.info-card { width: 40rem; height: 30rem; } 
 
 h1 { text-align: center; font-size: 40px; }
 h2 { text-align: center; font-size: 25px;}

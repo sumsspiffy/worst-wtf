@@ -9,8 +9,7 @@
 require_once('config.php');
 
 // check if they are admins
-$group = $local['usergroup'];
-if($group != "admin") { 
+if(!in_array($local['usergroup'], $staff)) { 
     header('Location: https://w0rst.xyz/panel/error.php?error=incorrect usergroup'); 
 }
 
@@ -25,7 +24,7 @@ $log = $link->query("SELECT * FROM logtable");
     </head>
     <body>
         <?php include_once('inc/navbar.php'); ?>
-        <div class="middle-card" style="width:50%;height:75%;left: 0;right: 0;top: 0;bottom: 0;margin-top: 8.5%;margin-bottom:auto;margin-right: auto;margin-left: auto;">
+        <div class="middle-card" style="width:50%;height:75%">
             <?php
                 if($log->num_rows > 0) {
                     while($row = $log->fetch_assoc()) {
@@ -45,10 +44,9 @@ $log = $link->query("SELECT * FROM logtable");
                         // define users avatar
                         $user = $link->query("SELECT * FROM usertable WHERE username = '$log_username'")->fetch_assoc();
                         $log_avatar = $user['avatar']; // since the avatar isn't stored in the log database ¯\_(ツ)_/¯
-                        if(empty($log_avatar)) { $log_avatar = "./img/avatar.png"; } // if the user has no avatar
 
                         echo("<div class='log-select'>
-                            <a href='profile.php?uid=$log_uid'><img class='rounded-circle log-pfp' src='$log_avatar'></a>
+                            <a href='profile.php?uid=$log_uid'><img class='rounded-circle log-pfp' src='$log_avatar' onerror=this.src='img/avatar.png'></a>
                             <h1 class='log-header'>$log_attempt</h1>
                             <table class='log-items'>
                                 <tr>

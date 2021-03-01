@@ -20,11 +20,12 @@ $results = $link->query("SELECT * FROM usertable WHERE username = '$username'");
 
 if ($results->num_rows > 0) {
     while($row = $results->fetch_assoc()) {
-        if($password == $row['password']) { $Authorized = true; }
+        if($password == $row['password']) { 
+            $Authorized = true; 
+        }
 
-        switch($row['usergroup']) {
-            case "user": $Verified = false; break; 
-            case "admin": $Verified = true; break; 
+        if(in_array($row['usergroup'], $staff)) {
+            $Verified = true;
         }
     }
 }

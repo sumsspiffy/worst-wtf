@@ -28,7 +28,7 @@ $rows = $result->num_rows;
                     $username = $result['username'];
 
                     echo("<div class='member-select'>
-                        <a href='profile?uid=$uid'><img class='rounded-circle member-pfp' src='$avatar'></a>
+                        <a href='profile?uid=$uid'><img class='rounded-circle member-pfp' src='$avatar' onerror=this.src='img/avatar.png'></a>
                         <span class='member-name'>$username</span>
                     </div>");
                 }

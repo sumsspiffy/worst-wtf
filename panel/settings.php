@@ -32,7 +32,7 @@ $avatar = $local['avatar'];
             </div>
             <button form='update' type='submit' class='btn save material-ripple'>Save Settings</button>
         </div>
-        <div class='fade-background1'>
+        <div class='fade-background'>
             <div class='password-card' style='width: 36rem; height: 14rem;'>
                 <form id='updatepass' autocomplete='off'>
                     <div class='settings-frame' style='height: 145px;'>
