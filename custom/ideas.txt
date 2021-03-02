@@ -1,0 +1,17 @@
+new effects
+better user editor
+better page formating
+make website work better on mobile
+fix scrolling on members/servers/connections
+working functions for auth & more outside pages
+email account activation
+anti alt system \ done
+anti vpn system \ done
+browser check \ maybe needed not sure
+new member display make it look more like kvac.cz
+new login display make it look more like clippy.gg
+new settings display make it look more like clippy.gg
+note that user editing still needs to be added thank yourself later ;0
+
+// make class system it's own file and require that with the config file
+// this will make verything way more neat & clean

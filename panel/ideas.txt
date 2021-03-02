@@ -1,0 +1,10 @@
+new effects
+better user editor
+better page formating
+make website work better on mobile
+fix scrolling on members/servers/connections
+working functions for auth & more outside pages
+email account activation
+anti alt system
+anti vpn system
+browser check

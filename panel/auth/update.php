@@ -72,7 +72,7 @@ if(isset($_GET['user'])) {
         $Valid = false; 
     }
 
-    if (in_array($local['usergroup'], $staff)) { 
+    if (!in_array($local['usergroup'], $staff)) { 
         $Error = "Incorrect usergroup.";
         $Valid = false;
     }

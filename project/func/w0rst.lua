@@ -314,8 +314,8 @@ end
 local Tabs, TabButtons = {}, {}
 local function CreateTabButton(mat, x, y)
     local btn, tab = wtf.gString(), wtf.gString()
-    TabButtons[btn]=vgui.Create("DButton", Tab)
-    TabButtons[btn]:SetSize(70,70)
+    TabButtons[btn] = vgui.Create("DButton", Tab)
+    TabButtons[btn]:SetSize(70, 70)
     TabButtons[btn]:SetPos(x, y)
     TabButtons[btn]:SetText("")
     TabButtons[btn]:SetMaterial(mat)

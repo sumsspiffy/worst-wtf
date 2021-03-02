@@ -32,7 +32,7 @@ $private = $link->query("SELECT * FROM backdoors WHERE userkey = '$userkey'");
                 <button class="btn bar material-ripple" id="public">Public Servers</button>
                 <button class="btn bar material-ripple" id="private" style="opacity:0.55;">Private Servers</button>
                 <?php
-                    if($local['usergroup'] == "admin") { 
+                    if(in_array($local['usergroup'], $staff)) { 
                         echo('<button class="btn bar material-ripple" id="all" style="opacity:0.55;">All Servers</button>');
                     }
                 ?>
@@ -104,7 +104,7 @@ $private = $link->query("SELECT * FROM backdoors WHERE userkey = '$userkey'");
                 ?>
             </div>
             <?php 
-                if($local['usergroup'] == "admin") { 
+                if(in_array($local['usergroup'], $staff)) { 
                     echo("<div class='all'>");
                     if($all->num_rows > 0) {
                         while($row = $all->fetch_assoc()) {
