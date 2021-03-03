@@ -3,10 +3,19 @@
 ?>
 
 <html>
-    <title>Worst</title>
-    <link rel='stylesheet' href='css/dashboard/style.css'>
+    <head>
+        <title>Worst</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <script src="js/jquery.min.js"></script>
+        <link rel='stylesheet' href='css/dashboard/style.css'>
+        <link rel='stylesheet' href='css/ripple.css'>
+        <script src="js/ripple.js"></script>
+    </head>
     <body>
         <?php include_once('inc/navbar.php'); ?>
-        <img style='position:relative;display:block;left:0;right:0;margin-top:5%;margin-left:auto;margin-right:auto;width: 65%;' src='img/logo.png'>
+        <div class="page-content">
+            <img class='background-image' src='img/logo.png'>
+        </div>
     </body>
 </html>

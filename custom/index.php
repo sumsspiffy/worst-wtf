@@ -1,3 +1,16 @@
+<?php 
+require_once('config.php');
+
+if($Local::IsBlacklisted()) {
+    $Local::Redirect("Blacklisted");
+}
+
+if($Local::IsActive()) {
+    header("Location: dashboard");
+}
+
+?>
+
 <html>
     <head>
         <title>Worst</title>
@@ -7,7 +20,6 @@
         <script src="js/jquery.min.js"></script>
         <script src="js/ripple.js"></script>
         <script src="core/js/login.js"></script>
-        <script src="js/effects.js"></script>
         <meta name="theme-color" content="#86ffba">
         <meta property="og:title" content="w0rst.xyz">
         <meta property="og:image" content="img/logo.png">
@@ -46,4 +58,7 @@
         </div>
     </body>
 </html>
+<script>
+
+</script>
 
