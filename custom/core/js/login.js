@@ -31,7 +31,7 @@ $(document).ready(function() {
             // response is promise with passed token
             grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
                 $.post("core/auth/simple.php?request=register",{email: email, username: username, password: password, captcha: token}, function(response) {
-                    if(!response) { window.location.replace("core/auth/discord.php?action=login") }
+                    if(!response) { alert("Check email for verification.") }
                     else { alert(response) }
                 });
             });

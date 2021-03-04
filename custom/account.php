@@ -10,6 +10,7 @@ $email = $LocalInfo['email'];
 $role = $LocalInfo['role'];
 $date = $LocalInfo['date'];
 $uid = $LocalInfo['uid'];
+$ip = $LocalInfo['ip'];
 
 ?>
 
@@ -55,27 +56,31 @@ $uid = $LocalInfo['uid'];
                         <?php echo("<input disabled class='input disabled' placeholder='$discord'></input>") ?>
                     </div>
                     <div class="form-row">
+                        <label class="label">IP Address</label>
+                        <?php echo("<input disabled class='input disabled' placeholder='$ip'></input>") ?>
+                    </div>
+                    <div class="form-row">
                         <label class="label">Creation Date</label>
                         <?php echo("<input disabled class='input disabled' placeholder='$date'></input>") ?>
                     </div>
                 </form>
                 <div class="button-container">
-                    <button id="link" class="button material-ripple hover">Relink Discord</button>
-                    <button id="edit" class="button material-ripple hover">Change Password</button>
+                    <button onclick="link()" class="button material-ripple hover">Relink Discord</button>
+                    <button onclick="edit()" class="button material-ripple hover">Change Password</button>
                 </div>
             </div>
         </div>
-        <div class="hidden">
-            <div class="edit-card">
+        <div class="hidden2">
+            <div class="center-card">
                 <h1 class="card-title">Update Information</h1>
                 <form id="update" autocomplete="on">
                     <div class="form-row">
                         <label class="label">Current Password</label>
-                        <input id="old-password" class="input" placeholder="password" type="password">
+                        <input id="old-password" class="input" type="password">
                         <label class="label">New Password</label>
-                        <input id="new-password" class="input" placeholder="password" type="password">
+                        <input id="new-password" class="input" type="password">
                         <div class="button-container" style="padding-bottom:0;">
-                            <button id="link" class="button material-ripple hover" style="width:85%;">Change Password</button>
+                            <button class="button material-ripple hover" style="width:85%;">Change Password</button>
                         </div>
                     </div>
                 </form>
@@ -83,21 +88,11 @@ $uid = $LocalInfo['uid'];
         </div>
     </body>
     <script>
-        const edit = $('#edit');
-        const link = $('#link');
-        const hidden = $('.hidden');
-        const card = $('.edit-card');
-
-        link.click(function() { 
-            location.href = "core/auth/discord.php?action=login";
-        })
-
-        edit.click(function() {
-            hidden.fadeIn();
-        })
+        function edit() { $('.hidden2').fadeIn(); }
+        function link() { location.href = "core/auth/discord.php?action=login"; }
 
         $(document).mouseup(function(e) { 
-            if(!card.is(e.target) && card.has(e.target).length === 0 && hidden.css('display') != 'none') { hidden.fadeOut(450); }
+            if(!$('.center-card').is(e.target) && $('.center-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }
         })
     </script>
 </html>

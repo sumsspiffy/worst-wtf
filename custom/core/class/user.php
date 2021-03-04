@@ -42,9 +42,9 @@ class Local {
     }
 
     public function IsAdmin() {
-        $group = Local::Info()['group'];
+        $role  = Local::Info()['role'];
         $roles = array('admin', 'funky');
-        if(in_array($group, $roles)) {
+        if(in_array($role, $roles)) {
             return true;
         }
 
@@ -97,7 +97,7 @@ class Account {
         } 
 
         if(empty($Error)) {
-            $token = md5(mt_rand(100000, 999999));
+            $token = Secure::Randomize();
             date_default_timezone_set('UTC');
             $date = date("Y:m:d H:i:s");
 
@@ -177,6 +177,10 @@ class Account {
 }
 
 class Secure {
+    public function Randomize() {
+        return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(12/strlen($x)))), 1, 12);
+    }
+
     public function AntiAlt() {
         $Address = $_SERVER['REMOTE_ADDR'];
 

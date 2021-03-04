@@ -46,6 +46,43 @@ body {
     z-index: 1;
 }
 
+.nav-tab {
+    border-radius:3px;
+    position:relative;
+    display:row;
+    right:0;left:0;
+    margin-right:auto;
+    height:3rem;
+    cursor:pointer;
+}
+
+.nav-button {
+    font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+    background-color: rgba(0,0,0,0);
+    height:100%;
+    width:5.5rem;
+    border:none;
+    color:white;
+    font-size:18px;
+    text-align:center;
+    right:0;
+    left:0;
+    top:0;
+    bottom:0;
+    margin-top:auto;
+    margin-left:auto;
+    margin-right:auto;
+    transition: 250ms ease;
+    margin-bottom:auto;
+    cursor:pointer;
+    opacity: 0.45;
+    outline:none;
+}
+
+.nav-button:hover {
+    opacity:1;
+}
+
 .banner {
     vertical-align: middle;
     border-style: none;
@@ -100,7 +137,13 @@ a { color: #fff; text-decoration: none; }
     background: #131313;
 }
 
-.edit-card {
+.flexbox {
+    display: flex;
+    flex-wrap: wrap;
+    padding:10px;
+}
+
+.center-card {
     width: 40rem;
     height:fit-content;
     position:absolute;
@@ -126,10 +169,11 @@ a { color: #fff; text-decoration: none; }
     line-height: 1.5715;
     list-style: none;
     font-feature-settings: tnum;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     vertical-align: top;
     width:70%;
-    left:0;right:0;
+    left:0;
+    right:0;
     margin-left:auto;
     margin-right:auto;
 }
@@ -228,8 +272,7 @@ a { color: #fff; text-decoration: none; }
 }
 
 .pfp {
-    width:2rem;
-    padding:5px;
+    width: 2rem;
 }
 
 .name {
@@ -262,7 +305,7 @@ a { color: #fff; text-decoration: none; }
     border: none;
     list-style: none;
     overflow: hidden;
-    z-index:0;
+    z-index:1;
     height: auto;
     display:none;
 }
@@ -281,15 +324,16 @@ a { color: #fff; text-decoration: none; }
     margin-top:auto;
     margin-left:auto;
     margin-right:auto;
+     transition: 250ms ease;
     margin-bottom:auto;
     cursor:pointer;
 }
 
 .dropdown-item:hover {
-    background-color: #525252d1;
+    background-color: #3f3f3fd1;
 }
 
-.hidden {
+.hidden1, .hidden2 {
     position:absolute;
     right:0;
     left:0;
@@ -300,6 +344,126 @@ a { color: #fff; text-decoration: none; }
     height:100%;
     z-index:2;
     display:none;
+}
+
+.member-card {
+    background-color:#222;
+    max-width: 30%;
+    min-width:9rem;
+    border-radius:5px;
+    margin:auto;
+    height:6.5rem;
+    position: relative;
+    width: 100%;
+    padding:10px;
+    margin-top:10px;
+    align-items:center;
+    overflow:hidden;
+}
+
+.member-pfp {
+    background-color: #ffffff38;
+    padding: 4px;
+    vertical-align: middle;
+    border-style: none;
+    width:6rem;
+    right:0;left:0;
+    float:left;
+}
+
+.member-text {
+    padding:5px;
+    width:10%;
+    padding-top:10px;
+    padding-left:10px;
+    padding-bottom:none;
+    display: flex;
+    font-size: 1.7em;
+    color: #fff;
+}
+
+.member-text:nth-child(3) {
+    font-size: 1.2em;
+    color: #a2a2a2bb;
+}
+
+.profile-pfp {
+    background-color: #ffffff6e;
+    border-style: none;
+    padding: 5px;
+    width:20rem;
+    right:0;left:0;
+    margin:auto;
+}
+
+.profile-header {
+    position: relative;
+    text-align:center;
+    font-size:3rem;
+}
+
+.profile-box {
+    background-color:#1a1a1a;
+    border-radius:5px;
+    display:block;
+    margin:auto;
+    width:auto;
+    height:auto;
+    padding-right:40px;
+    padding-left:40px;
+}
+
+.profile-items {
+    position:relative;
+    margin-right:auto;
+    margin-left:auto;
+    padding:15px;
+}
+
+.profile-text {
+    display: table-row;
+    position: relative;
+    font-size: 25px;
+    position: relative;
+    text-align: center;
+}
+
+.server-box {
+    background-color:#1a1a1a;
+    border-radius:5px;
+    margin:auto;
+    height:auto;
+    margin-top:10px;
+    padding:10px;
+    padding-right:40px;
+    padding-left:40px;
+    min-width:max-content;
+}
+
+.server-items {
+    float:left;
+    width:auto;
+    padding-right:20px;
+}
+
+.server-text {
+    display:block;
+    text-align: left;
+    font-size: 14px;
+    max-width: fit-content;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.server-pfp {
+    background-color: #ffffff6e;
+    padding: 3px;
+    width:8rem;
+    position:relative;
+    top:0;bottom:0;
+    margin: 0 auto;
+    
 }
 
 /* effects */
