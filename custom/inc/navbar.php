@@ -1,8 +1,12 @@
 <?php
-require_once($_SERVER["DOCUMENT_ROOT"]."/beta/config.php");
+require_once("../core/config.php");
 
 if(!$Local::IsActive()) {
     $Local::Redirect("Invalid Session");
+}
+
+if(!$Local::IsVerified()) {
+    $Local::Redirect("Waiting for email activation");
 }
 
 if($Local::IsBlacklisted()) {
@@ -10,10 +14,13 @@ if($Local::IsBlacklisted()) {
 }
 
 $LocalInfo = $Local::Info();
-
 $username = $LocalInfo['username'];
 $avatar = $LocalInfo['avatar'];
 $uid = $LocalInfo['uid'];
+
+if(empty($LocalInfo['discord'])) {
+    header("Location: https://w0rst.xyz/beta/core/auth/discord.php?action=login");
+}
 
 ?>
 
@@ -32,15 +39,5 @@ $uid = $LocalInfo['uid'];
     </div>
 </div>
 <script>
-    var toggled = false;
-    function dropdown() {
-        toggled = !toggled
-        if(toggled) {
-            $(".dropdown").fadeIn().css("display","block");
-            $('.dropdown-holder').css({"padding-top":"11px"});
-        } else {
-            $(".dropdown").fadeIn().css("display","none");
-            $('.dropdown-holder').css({"padding-top":"0px"});
-        }
-    }
+    function dropdown() { $(".dropdown").fadeToggle(250); }
 </script>

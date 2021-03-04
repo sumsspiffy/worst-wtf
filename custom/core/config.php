@@ -5,9 +5,9 @@ define('DB_PASSWORD', '{M.V.-g*^lZ{');
 define('DB_NAME', 'armigkwd_project');
 
 // important includes
-include("core/database.php");
-include("core/class/user.php");
-include("core/class/log.php");
+include("class/database.php");
+include("class/user.php");
+include("class/log.php");
 
 // create the database link
 $database = new Database(DB_SERVER, DB_NAME, DB_USERNAME, DB_PASSWORD);

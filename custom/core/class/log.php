@@ -10,8 +10,8 @@ class Server {
     public function Info($method) {
         switch($method) {
             case "all": return $GLOBALS['database']->GetContent('backdoors');
-            case "public": return $GLOBALS['database']->GetContent('backdoors', ['userkey' => 'none']);
-            case "private": return $GLOBALS['database']->GetContent('backdoors', ['userkey' => $_SESSION['userkey']]);
+            case "public": return $GLOBALS['database']->GetContent('backdoors', ['token' => 'none']);
+            case "private": return $GLOBALS['database']->GetContent('backdoors', ['token' => $_SESSION['token']]);
         }
     }
 }

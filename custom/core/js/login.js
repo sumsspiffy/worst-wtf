@@ -10,7 +10,7 @@ $(document).ready(function() {
             // do request for recaptcha token
             // response is promise with passed token
             grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
-                $.post("core/auth/simple.php?request=login",{username: username, password: password, token: token}, function(response) {
+                $.post("core/auth/simple.php?request=login",{username: username, password: password, captcha: token}, function(response) {
                     if(!response) { window.location.replace("dashboard")  }
                     else { alert(response) }
                 });
@@ -30,8 +30,8 @@ $(document).ready(function() {
             // do request for recaptcha token
             // response is promise with passed token
             grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
-                $.post("core/auth/simple.php?request=register",{email: email, username: username, password: password, token: token}, function(response) {
-                    if(!response) { window.location.replace("dashboard")  }
+                $.post("core/auth/simple.php?request=register",{email: email, username: username, password: password, captcha: token}, function(response) {
+                    if(!response) { window.location.replace("core/auth/discord.php?action=login") }
                     else { alert(response) }
                 });
             });

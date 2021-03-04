@@ -194,14 +194,15 @@ class Database
 // 	uid INT(10) AUTO_INCREMENT PRIMARY KEY, 
 // 	username VARCHAR(30) NOT NULL, 
 // 	password VARCHAR(255) NOT NULL, 
-// 	address VARCHAR(30) NOT NULL, 
-// 	usergroup VARCHAR(30) DEFAULT 'user', 
+// 	ip VARCHAR(30) NOT NULL, 
+// 	group VARCHAR(30) DEFAULT 'user', 
 // 	blacklist VARCHAR(5) DEFAULT 'false',
 // 	avatar VARCHAR(255) DEFAULT NULL, 
-// 	discordid VARCHAR(30) DEFAULT NULL, 
-// 	userkey VARCHAR(60) NOT NULL,
+// 	discord VARCHAR(30) DEFAULT NULL, 
+// 	key VARCHAR(60) NOT NULL,
 // 	date VARCHAR(20) NOT NULL,
-//  mail VARCHAR(30) NOT NULL
+//  email VARCHAR(30) NOT NULL,
+//  verified VARCHAR(5) DEFAULT 'false'
 // )
 
 // CREATE TABLE IF NOT EXISTS logs (

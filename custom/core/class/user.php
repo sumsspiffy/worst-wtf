@@ -2,11 +2,47 @@
 
 class Local {
     public function Info() {
-        return $GLOBALS['database']->GetContent('users', ['userkey' => $_SESSION['userkey']])[0];
+        return $GLOBALS['database']->GetContent('users', ['token' => $_SESSION['token']])[0];
+    }
+
+    public function ChangePassword($oldpass, $newpass) {
+        $LocalInfo = Local::Info();
+        $username = $LocalInfo['username'];
+        $password = $LocalInfo['password'];
+
+        if(md5($oldpass) != $password) {
+            $Error[] = "Incorrect password";
+        }
+
+        if(md5($oldpass) == md5($newpass)) {
+            $Error[] = "Passwords cannot be the same";
+        }
+
+        if(empty($Error)) {
+            Account::Edit($username, "password", md5($newpass));
+            return true;
+        }
+
+        else { 
+            foreach($Error as $Errors) {
+                echo("$Errors.\n");
+            }
+        }
+    }
+
+    public function IsVerified() {
+        $LocalInfo = Local::Info();
+        $verified = $LocalInfo['verified'];
+
+        if($verified == "true") {
+            return true;
+        }
+
+        return false;
     }
 
     public function IsAdmin() {
-        $group = Local::Info()['usergroup'];
+        $group = Local::Info()['group'];
         $roles = array('admin', 'funky');
         if(in_array($group, $roles)) {
             return true;
@@ -46,14 +82,14 @@ class Account {
     public function Create($user, $pass, $mail, $captcha) {
         if(empty($user)) { $Error[] = "Invalid username"; }
         if(empty($pass)) { $Error[] = "Invalid password"; }
-        if(empty($mail) || !filter_var($mail, FILTER_VALIDATE_EMAIL)) { $Error[] = "Invalid mail"; }
+        if(empty($mail)) { $Error[] = "Invalid email"; }
         if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
         if(Secure::AntiAlt()) { $Error[] = "Altings not allowed"; }
 
         $res = $GLOBALS['database']->Count('users', ['username' => $user]);
         if($res > 0) { $Error[] = "Username exists"; }
 
-        $res = $GLOBALS['database']->Count('users', ['mail' => $mail]);
+        $res = $GLOBALS['database']->Count('users', ['email' => $mail]);
         if($res > 0) { $Error[] = "Email exists"; }
 
         if($captcha->success == 0 || $captcha->score < 0.5) {
@@ -61,50 +97,25 @@ class Account {
         } 
 
         if(empty($Error)) {
-            $key = md5(mt_rand(100000, 999999));
+            $token = md5(mt_rand(100000, 999999));
             date_default_timezone_set('UTC');
             $date = date("Y:m:d H:i:s");
 
             // activate the session
             $_SESSION['active'] = true;
-            $_SESSION['userkey'] = $key;
+            $_SESSION['token'] = $token;
 
-            $GLOBALS['database']->Insert('users', ['username' => $user, 'password' => md5($pass), 'mail' => $mail, 'userkey' => $key, 'ip' => $_SERVER['REMOTE_ADDR'], 'date' => $date]);
+            // email verification link
+            $subject= "Account Verfication.";
+            $headers = "From: <webmaster@w0rst.xyz>\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1\r\n";
+            $message= "<html><h2>Hello, $user.\nEmail verification required, head on over <a href='https://w0rst.xyz/beta/core/auth/simple.php?request=verify&token=$token'>Here!</a></h2></html>";
+            
+            mail($mail, $subject, $message, $headers);
+
+            $GLOBALS['database']->Insert('users', ['username' => $user, 'password' => md5($pass), 'email' => $mail, 'token' => $token, 'ip' => $_SERVER['REMOTE_ADDR'], 'date' => $date]);
             return;
         }
 
-        else { 
-            foreach($Error as $Errors) {
-                echo("$Errors.\n");
-            }
-        }
-    }
-
-    public function Verify($user, $token) {
-
-    }
-
-    public function Login($user, $pass, $captcha) {
-        if(empty($user)) { $Error[] = "Invalid username"; }
-        if(empty($pass)) { $Error[] = "Invalid password"; }
-        if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
-
-        $res = $GLOBALS['database']->GetContent('users', ['username' => $user, 'password' => md5($pass)])[0];
-
-        if($res == 0) { 
-            $Error[] = "Invalid credentials";
-        }
-
-        if($captcha->success == 0 || $captcha->score < 0.5) {
-            $Error[] = "Failed captcha";
-        }
-
-        if(empty($Error)) {
-            $_SESSION['userkey'] = $res['userkey'];
-            $_SESSION['active'] = true;
-            return;
-        }
-        
         else { 
             foreach($Error as $Errors) {
                 echo("$Errors.\n");
@@ -114,6 +125,50 @@ class Account {
 
     public function Edit($user, $edit, $value) {
         $GLOBALS['database']->Update('users', ['username' => $user], [$edit => $value]);
+    }
+
+    public function Verify($token) {
+        $AccountInfo = $GLOBALS['database']->GetContent('users', ['token' => $token])[0];
+        $username = $AccountInfo['username'];
+        $usertoken = $AccountInfo['token'];
+
+        if($token == $usertoken) {
+            Account::Edit($username, "verified", "true");
+            return true;
+        }
+
+        return false;
+    }
+
+    public function Login($user, $pass, $captcha) {
+        if(empty($user)) { $Error[] = "Invalid username"; }
+        if(empty($pass)) { $Error[] = "Invalid password"; }
+        if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
+
+        $AccountInfo = Account::Info($user);
+        if(md5($pass) != $AccountInfo['password']) { 
+            $Error[] = "Invalid credentials";
+        }
+
+        if($captcha->success == 0 || $captcha->score < 0.5) {
+            $Error[] = "Failed captcha";
+        }
+
+        if($AccountInfo['verified'] == "false") {
+            $Error[] = "Email verification required";
+        }
+
+        if(empty($Error)) {
+            $_SESSION['token'] = $AccountInfo['token'];
+            $_SESSION['active'] = true;
+            return;
+        }
+        
+        else { 
+            foreach($Error as $Errors) {
+                echo("$Errors.\n");
+            }
+        }
     }
 
     public function Info($user) {
@@ -127,13 +182,13 @@ class Secure {
 
         // update ip address if it had changed
         if(Local::Info()['ip'] != $Address) {
-            $GLOBALS['database']->Update('users', ['userkey' => $_SESSION['userkey']], ['ip' => $Address]);
+            $GLOBALS['database']->Update('users', ['token' => $_SESSION['token']], ['ip' => $Address]);
         }
 
         $res = $GLOBALS['database']->GetContent('users', ['ip' => $Address]);
         
         foreach($res as $user) {
-            if ($user['userkey'] != Local::Info()['userkey']) {
+            if ($user['token'] != Local::Info()['token']) {
                 return true;
             }
         }

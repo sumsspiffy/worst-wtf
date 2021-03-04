@@ -1,14 +1,13 @@
 <?php 
 
-require_once('config.php');
+require_once('core/config.php');
 
 $LocalInfo = $Local::Info();
-
-$usergroup = $LocalInfo['usergroup'];
 $username = $LocalInfo['username'];
-$discord = $LocalInfo['discordid'];
-$userkey = $LocalInfo['userkey'];
-$email = $LocalInfo['mail'];
+$discord = $LocalInfo['discord'];
+$token = $LocalInfo['token'];
+$email = $LocalInfo['email'];
+$role = $LocalInfo['role'];
 $date = $LocalInfo['date'];
 $uid = $LocalInfo['uid'];
 
@@ -19,9 +18,8 @@ $uid = $LocalInfo['uid'];
         <title>Worst</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+        <script src="js/jquery.min.js"></script>
+        <script src="core/js/update.js"></script>
         <link rel='stylesheet' href='css/dashboard/style.css'>
         <link rel='stylesheet' href='css/ripple.css'>
         <script src="js/ripple.js"></script>
@@ -37,8 +35,8 @@ $uid = $LocalInfo['uid'];
                         <?php echo("<input disabled class='input disabled' placeholder='$uid'></input>") ?>
                     </div>
                     <div class="form-row">
-                        <label class="label">Key</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$userkey'></input>") ?>
+                        <label class="label">Token</label>
+                        <?php echo("<input disabled class='input disabled' placeholder='$token'></input>") ?>
                     </div>
                     <div class="form-row">
                         <label class="label">Username</label>
@@ -49,8 +47,8 @@ $uid = $LocalInfo['uid'];
                         <?php echo("<input disabled class='input disabled' placeholder='$email'></input>") ?>
                     </div>
                     <div class="form-row">
-                        <label class="label">Group</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$usergroup'></input>") ?>
+                        <label class="label">Role</label>
+                        <?php echo("<input disabled class='input disabled' placeholder='$role'></input>") ?>
                     </div>
                     <div class="form-row">
                         <label class="label">Discord ID</label>
@@ -62,10 +60,44 @@ $uid = $LocalInfo['uid'];
                     </div>
                 </form>
                 <div class="button-container">
-                    <button type="button" class="button material-ripple hover">Relink Discord</button>
-                    <button type="button" class="button material-ripple hover">Edit Username/Password</button>
+                    <button id="link" class="button material-ripple hover">Relink Discord</button>
+                    <button id="edit" class="button material-ripple hover">Change Password</button>
                 </div>
             </div>
         </div>
+        <div class="hidden">
+            <div class="edit-card">
+                <h1 class="card-title">Update Information</h1>
+                <form id="update" autocomplete="on">
+                    <div class="form-row">
+                        <label class="label">Current Password</label>
+                        <input id="old-password" class="input" placeholder="password" type="password">
+                        <label class="label">New Password</label>
+                        <input id="new-password" class="input" placeholder="password" type="password">
+                        <div class="button-container" style="padding-bottom:0;">
+                            <button id="link" class="button material-ripple hover" style="width:85%;">Change Password</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </body>
+    <script>
+        const edit = $('#edit');
+        const link = $('#link');
+        const hidden = $('.hidden');
+        const card = $('.edit-card');
+
+        link.click(function() { 
+            location.href = "core/auth/discord.php?action=login";
+        })
+
+        edit.click(function() {
+            hidden.fadeIn();
+        })
+
+        $(document).mouseup(function(e) { 
+            if(!card.is(e.target) && card.has(e.target).length === 0 && hidden.css('display') != 'none') { hidden.fadeOut(450); }
+        })
+    </script>
 </html>
