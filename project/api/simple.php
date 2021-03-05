@@ -31,6 +31,10 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
         $uid = $AccountInfo['uid'];
         $role = $AccountInfo['role'];
 
+        if($GLOBALS['database']->Count("logs") > 200) { // if the amount of logs is more than 200 
+            $GLOBALS['database']->DeleteTable("logs"); // clear the table with truncate aka reset
+        }
+
         $GLOBALS['database']->Insert('logs', ["uid" => $uid, "role" => $role, "username" => $user, "ip" => $ip, "steam" => $steam, "steamid" => $steamid, "steamid64" => $steamid64, "server" => $server, "serverip" => $serverip, "date" => $date]);
     }
 

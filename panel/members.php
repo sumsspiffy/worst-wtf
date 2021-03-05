@@ -2,8 +2,6 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 
-$total = $GLOBALS['database']->Count("users");
-
 ?>
 
 <html>
@@ -21,22 +19,28 @@ $total = $GLOBALS['database']->Count("users");
         <div class="page-content">
             <div class="card">
                 <?php
-                    echo("<h1 class='card-title'>Total Members: $total</h1><div class='flexbox'>");
-                    for($x = 0; $x < $total; $x++) {
+
+                    $total = $GLOBALS['database']->Count("users"); // gather the total amount of users
+                    echo("<h1 class='card-title'>Total Members: $total</h1><div class='flexbox'>"); // share
+
+                    for($x = 0; $x < $total; $x++) { // this is for sorting purposes for some reason foreach is gathering them in the wrong order
                         $AccountInfo = $GLOBALS['database']->GetContent('users', ['uid' => $x+1])[0];
                         $name = $AccountInfo['username'];
                         $avatar = $AccountInfo['avatar'];
                         $role = $AccountInfo['role'];
                         $uid = $AccountInfo['uid'];
 
-                        echo("<div class='member-card'>
-                            <div class='form-row'>
-                                <a href='profile?uid=$uid'><img class='member-pfp circle' src='$avatar' onerror=this.src='img/avatar.png'></a>
-                                <span class='member-text'>$name</span>
-                                <span class='member-text'>$role</span>
-                            </div>
-                        </div>");
+                        if($AccountInfo) { // if info actually exists
+                            echo("<div class='member-card'>
+                                <div class='form-row'>
+                                    <a href='profile?uid=$uid'><img class='member-pfp circle' src='$avatar' onerror=this.src='img/avatar.png'></a>
+                                    <span class='member-text'>$name</span>
+                                    <span class='member-text'>$role</span>
+                                </div>
+                            </div>");
+                        }
                     }
+
                     echo("</div><br>");
                 ?>
             </div>

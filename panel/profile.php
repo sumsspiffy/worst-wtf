@@ -27,6 +27,7 @@ if(!$AccountInfo) { $Local::Redirect("Invalid uid"); } // redirect if uid isn't 
                 <?php
                     $blacklist =$AccountInfo['blacklist'];
                     $username = $AccountInfo['username'];
+                    $verified = $AccountInfo['verified'];
                     $discord = $AccountInfo['discord'];
                     $avatar = $AccountInfo['avatar'];
                     $email = $AccountInfo['email'];
@@ -47,6 +48,7 @@ if(!$AccountInfo) { $Local::Redirect("Invalid uid"); } // redirect if uid isn't 
                         <table class='profile-items'>
                             <td class='profile-text'><strong>UID: <span>$uid</span></strong></td>
                             <td class='profile-text'><strong>Role: <span>$role</span></strong></td>
+                            <td class='profile-text'><strong>Verified: <span>$verified</span></strong></td>
                             <td class='profile-text'><strong>Blacklisted: <span>$blacklist</span></strong></td>
                             <td class='profile-text'><strong>Creation: <span>$date</span></strong></td>
                             <td class='profile-text'><strong>Discord ID: <span>$discord</span></strong></td>

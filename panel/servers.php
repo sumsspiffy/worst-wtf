@@ -27,6 +27,7 @@ $i = 0; // this will be used for displaying the server tab
         <link rel='stylesheet' href='css/ripple.css'>
         <script src="js/ripple.js"></script>
         <style type="text/css">
+            span { color: #ccccccbb; }
             .S1, .S2 { display:none; }
         </style>
     </head>
@@ -40,6 +41,10 @@ $i = 0; // this will be used for displaying the server tab
                     <?php echo($All); ?>
                 </div>
                 <?php
+                    // Im using for each for the servers because idgaf about the order they are
+                    // if this were a list or something it would be diffrent, but its whatever
+                    // if you want to know how to order it properly check out members or logs
+
                     // for each server then for each row
                     foreach($Servers as $row => $value) {
 
@@ -59,13 +64,13 @@ $i = 0; // this will be used for displaying the server tab
                             echo("<div class='server-box'>
                                 <a href='steam://connect/$ip'><img class='server-pfp circle' src='img/steam.png'></a>
                                 <table class='server-items'>
-                                    <td class='server-text'>Server: $name</td>
-                                    <td class='server-text'>Server IP: $ip</td>
-                                    <td class='server-text'>Password: $pass</td>
-                                    <td class='server-text'>Gamemode: $mode</td>
-                                    <td class='server-text'>Net: $net</td>
-                                    <td class='server-text'>Map: $map</td>
-                                    <td class='server-text'>Date: $date</td>
+                                    <td class='server-text'><strong>Server: <span>$name</span></strong></td>
+                                    <td class='server-text'><strong>Server IP: <span>$ip</span></strong></td>
+                                    <td class='server-text'><strong>Password: <span>$pass</span></strong></td>
+                                    <td class='server-text'><strong>Gamemode: <span>$mode</span></strong></td>
+                                    <td class='server-text'><strong>Net: <span>$net</span></strong></td>
+                                    <td class='server-text'><strong>Map: <span>$map</span></strong></td>
+                                    <td class='server-text'><strong>Date: <span>$date</span></strong></td>
                                 </table>
                             </div>");
                         }
