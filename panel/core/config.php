@@ -6,8 +6,7 @@ define('DB_NAME', 'armigkwd_project');
 
 // important includes
 include("class/database.php");
-include("class/user.php");
-include("class/log.php");
+include("class/classes.php");
 
 // create the database link
 $database = new Database(DB_SERVER, DB_NAME, DB_USERNAME, DB_PASSWORD);
@@ -17,12 +16,10 @@ global $database;
 // define required classes
 // classes for user info
 $Account = new Account;
+$Script = new Script;
 $Secure = new Secure;
 $Local = new Local;
-
-// classes for log info
-$Server = new Server;
-$Script = new Script;
+$Log = new Log;
 
 session_start(); // start session
 

@@ -26,13 +26,13 @@ if($request == "register") {
 
 if($request == "verify") { 
     if(Account::Verify($token)) {
-        header("Location: https://w0rst.xyz/beta/dashboard"); 
+        header("Location: https://w0rst.xyz/panel/dashboard"); 
     }
 }
 
 if($request == "logout") { 
     Local::Disconnect(); // clear session info
-    header("Location: https://w0rst.xyz/beta/"); 
+    header("Location: https://w0rst.xyz/panel/"); 
 }
 
 ?>

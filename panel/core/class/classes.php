@@ -219,4 +219,74 @@ class Secure {
     }
 }
 
+class Log {
+    public function Script() {
+        return $GLOBALS['database']->GetContent('logs');
+    }
+
+    public function Server($method) {
+        switch($method) {
+            case "all": return $GLOBALS['database']->GetContent('backdoors');
+            case "public": return $GLOBALS['database']->GetContent('backdoors', ['token' => 'none']);
+            case "private": return $GLOBALS['database']->GetContent('backdoors', ['token' => $_SESSION['token']]);
+        }
+    }
+}
+
+class Script {
+    function Login($user, $pass) {
+        if(empty($user)) { $Error[] = "Invalid username"; }
+        if(empty($pass)) { $Error[] = "Invalid password"; }
+
+        $AccountInfo = Account::Info($user);
+
+        // incorrect information
+        if($pass != $AccountInfo['password']) { 
+            $Error[] = "Incorrect password";
+        } 
+
+        // currently blacklisted
+        if($AccountInfo['blacklist'] == "true") {
+            $Error[] = "Currently Blacklisted";
+        } 
+
+        // account needs verification
+        if($AccountInfo['verified'] == "false") { 
+            $Error[] = "Awaiting Verification";
+        }
+
+        if(empty($Error)) {
+            return true;
+        }
+
+        else { 
+            foreach($Error as $Errors) {
+                echo("$Errors.\n");
+            }
+        }
+    }
+    
+    function IsBlacklisted($user) {
+        $blacklist = Account::Info($user)['blacklist'];
+
+        if($blacklist == "true") {
+            return true;
+        }
+
+        return false;
+    }
+
+    function IsAdmin($user) {
+        $role = Account::Info($user)['role'];
+        $roles = array('admin', 'funky');
+
+        if(in_array($role, $roles)) {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+
 ?>

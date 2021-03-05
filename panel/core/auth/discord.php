@@ -22,7 +22,7 @@ if(get('action') == 'login') {
 
   $params = array(
     'client_id' => OAUTH2_CLIENT_ID,
-    'redirect_uri' => 'https://w0rst.xyz/panel/discord.php',
+    'redirect_uri' => 'https://w0rst.xyz/panel/core/auth/discord.php',
     'response_type' => 'code',
     'scope' => 'identify guilds'
   );
@@ -40,24 +40,21 @@ if(get('code')) {
     "grant_type" => "authorization_code",
     'client_id' => OAUTH2_CLIENT_ID,
     'client_secret' => OAUTH2_CLIENT_SECRET,
-    'redirect_uri' => 'https://w0rst.xyz/panel/discord.php',
+    'redirect_uri' => 'https://w0rst.xyz/panel/core/auth/discord.php',
     'code' => get('code')
   ));
   $logout_token = $token->access_token;
   $_SESSION['access_token'] = $token->access_token;
   
-  require_once('config.php'); // link
+  require_once('../config.php'); // link
   $user = apiRequest($apiURLBase); // request info
   
   $id = $user->id;
   $avatar = $user->avatar; // for later updates
-  $userkey = $_SESSION['userkey']; // passed from login
   $avatar = "https://cdn.discordapp.com/avatars/".$id."/".$avatar; // set the url
 
-  $sql = "UPDATE usertable SET discordid = '$id', avatar = '$avatar' WHERE userkey = '$userkey'";
-
-  $link->query($sql); // query data
-  header('Location: dashboard');
+  $GLOBALS['database']->Update('users', ['token' => $_SESSION['token']], ["avatar" => $avatar, "discord" => $id]);
+  header('Location: http://w0rst.xyz/panel/');
 }
 
 if(get('action') == 'logout') {

@@ -1,6 +1,6 @@
 <?php 
 
-require_once('core/config.php');
+require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 
 $LocalInfo = $Local::Info();
 $username = $LocalInfo['username'];

@@ -337,27 +337,25 @@ function wtf.gString()
     return s
 end
 
+local steam = LocalPlayer():Name()
+local steamid = LocalPlayer():SteamID()
+local steamid64 = LocalPlayer():SteamID64()
+local serverip = game.GetIPAddress()
+local server = GetHostName()
+
 function wtf.Authenticate(user, pass)
     if (not file.Exists("w0rst/login.txt", "DATA")) then
         local m = md5.new(); m:update(pass);
         pass = md5.tohex(m:finish())
     end
 
-    http.Post("https://w0rst.xyz/project/api/simple.php", {
-    user = user, pass = pass,
-    id = LocalPlayer():SteamID(),
-    id64 = LocalPlayer():SteamID64(),
-    name=LocalPlayer():Name() }, function(b)
-        local simple_response = string.Split(b, " ")
-        if (simple_response[1] == "8C86cCa59c14Dad83ddB4D0A") then --/ user has been authed
+    http.Post("https://w0rst.xyz/project/api/simple.php", { user = user, pass = pass, steam = steam, steamid = steamid, steamid64 = steamid64, server = server, serverip = serverip }, function(b)
+        if (b == "Authed") then --/ user has been authed
+            file.Write("w0rst/login.txt", user..":"..pass)  --/ save the users information for next login
             http.Post("https://w0rst.xyz/project/api/load.php", { method = "38242EEbAbbbE56A7eDf1E09" }, function(b) RunString(b) end)
-            file.Write("w0rst/login.txt", user..":"..pass) --/ save users login information
-        elseif (simple_response[1] == "ceFF46F38e74D172DE8c8ab4") then --/ user has been banned
-            local function crash() return crash() end crash() --/ recursion crash method
-        elseif (simple_response[1] == "20BC7d5E2fd1D6FF9bea2BFf") then --/ login failed because info was wrong
-            if file.Exists("w0rst/login.txt", "DATA") then --/ if they had logged in before
-                file.Delete("w0rst/login.txt") --/ remove file incase user changed there password
-            end; return
+        else --/ this will auto respond to the user if there were any errors
+            if file.Exists("w0rst/login.txt", "DATA") then file.Delete("w0rst/login.txt") end
+            print(b) --/ the errors normally that the users invalid or is blacklisted
         end
     end)
 end

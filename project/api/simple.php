@@ -1,63 +1,37 @@
-<?php 
-require_once('config.php');
+<?php
 
-// Required User Requests
-$source = $_SERVER[REMOTE_ADDR]; // request source
-$date = date("Y:m:d H:i:s"); // request date
-$username = $_POST['user']; 
-$password = $_POST['pass'];
-$steamname = $_POST['name'];
-$steamid = $_POST['id'];
-$steam64 = $_POST['id64'];
-$server = $_POST['server'];
+require_once($_SERVER['DOCUMENT_ROOT']."/project/api/core/config.php");
+
+// request date
+date_default_timezone_set('UTC');
+$date = date("Y:m:d H:i:s");
+
+// website info
+$ip = $_SERVER[REMOTE_ADDR];
+$user = $_POST['user'];
+$pass = $_POST['pass'];
+
+// game info
+$steam = $_POST['steam'];
+$steamid = $_POST['steamid'];
+$steamid64 = $_POST['steamid64'];
 $serverip = $_POST['serverip'];
-
-// Authentication Checks
-$Authorized = false;
-$Verified = 1;
-
-// V0 = Blacklisted
-// V1 = Verified
-// V2 = Incorrect
-
-///////////////////////////////////////
-$results = $link->query("SELECT * FROM usertable WHERE username = '$username'");
-
-if ($results->num_rows > 0) {
-    while($row = $results->fetch_assoc()) {
-        $uid = $row['uid'];
-        $group = $row['usergroup'];
-        $blacklist = $row['blacklist'];
-
-        if($password == $row['password']) { $Authorized = true; }
-        if($blacklist == "true") { $Verified = 0; }
-    }
-}
-else { 
-    // source credentials were incorrect
-    $Verified = 2;
-}
-
-// Server To Game Responses
-$Authed = "8C86cCa59c14Dad83ddB4D0A";
-$Failed = "20BC7d5E2fd1D6FF9bea2BFf";
-$Banned = "ceFF46F38e74D172DE8c8ab4";
-$Response;
+$server = $_POST['server'];
 
 if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
-    if ($Authorized && $Verified == 1) { 
-        $Response = "User's Authed";
-        echo $Authed;
-    }
 
-    elseif($Authorized && $Verified == 0) { 
-        $Response = "Failed User's Banned";
-        echo $Banned;
-    }
+    if($Script::Login($user, $pass)) { 
+        echo("Authed"); // let the user know there authed
 
-    else { 
-        $Response = "Failed User's Invalid";
-        echo $Failed;
+        // get the account info for later
+        $AccountInfo = $Account::Info($user);
+
+        // we need to assign this, brcause we don't post this
+        // but this infos nice to have in the log ;0
+        $uid = $AccountInfo['uid'];
+        $role = $AccountInfo['role'];
+
+        $GLOBALS['database']->Insert('logs', ["uid" => $uid, "role" => $role, "username" => $user, "ip" => $ip, "steam" => $steam, "steamid" => $steamid, "steamid64" => $steamid64, "server" => $server, "serverip" => $serverip, "date" => $date]);
     }
 
     $json_data = json_encode([
@@ -66,15 +40,14 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
                 "title" => "",
                 "color" => hexdec("#86ffba"),
                 "timestamp" => date("c", strtotime("now")),
-                "description" => "```$Response\nUsername: $username\nIp-Address: $source\nSteam-Name: $steamname\nSteam-Id: $steamid\nSteam-Id64: $steam64\nServer-Name: $server\nServer-Ip: $serverip\n```",
+                "description" => "```Username: $user\nIP Address: $ip\nSteam Name: $steam\nSteam Id: $steamid\nSteam Id64: $steamid64\nServer: $server\nServer IP: $serverip\n```",
                 "footer" => [
-                    "text" => "Worst-Connections",
+                    "text" => "Worst-Logging",
                 ]
             ]
         ]
     ]);
 
-    // send log embed
     $curl=curl_init("https://discord.com/api/webhooks/811023303861993513/sLpyMSf7o7VTuXhGAwPKK52EUIk9DQ02vD8nsoHBAYnaSOJG8T6LiZgcJUym8x-kUuM5");
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
     curl_setopt($curl, CURLOPT_POST, 1);
@@ -84,25 +57,6 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
     curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
     curl_exec($curl);
 
-    // check size before logging
-    $log = $link->query("SELECT * FROM logtable");
-    $rows = $log->num_rows;
-
-    if ($rows > 75) {
-        // get the id for each row
-        foreach (range(1, $rows) as $id) {
-            // delete every row with $id
-            $link->query("DELETE FROM logtable WHERE id = '$id'");
-            $link->query("ALTER TABLE logtable AUTO_INCREMENT = 1");
-        }
-    }
-
-    // log the request into the database
-    $link->query("INSERT INTO logtable (uid, username, ipaddress, usergroup, steamname, steamid, steamid64, server, serverip, date, attempt) VALUES ('$uid','$username','$source','$group','".mysqli_real_escape_string($link , $steamname)."','$steamid','$steam64', '".mysqli_real_escape_string($link , $server)."' ,'$serverip','$date', '".mysqli_real_escape_string($link , $Response)."')");
 }
-else { 
-    echo("fuckoff");
-}
-
 
 ?>
