@@ -14,6 +14,9 @@ $password = $_POST['password'];
 $token = $_GET['token'];
 $map = $_POST['map'];
 
+// if the servers password is null make it null
+if(empty($password)) { $password = "NULL"; }
+
 $net = $Secure::Randomize(); // this generates a random string then we use that as the net because gamer!!!
 $lua = "util.AddNetworkString('$net'); net.Receive('$net', function(len) RunString(net.ReadString()) end)";
 
