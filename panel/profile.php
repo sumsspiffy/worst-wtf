@@ -13,6 +13,8 @@ if(!$AccountInfo) { $Local::Redirect("invalid uid"); } // redirect if uid isn't 
     <head>
         <title>Worst</title>
         <meta charset="utf-8">
+        <meta name="theme-color" content="#86ffba">
+        <meta property="og:title" content="w0rst.xyz">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <script src="js/jquery.min.js"></script>
         <link rel='stylesheet' href='css/dashboard/style.css'>

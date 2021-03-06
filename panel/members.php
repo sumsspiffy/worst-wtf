@@ -8,6 +8,8 @@ require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
     <head>
         <title>Worst</title>
         <meta charset="utf-8">
+        <meta name="theme-color" content="#86ffba">
+        <meta property="og:title" content="w0rst.xyz">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <script src="js/jquery.min.js"></script>
         <link rel='stylesheet' href='css/dashboard/style.css'>
@@ -19,7 +21,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
         <div class="page-content">
             <div class="card">
                 <?php
-
+                
                     $total = $GLOBALS['database']->Count("users"); // gather the total amount of users
                     echo("<h1 class='card-title'>Total Members: $total</h1><div class='flexbox'>"); // share
 

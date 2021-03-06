@@ -74,7 +74,9 @@ class Local {
     }
 
     public function Redirect($reason) {
-        header("Location: https://w0rst.xyz/panel/error?error=$reason");
+        // if theres a reason then add that 
+        if($reason) { $extra = "?error=$reason"; }
+        header("Location: https://w0rst.xyz/panel/error$extra");
     }
 }
 
@@ -108,8 +110,8 @@ class Account {
             // email verification link
             $subject= "Account Verfication.";
             $headers = "From: <webmaster@w0rst.xyz>\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1\r\n";
-            $message= "<html><h2>Hello, $user.\nEmail verification required, head on over <a href='https://w0rst.xyz/panel/core/auth/simple.php?request=verify&token=$token'>Here!</a></h2></html>";
-            
+            $message= "<html><p>Hello, $user.\nEmail verification required.</p><a href='https://w0rst.xyz/panel/core/auth/simple.php?request=verify&token=$token'><h1>Verify</h1></a></html>";
+
             mail($mail, $subject, $message, $headers);
 
             $GLOBALS['database']->Insert('users', ['username' => $user, 'password' => md5($pass), 'email' => $mail, 'token' => $token, 'ip' => $_SERVER['REMOTE_ADDR'], 'date' => $date]);

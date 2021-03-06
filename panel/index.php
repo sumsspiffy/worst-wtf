@@ -31,8 +31,8 @@ if($Local::IsActive()) { header("Location: dashboard"); } // auto redirect
         <div class="hidden">
             <div class="card"> 
                 <div class="button-container">
-                    <button id="tab-login" class="button transparent" style="opacity:1;">LOGIN</button>
-                    <button id="tab-register" class="button transparent">REGISTER</button>
+                    <button id="tab-login" class="button transparent material-ripple" style="opacity:1;">LOGIN</button>
+                    <button id="tab-register" class="button transparent material-ripple">REGISTER</button>
                 </div>
                 <form id="login" autocomplete="on">
                     <div class="form-row">

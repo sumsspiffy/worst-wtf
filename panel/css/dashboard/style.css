@@ -456,13 +456,13 @@ a { color: #fff; text-decoration: none; }
 .server-items {
     float:left;
     width:auto;
-    padding-right:20px;
 }
 
 .server-text {
     display:block;
     text-align: left;
     font-size: 14px;
+    padding-right:20px;
     max-width: fit-content;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -478,12 +478,19 @@ a { color: #fff; text-decoration: none; }
     margin: 0 auto;
 }
 
+.transparent {
+    background-color: #1a1a1aab;
+    border-radius:5px;
+    border:none;
+    opacity:0.55;
+}
+
 .log-box {
     background-color:#1a1a1a;
     border-radius:5px;
     margin:auto;
     height:auto;
-    width:60%;
+    width: auto;
     min-width:max-content;
     margin-top:10px;
     padding:10px;
@@ -494,13 +501,13 @@ a { color: #fff; text-decoration: none; }
 .log-items {
     float:left;
     width:auto;
-    padding-right:20px;
 }
 
 .log-text {
     display:block;
     text-align: left;
     font-size: 14px;
+    padding-right:20px;
     max-width: fit-content;
     overflow: hidden;
     text-overflow: ellipsis;
