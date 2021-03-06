@@ -9,21 +9,15 @@ $avatar = $LocalInfo['avatar'];
 $token = $LocalInfo['token'];
 $uid = $LocalInfo['uid'];
 
-if(!$Local::IsVerified()) {
-    $Local::Redirect("Waiting for email activation");
-}
+if(!$Local::IsVerified()) { $Local::Redirect("Waiting for email activation"); }
 
-if(!$Local::IsActive()) {
-    $Local::Redirect("Invalid Session");
-}
+if(!$Local::IsActive()) { $Local::Redirect("Invalid Session"); }
 
-if($Local::IsBlacklisted()) {
-    $Local::Redirect("Blacklisted");
-}
+if($Local::IsBlacklisted()) { $Local::Redirect("Blacklisted"); }
 
 // if discords null & localinfo exists
 // just a dumb error ez fix ;0 ;0 ;0
-if($discord == null && !empty($LocalInfo)) {
+if($discord == "NULL" && !empty($LocalInfo)) {
     header("Location: https://w0rst.xyz/panel/core/auth/discord.php?action=login");
 }
 
@@ -36,26 +30,27 @@ if($Local::IsAdmin()) {
 }
 
 ?>
-
-<div class="navbar">
-    <div class="nav-tab">
-        <button class="nav-button" onclick="redirect(1)">Home</button>
-        <button class="nav-button" onclick="redirect(2)">Members</button>
-        <button class="nav-button" onclick="redirect(3)">Servers</button>
-        <?php echo($Logs); ?>
-    </div>
-    <div class="dropdown-holder">
-        <div class="button-drop material-ripple" onclick="dropdown()">
-            <?php echo("<img class='circle pfp' src='$avatar' onerror=this.src='img/avatar.png'>"); ?>
-            <?php echo("<span class='name'>$username</span>"); ?>
+<div class="nav-container"> 
+    <div class="navbar">
+        <div class="nav-tab">
+            <button class="nav-button" onclick="redirect(1)">Home</button>
+            <button class="nav-button" onclick="redirect(2)">Members</button>
+            <button class="nav-button" onclick="redirect(3)">Servers</button>
+            <?php echo($Logs); ?>
         </div>
-        <div class="dropdown">
-            <a class="dropdown-item" onclick="account()">Account</a>
-            <a class="dropdown-item" onclick="script()">Script</a>
-            <a class="dropdown-item" onclick="logout()"">Logout</a>
+        <div class="dropdown-holder">
+            <div class="button-drop material-ripple" onclick="dropdown()">
+                <?php echo("<img class='circle pfp' src='$avatar' onerror=this.src='img/avatar.png'>"); ?>
+                <?php echo("<span class='name'>$username</span>"); ?>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-item" onclick="account()">Account</a>
+                <a class="dropdown-item" onclick="script()">Script</a>
+                <a class="dropdown-item" onclick="logout()"">Logout</a>
+            </div>
         </div>
     </div>
-</div>
+</div><br><br><br>
 <div class="hidden1">
     <div class="center-card">
         <h1 class="card-title">Script Information</h1>
@@ -77,7 +72,7 @@ if($Local::IsAdmin()) {
 
 <script>
     function dropdown() { $(".dropdown").fadeToggle(250); }
-    function script() {  $(".hidden1").fadeToggle(250); }
+    function script() {  $(".hidden1").fadeToggle(250); $('body').css("overflow-y", "hidden"); }
     function account() { location.href = "account"; }
     function logout() { location.href = "core/auth/simple.php?request=logout"; }
     function redirect(type) {
@@ -93,6 +88,9 @@ if($Local::IsAdmin()) {
     }
 
     $(document).mouseup(function(e) { 
-        if(!$(".center-card").is(e.target) && $(".center-card").has(e.target).length === 0 &&  $(".hidden1").css('display') != 'none') {  $(".hidden1").fadeOut(450); }
+        if(!$(".center-card").is(e.target) && $(".center-card").has(e.target).length === 0 &&  $(".hidden1").css('display') != 'none') {  
+            $('body').css("overflow-y", "auto");
+            $(".hidden1").fadeOut(450); 
+        }
     })
 </script>

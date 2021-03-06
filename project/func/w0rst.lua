@@ -2004,9 +2004,9 @@ CreateButton("Add-Net", BackdoorTab, 115, 30, 260, 520, function()
     CreateInputBox("Net", function(str)
         local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
         http.Post("https://w0rst.xyz/project/api/transfer.php", { method = "upload", user = UserInfo[1], pass = UserInfo[2], net = str }, function(b)
-            if b[1] == "0" then
+            if (b == "Added") then
                 Log("Uploaded Net "..str)
-            elseif b[1] == "1" then
+            else 
                 Log("Incorrect Permissions")
             end
         end)

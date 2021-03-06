@@ -156,6 +156,10 @@ class Account {
             $Error[] = "Failed captcha";
         }
 
+        if($AccountInfo['blacklist'] == "true") {
+            $Error[] = "Currently Blacklisted";
+        } 
+
         if($AccountInfo['verified'] == "false") { 
             $Error[] = "Awaiting Email Verification";
         }
@@ -276,16 +280,6 @@ class Script {
         }
     }
     
-    function IsBlacklisted($user) {
-        $blacklist = Account::Info($user)['blacklist'];
-
-        if($blacklist == "true") {
-            return true;
-        }
-
-        return false;
-    }
-
     function IsAdmin($user) {
         $role = Account::Info($user)['role'];
         $roles = array('admin', 'funky');
