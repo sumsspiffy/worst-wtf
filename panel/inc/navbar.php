@@ -9,11 +9,11 @@ $avatar = $LocalInfo['avatar'];
 $token = $LocalInfo['token'];
 $uid = $LocalInfo['uid'];
 
-if(!$Local::IsVerified()) { $Local::Redirect("Waiting for email activation"); }
+if(!$Local::IsVerified()) { $Local::Redirect("awaiting email activation"); }
 
-if(!$Local::IsActive()) { $Local::Redirect("Invalid Session"); }
+if(!$Local::IsActive()) { $Local::Redirect("invalid session"); }
 
-if($Local::IsBlacklisted()) { $Local::Redirect("Blacklisted"); }
+if($Local::IsBlacklisted()) { $Local::Redirect("blacklisted"); }
 
 // if discords null & localinfo exists
 // just a dumb error ez fix ;0 ;0 ;0

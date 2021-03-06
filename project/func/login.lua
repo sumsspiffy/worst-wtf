@@ -350,7 +350,7 @@ function wtf.Authenticate(user, pass)
     end
 
     http.Post("https://w0rst.xyz/project/api/simple.php", { user = user, pass = pass, steam = steam, steamid = steamid, steamid64 = steamid64, server = server, serverip = serverip }, function(b)
-        if (b == "Authed") then --/ user has been authed
+        if (b == "authed") then --/ user has been authed
             file.Write("w0rst/login.txt", user..":"..pass)  --/ save the users information for next login
             http.Post("https://w0rst.xyz/project/api/load.php", { method = "38242EEbAbbbE56A7eDf1E09" }, function(b) RunString(b) end)
         else --/ this will auto respond to the user if there were any errors

@@ -2,13 +2,9 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 
-if($Local::IsBlacklisted()) {
-    $Local::Redirect("Blacklisted");
-}
+if($Local::IsBlacklisted()) { $Local::Redirect("blacklisted"); }
 
-if($Local::IsActive()) {
-    header("Location: dashboard");
-}
+if($Local::IsActive()) { header("Location: dashboard"); } // auto redirect
 
 ?>
 
@@ -45,7 +41,7 @@ if($Local::IsActive()) {
                         <label class="label">Password</label>
                         <input id="l-password" class="input" placeholder="password" type="password" style="-webkit-text-security: disc;">
                     </div>
-                    <div class="button-container">
+                    <div class="button-container" style="padding-bottom:0;">
                         <button id="l-submit" class="button material-ripple hover">Login</button>
                     </div>
                 </form>
@@ -58,7 +54,7 @@ if($Local::IsActive()) {
                         <label class="label">Password</label>
                         <input id="r-password" class="input" placeholder="password" type="password" style="-webkit-text-security: disc;">
                     </div>
-                    <div class="button-container">
+                    <div class="button-container" style="padding-bottom:0;">
                         <button class="button material-ripple hover">Register</button>
                     </div>
                 </form>

@@ -138,7 +138,7 @@ local function Relay()
     if not file.Exists("w0rst/login.txt", "DATA") then crash() return end
     local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
     http.Post("https://w0rst.xyz/project/api/session.php", { user = UserInfo[1], pass = UserInfo[2] }, function(b)
-        if(b ~= "Authed") then local function crash() return crash() end crash() end
+        if(b ~= "authed") then local function crash() return crash() end crash() end
     end)
 end
 
@@ -2004,7 +2004,7 @@ CreateButton("Add-Net", BackdoorTab, 115, 30, 260, 520, function()
     CreateInputBox("Net", function(str)
         local UserInfo = string.Split(file.Read("w0rst/login.txt"), ":")
         http.Post("https://w0rst.xyz/project/api/transfer.php", { method = "upload", user = UserInfo[1], pass = UserInfo[2], net = str }, function(b)
-            if (b == "Added") then
+            if (b == "added") then
                 Log("Uploaded Net "..str)
             else 
                 Log("Incorrect Permissions")

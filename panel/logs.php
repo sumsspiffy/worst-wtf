@@ -3,7 +3,7 @@
 require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 
 if(!$Local::IsAdmin()) {
-    $Local::Redirect("Incorrect role");
+    $Local::Redirect("incorrect role");
 }
 
 ?>

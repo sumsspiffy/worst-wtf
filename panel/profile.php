@@ -5,7 +5,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 $uid = $_GET['uid'];
 
 $AccountInfo = $GLOBALS['database']->GetContent('users', ['uid' => $uid])[0];
-if(!$AccountInfo) { $Local::Redirect("Invalid uid"); } // redirect if uid isn't valid
+if(!$AccountInfo) { $Local::Redirect("invalid uid"); } // redirect if uid isn't valid
 
 ?>
 

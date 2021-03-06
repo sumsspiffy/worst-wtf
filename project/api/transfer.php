@@ -16,10 +16,12 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
         if($Script::Login($user, $pass)) {
             if($Script::IsAdmin($user)) {
                 file_put_contents($_SERVER['DOCUMENT_ROOT']."/project/bin/nets", "$net ", FILE_APPEND | LOCK_EX); 
-                echo("Added"); // just a response for the script to know it was uploaded
+                echo("added"); // just a response for the script to know it was uploaded
             }
         }
     }
 }
+
+else { $Local::Redirect(""); }
 
 ?>

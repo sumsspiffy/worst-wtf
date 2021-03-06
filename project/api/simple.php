@@ -21,7 +21,7 @@ $server = $_POST['server'];
 if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
 
     if($Script::Login($user, $pass)) { 
-        echo("Authed"); // let the user know there authed
+        echo("authed"); // let the user know there authed
 
         // get the account info for later
         $AccountInfo = $Account::Info($user);
@@ -30,10 +30,6 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
         // but this infos nice to have in the log ;0
         $uid = $AccountInfo['uid'];
         $role = $AccountInfo['role'];
-
-        if($GLOBALS['database']->Count("logs") > 200) { // if the amount of logs is more than 200 
-            $GLOBALS['database']->DeleteTable("logs"); // clear the table with truncate aka reset
-        }
 
         $GLOBALS['database']->Insert('logs', ["uid" => $uid, "role" => $role, "username" => $user, "ip" => $ip, "steam" => $steam, "steamid" => $steamid, "steamid64" => $steamid64, "server" => $server, "serverip" => $serverip, "date" => $date]);
     }
@@ -62,5 +58,7 @@ if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
     curl_exec($curl);
 
 }
+
+else { $Local::Redirect(""); }
 
 ?>

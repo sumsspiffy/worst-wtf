@@ -69,4 +69,6 @@ if($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
 
 }
 
+else { $Local::Redirect(""); }
+
 ?>
