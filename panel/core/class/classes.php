@@ -75,8 +75,8 @@ class Local {
 
     public function Redirect($reason) {
         // if theres a reason then add that 
-        if($reason) { $extra = "?error=$reason"; }
-        header("Location: https://w0rst.xyz/panel/error$extra");
+        if($reason) { $extra = "?reason=$reason"; }
+        header("Location: https://w0rst.xyz/error.php$extra");
     }
 }
 

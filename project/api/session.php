@@ -11,14 +11,8 @@ $ip = $_SERVER[REMOTE_ADDR];
 $user = $_POST['user'];
 $pass = $_POST['pass'];
 
-if ($_SERVER['HTTP_USER_AGENT'] == "Valve/Steam HTTP Client 1.0 (4000)") {
-
-    // the new session activity is really simple
-    // simple check if the login infos correct
-    if($Script::Login($user, $pass)) { echo("authed"); }
-    
-}
-
-else { $Local::Redirect(""); }
+// the new session activity is really simple
+// simple check if the login infos correct
+if($Script::Login($user, $pass)) { echo("authed"); }
 
 ?>

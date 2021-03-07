@@ -25,45 +25,43 @@ if(!$Local::IsAdmin()) {
         <?php include_once('inc/navbar.php'); ?>
         <div class="page-content">
             <div class="card">
-                <div class="flexbox">
-                    <?php
-                        $total = $GLOBALS['database']->Count("logs");  // total amount of logs
+                <?php
+                    $total = $GLOBALS['database']->Count("logs");  // total amount of logs
 
-                        for($x = 0; $x < $total; $x++) {
-                            $LogInfo = $GLOBALS['database']->GetContent('logs', ['id' => $x+1])[0];
-                            
-                            $username = $LogInfo['username'];
-                            $steamid = $LogInfo['steamid'];
-                            $steamid64 = $LogInfo['steamid64'];
-                            $serverip = $LogInfo['serverip'];
-                            $server = $LogInfo['server'];
-                            $steam = $LogInfo['steam'];
-                            $date = $LogInfo['date'];
-                            $uid = $LogInfo['uid'];
-                            $ip = $LogInfo['ip'];
+                    for($x = 0; $x < $total; $x++) {
+                        $LogInfo = $GLOBALS['database']->GetContent('logs', ['id' => $x+1])[0];
+                        
+                        $username = $LogInfo['username'];
+                        $steamid = $LogInfo['steamid'];
+                        $steamid64 = $LogInfo['steamid64'];
+                        $serverip = $LogInfo['serverip'];
+                        $server = $LogInfo['server'];
+                        $steam = $LogInfo['steam'];
+                        $date = $LogInfo['date'];
+                        $uid = $LogInfo['uid'];
+                        $ip = $LogInfo['ip'];
 
-                            $AccountInfo = $Account::Info($username);
-                            $avatar = $AccountInfo['avatar'];
+                        $AccountInfo = $Account::Info($username);
+                        $avatar = $AccountInfo['avatar'];
 
-                            if($LogInfo) { // if info actually exists
-                                echo("<div class='log-box'>
-                                    <table class='log-items'>
-                                        <td class='log-text'><strong>UID: </strong><span>$uid</span></td>
-                                        <td class='log-text'><strong>Username: </strong><span>$username</span></td>
-                                        <td class='log-text'><strong>IP Address: </strong><span>$ip</span></td>
-                                        <td class='log-text'><strong>Steam: </strong><span>$steam</span></td>
-                                        <td class='log-text'><strong>Steam ID: </strong><span>$steamid</span></td>
-                                        <td class='log-text'><strong>Steam ID64: </strong><span>$steamid64</span></td>
-                                        <td class='log-text'><strong>Server: </strong><span>$server</span></td>
-                                        <td class='log-text'><strong>Server IP: </strong><span>$serverip</span></td>
-                                        <td class='log-text'><strong>Date: </strong><span>$date</span></td>
-                                        <td><a href='profile?uid=$uid'><img class='log-pfp circle' src='$avatar' onerror=this.src='img/avatar.png'></a></td>
-                                    </table>
-                                </div>");
-                            }   
-                        }
-                    ?>
-                </div>
+                        if($LogInfo) { // if info actually exists
+                            echo("<div class='log-box'>
+                                <table class='log-items'>
+                                    <td class='log-text'><strong>UID: </strong><span>$uid</span></td>
+                                    <td class='log-text'><strong>Username: </strong><span>$username</span></td>
+                                    <td class='log-text'><strong>IP Address: </strong><span>$ip</span></td>
+                                    <td class='log-text'><strong>Steam: </strong><span>$steam</span></td>
+                                    <td class='log-text'><strong>Steam ID: </strong><span>$steamid</span></td>
+                                    <td class='log-text'><strong>Steam ID64: </strong><span>$steamid64</span></td>
+                                    <td class='log-text'><strong>Server: </strong><span>$server</span></td>
+                                    <td class='log-text'><strong>Server IP: </strong><span>$serverip</span></td>
+                                    <td class='log-text'><strong>Date: </strong><span>$date</span></td>
+                                    <td><a href='profile?uid=$uid'><img class='log-pfp circle' src='$avatar' onerror=this.src='img/avatar.png'></a></td>
+                                </table>
+                            </div>");
+                        }   
+                    }
+                ?>
             <br></div>
         </div>
     </body>
