@@ -14,3 +14,4 @@
 * panel index (login) page effects
 * little nods about other panels/scripts
 * registration friend referals - shadyz
+* better/more staff permissions
