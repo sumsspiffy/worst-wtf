@@ -8,6 +8,7 @@
 * monkey
 * admin
 * funky
+* wow
 * sex
 
 ### Current Issues
