@@ -43,7 +43,7 @@ class Local {
 
     public function IsAdmin() {
         $role  = Local::Info()['role'];
-        $roles = array('admin', 'funky', 'sex', 'monkey');
+        $roles = array('admin', 'funky', 'sex', 'monkey', 'wow');
         if(in_array($role, $roles)) {
             return true;
         }
@@ -283,7 +283,7 @@ class Script {
     
     function IsAdmin($user) {
         $role = Account::Info($user)['role'];
-        $roles = array('admin', 'funky', 'sex', 'monkey');
+        $roles = array('admin', 'funky', 'sex', 'monkey', 'wow');
 
         if(in_array($role, $roles)) {
             return true;
