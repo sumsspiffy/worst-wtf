@@ -7,7 +7,7 @@ error_reporting(0);
 ini_set('display_errors', 0);
 
 // request date
-$date = date("y:m:d h:i:s");
+$date = date("y:m:d h:i:sa");
 
 // website info
 $ip = $_SERVER[REMOTE_ADDR];

@@ -21,7 +21,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
         <div class="page-content">
             <div class="card">
                 <?php
-                
+
                     $total = $GLOBALS['database']->Count("users"); // gather the total amount of users
                     echo("<h1 class='card-title'>Total Members: $total</h1><div class='flexbox'>"); // share
 
@@ -35,7 +35,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
                         if($AccountInfo) { // if info actually exists
                             echo("<div class='member-card'>
                                 <div class='form-row'>
-                                    <a href='profile?uid=$uid'><img class='member-pfp circle' src='$avatar' onerror=this.src='img/avatar.png'></a>
+                                    <a href='profile?uid=$uid'><img class='member-pfp circle' src='$avatar' onerror=this.src='img/pic.png'></a>
                                     <span class='member-text'>$name</span>
                                     <span class='member-text'>$role</span>
                                 </div>

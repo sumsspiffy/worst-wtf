@@ -43,7 +43,7 @@ class Local {
 
     public function IsAdmin() {
         $role  = Local::Info()['role'];
-        $roles = array('admin', 'funky');
+        $roles = array('admin', 'funky', 'sex', 'monkey');
         if(in_array($role, $roles)) {
             return true;
         }
@@ -100,7 +100,7 @@ class Account {
 
         if(empty($Error)) {
             $token = Secure::Randomize();
-            $date = date("y:m:d h:i:s");
+            $date = date("y:m:d h:i:sa");
 
             // activate the session
             $_SESSION['active'] = true;
@@ -283,7 +283,7 @@ class Script {
     
     function IsAdmin($user) {
         $role = Account::Info($user)['role'];
-        $roles = array('admin', 'funky');
+        $roles = array('admin', 'funky', 'sex', 'monkey');
 
         if(in_array($role, $roles)) {
             return true;

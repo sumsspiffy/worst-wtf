@@ -4,6 +4,12 @@
 #### Creators, spiffy - tomc
 #### Helpers, gomi - warped
 
+### Staff Roles
+* monkey
+* admin
+* funky
+* sex
+
 ### Current Issues
 * NONE Known
 

@@ -44,7 +44,7 @@ if(!$AccountInfo) { $Local::Redirect("invalid uid"); } // redirect if uid isn't 
                     }
                     
                     echo("
-                    <img class='profile-pfp circle' src='$avatar' onerror=this.src='img/avatar.png'>
+                    <img class='profile-pfp circle' src='$avatar' onerror=this.src='img/pic.png'>
                     <h1 class='profile-header'>$username</h1>
                     <div class='profile-box'>
                         <table class='profile-items'>

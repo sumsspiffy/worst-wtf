@@ -88,7 +88,7 @@ $i = 0; // this will be used for displaying the server tab
                                     <td class='server-text'><strong>Net: <span>$net</span></strong></td>
                                     <td class='server-text'><strong>Map: <span>$map</span></strong></td>
                                     <td class='server-text'><strong>Date: <span>$date</span></strong></td>
-                                    <td><a href='steam://connect/$ip'><img class='server-pfp circle' src='img/steam.png'></a></td>
+                                    <td><a href='steam://connect/$ip'><img class='server-pfp circle' src='img/pic.png'></a></td>
                                 </table>
                             </div>");
 

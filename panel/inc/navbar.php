@@ -40,7 +40,7 @@ if($Local::IsAdmin()) {
         </div>
         <div class="dropdown-holder">
             <div class="button-drop material-ripple" onclick="dropdown()">
-                <?php echo("<img class='circle pfp' src='$avatar' onerror=this.src='img/avatar.png'>"); ?>
+                <?php echo("<img class='circle pfp' src='$avatar' onerror=this.src='img/pic.png'>"); ?>
                 <?php echo("<span class='name'>$username</span>"); ?>
             </div>
             <div class="dropdown">

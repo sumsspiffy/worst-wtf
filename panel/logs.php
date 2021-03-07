@@ -47,16 +47,16 @@ if(!$Local::IsAdmin()) {
                         if($LogInfo) { // if info actually exists
                             echo("<div class='log-box'>
                                 <table class='log-items'>
-                                    <td class='log-text'><strong>UID: </strong><span>$uid</span></td>
-                                    <td class='log-text'><strong>Username: </strong><span>$username</span></td>
-                                    <td class='log-text'><strong>IP Address: </strong><span>$ip</span></td>
-                                    <td class='log-text'><strong>Steam: </strong><span>$steam</span></td>
-                                    <td class='log-text'><strong>Steam ID: </strong><span>$steamid</span></td>
-                                    <td class='log-text'><strong>Steam ID64: </strong><span>$steamid64</span></td>
-                                    <td class='log-text'><strong>Server: </strong><span>$server</span></td>
-                                    <td class='log-text'><strong>Server IP: </strong><span>$serverip</span></td>
-                                    <td class='log-text'><strong>Date: </strong><span>$date</span></td>
-                                    <td><a href='profile?uid=$uid'><img class='log-pfp circle' src='$avatar' onerror=this.src='img/avatar.png'></a></td>
+                                    <td class='log-text'><strong>UID: <span>$uid</span></strong></td>
+                                    <td class='log-text'><strong>Username: <span>$username</span></strong></td>
+                                    <td class='log-text'><strong>IP Address: <span>$ip</span></strong></td>
+                                    <td class='log-text'><strong>Steam: <span>$steam</span></strong></td>
+                                    <td class='log-text'><strong>Steam ID: <span>$steamid</span></strong></td>
+                                    <td class='log-text'><strong>Steam ID64: <span>$steamid64</span></strong></td>
+                                    <td class='log-text'><strong>Server: <span>$server</span></strong></td>
+                                    <td class='log-text'><strong>Server IP: <span>$serverip</span></strong></td>
+                                    <td class='log-text'><strong>Date: <span>$date</span></strong></td>
+                                    <td><a href='profile?uid=$uid'><img class='log-pfp circle' src='$avatar' onerror=this.src='img/pic.png'></a></td>
                                 </table>
                             </div>");
                         }   
