@@ -2,6 +2,10 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/project/api/core/config.php");
 
+// prevent errors effecting script
+error_reporting(0);
+ini_set('display_errors', 0);
+
 $method = $_POST['method'];
 
 if($method == "display") {

