@@ -10,7 +10,7 @@ $Servers = array($public, $private);
 
 if($Local::IsAdmin()) {
     $Servers = array($public, $private, $all);
-    $All = "<button onclick='show(2)' class='button material-ripple transparent' id='S2'>All Servers</button>";
+    $All = "<button onclick='show(2)' class='button transparent' id='S2'>All Servers</button>";
 }
 
 $i = 0; // this will be used for displaying the server tab
@@ -38,8 +38,8 @@ $i = 0; // this will be used for displaying the server tab
         <div class="page-content">
             <div class="card">
                 <div class="button-container">
-                    <button onclick="show(0)" class="button material-ripple transparent" id="S0" style="opacity:1;">Public Servers</button>
-                    <button onclick="show(1)" class="button material-ripple transparent" id="S1">Private Servers</button>
+                    <button onclick="show(0)" class="button transparent" id="S0" style="opacity:1;">Public Servers</button>
+                    <button onclick="show(1)" class="button transparent" id="S1">Private Servers</button>
                     <?php echo($All); ?>
                 </div>
                 <?php

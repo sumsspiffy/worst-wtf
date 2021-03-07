@@ -3,7 +3,7 @@
 require_once($_SERVER['DOCUMENT_ROOT']."/project/api/core/config.php");
 
 // request date
-date_default_timezone_set('UTC');
+date_default_timezone_set('PST');
 $date = date("Y:m:d H:i:s");
 
 // website info

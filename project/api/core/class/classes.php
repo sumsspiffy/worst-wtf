@@ -100,7 +100,7 @@ class Account {
 
         if(empty($Error)) {
             $token = Secure::Randomize();
-            date_default_timezone_set('UTC');
+            date_default_timezone_set('PST');
             $date = date("Y:m:d H:i:s");
 
             // activate the session
