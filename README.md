@@ -11,10 +11,17 @@
 * wow
 * sex
 
+### What's New?
+* new home page
+* new error redirects with htaccess
+* htaccess files, favicon, & index page
+* antialt update - spiffy: sorta did a small brain
+
 ### Current Issues
 * NONE Known
 
 ### Ideas
+* new custom file host
 * new email html for verfications
 * jokes around meth being ratted
 * script anti crack protection

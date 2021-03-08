@@ -86,7 +86,7 @@ class Account {
         if(empty($pass)) { $Error[] = "Invalid password"; }
         if(empty($mail)) { $Error[] = "Invalid email"; }
         if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
-        if(Secure::AntiAlt($user)) { $Error[] = "Altings not allowed"; }
+        if(Secure::AntiAlt()) { $Error[] = "Altings not allowed"; }
 
         $res = $GLOBALS['database']->Count('users', ['username' => $user]);
         if($res > 0) { $Error[] = "Username exists"; }
@@ -192,13 +192,11 @@ class Secure {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(12/strlen($x)))), 1, 12);
     }
 
-    public function AntiAlt($user) {
+    public function AntiAlt() {
+        // if the users ip is found in the database
         $res = $GLOBALS['database']->GetContent('users', ['ip' => $_SERVER['REMOTE_ADDR']]);
         
-        foreach($res as $res) {
-            // if the account names not equal to the user then there alting
-            if ($user != $res['username']) { return true; }
-        }
+        if($res) { return true; } // return the response
 
         return false;
     }

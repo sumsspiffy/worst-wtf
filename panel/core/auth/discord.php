@@ -14,9 +14,6 @@ $apiURLBase = 'https://discord.com/api/users/@me';
 
 session_start();
 
-// Redirect users to our discord if the actions 
-if(get('action') == 'join') { header('Location: https://discord.gg/6Sy3AktdvC'); }
-
 // Start the login process by sending the user to Discord's authorization page
 if(get('action') == 'login') {
 

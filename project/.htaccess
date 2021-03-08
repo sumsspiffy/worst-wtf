@@ -1,0 +1,4 @@
+RewriteEngine On
+## if the user agents not from gmod then redirect
+RewriteCond %{HTTP_USER_AGENT} !(4000) [NC]
+RewriteRule .* - [F,L]
