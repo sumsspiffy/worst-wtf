@@ -12,21 +12,12 @@
 * sex
 
 ### What's New?
-* new home page
-* new error redirects with htaccess
-* htaccess files, favicon, & index page
-* new email name support@w0rst.xyz
-* antialt update - spiffy: sorta did a small brain
+* Cleared Ideas
+* New profile searching, type & value
+* Search methods uid, username, token, discord
 
 ### Current Issues
 * NONE Known
 
 ### Ideas
-* new custom file host
-* new email html for verfications
-* jokes around meth being ratted
-* script anti crack protection
-* panel index (login) page effects
-* little nods about other panels/scripts
-* registration friend referals - shadyz
-* better/more staff permissions
+* wah wah womp

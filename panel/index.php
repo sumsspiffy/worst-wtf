@@ -4,7 +4,8 @@ require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 
 if($Local::IsBlacklisted()) { $Local::Redirect("blacklisted"); }
 
-if($Local::IsActive()) { header("Location: dashboard"); } // auto redirect
+// auto redirect
+if($Local::IsActive()) { header("Location: dashboard"); } 
 
 ?>
 

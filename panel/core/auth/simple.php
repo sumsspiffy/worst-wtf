@@ -13,25 +13,31 @@ $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret .
 $recaptcha = json_decode($recaptcha);
 
 if($request == "update") { 
-    Local::ChangePassword($_POST['oldpass'], $_POST['newpass']);
+    $Local::ChangePassword($_POST['oldpass'], $_POST['newpass']);
+}
+
+if($request == "blacklist") {
+    $AccountInfo = $Account::Info($username);
+    if($AccountInfo['blacklist'] == "true") { $Account::Edit($username, "blacklist", "false"); }
+    else { $Account::Edit($username, "blacklist", "true"); }
 }
 
 if($request == "login") { 
-    Account::Login($username, $password, $recaptcha);
+    $Account::Login($username, $password, $recaptcha);
 }
 
 if($request == "register") { 
-    Account::Create($username, $password, $email, $recaptcha);
+    $Account::Create($username, $password, $email, $recaptcha);
 }
 
 if($request == "verify") { 
-    if(Account::Verify($token)) {
+    if($Account::Verify($token)) {
         header("Location: https://w0rst.xyz/panel/dashboard"); 
     }
 }
 
 if($request == "logout") { 
-    Local::Disconnect(); // clear session info
+    $Local::Disconnect(); // clear session info
     header("Location: https://w0rst.xyz/panel/"); 
 }
 

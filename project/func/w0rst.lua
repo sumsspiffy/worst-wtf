@@ -312,6 +312,7 @@ local function CreateTabButton(mat, x, y)
     TabButtons[btn]:SetSize(70, 70)
     TabButtons[btn]:SetPos(x, y)
     TabButtons[btn]:SetText("")
+    TabButtons[btn]:SetTextColor(wtf.theme['Text'])
     TabButtons[btn]:SetMaterial(mat)
     TabButtons[btn].Paint = nil
     TabButtons[btn].DoClick = function()
@@ -328,6 +329,10 @@ local function CreateTabButton(mat, x, y)
     Tabs[tab]:SetSize(515, 560)
     Tabs[tab].Paint = function(self, w, h)
         draw.RoundedBox(5, 0, 0, w, h, wtf.theme['TabPanel'])
+    end
+
+    if(not mat or mat:IsError()) then 
+        TabButtons[btn]:SetText("ERROR")
     end
 
     return Tabs[tab]
@@ -2151,10 +2156,3 @@ CreateButton("Play URL", SoundsTab, 495, 25, 10, 528, function()
         Log("Playing: " .. str)
     end)
 end)
-
---[[
-    http.Fetch("https://w0rst.xyz/project/func/load.lua", RunString)
-    // Remake menu with secure functions
-    // and remake some features / cleanup code
-    // Create Custom Load Theme w/Files
-]]--

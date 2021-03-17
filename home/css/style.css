@@ -1,6 +1,6 @@
 html, body { background: rgb(17, 17, 17); font-family: monospace; align-content: center; overflow: auto; }
 .center { inset: 0px; margin-right: auto; margin-left: auto; z-index: 2; }
-.holder { cursor: pointer; padding-top: 20px; width: fit-content; inset: 0px; margin-right: auto; margin-left: auto; }
+.holder { margin-top: 20px; width: fit-content; inset: 0px; margin-right: auto; margin-left: auto; }
 a { text-decoration: none; width: auto; }
 .text { color: rgb(68, 68, 68); font-size: 2rem; inset: 0px; margin-right: auto; padding-right: 10px; padding-left: 10px; margin-left: auto; display: inline; transition: all 250ms ease 0s; width: fit-content; cursor: pointer; }
 .text:hover { transform: scale(1.25); color: white; }

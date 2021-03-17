@@ -2,10 +2,17 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 
-$uid = $_GET['uid'];
+// handler
+$type = $_GET['type'];
 
-$AccountInfo = $GLOBALS['database']->GetContent('users', ['uid' => $uid])[0];
-if(!$AccountInfo) { $Local::Redirect("invalid uid"); } // redirect if uid isn't valid
+// the four ways of getting the user - uid, username, token, discord
+if($type == "uid") { $uid = $_GET['uid']; $AccountInfo = $GLOBALS['database']->GetContent('users', ['uid' => $uid])[0]; }
+if($type == "username") { $username = $_GET['username']; $AccountInfo = $GLOBALS['database']->GetContent('users', ['username' => $username])[0]; }
+if($type == "discord") { $discord= $_GET['discord']; $AccountInfo = $GLOBALS['database']->GetContent('users', ['discord' => $discord])[0]; }
+if($type == "token") { $token = $_GET['token']; $AccountInfo = $GLOBALS['database']->GetContent('users', ['token' => $token])[0]; }
+
+// if no type, or the request was invalid
+if(!$type || !$AccountInfo) { $Local::Redirect("404 Error"); }
 
 ?>
 
@@ -37,14 +44,14 @@ if(!$AccountInfo) { $Local::Redirect("invalid uid"); } // redirect if uid isn't 
                     $role = $AccountInfo['role'];
                     $uid = $AccountInfo['uid'];
                     $ip = $AccountInfo['ip'];
-
+                    
                     if($Local::IsAdmin()) {
                         $IPInfo = "<td class='profile-text'><strong>IP Address: <span>$ip</span></strong></td>";
                         $EmailInfo = "<td class='profile-text'><strong>Email: <span>$email</span></strong></td>";
+                        $Button = "<div class='button-container' style='padding-top:20px;padding-bottom:10px;'><button class='button material-ripple hover'>Blacklist</button></div>";
                     }
-                    
-                    echo("
-                    <img class='profile-pfp circle' src='$avatar' onerror=this.src='img/pic.png'>
+
+                    echo("<img class='profile-pfp circle' src='$avatar' onerror=this.src='img/pic.png'>
                     <h1 class='profile-header'>$username</h1>
                     <div class='profile-box'>
                         <table class='profile-items'>
@@ -57,9 +64,12 @@ if(!$AccountInfo) { $Local::Redirect("invalid uid"); } // redirect if uid isn't 
                             $EmailInfo
                             $IPInfo
                         </table>
-                    </div><br>");
+                    </div>$Button<br>");
                 ?>
             </div>
         </div>
     </body>
 </html>
+<script>
+    <?php echo("$('.button').click(function() { $.post('core/auth/simple.php?request=blacklist', { username: '$username' }); location.reload(); });"); ?>
+</script>

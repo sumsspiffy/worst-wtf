@@ -56,7 +56,7 @@ if(!$Local::IsAdmin()) {
                                     <td class='log-text'><strong>Server: <span>$server</span></strong></td>
                                     <td class='log-text'><strong>Server IP: <span>$serverip</span></strong></td>
                                     <td class='log-text'><strong>Date: <span>$date</span></strong></td>
-                                    <td><a href='profile?uid=$uid'><img class='log-pfp circle' src='$avatar' onerror=this.src='img/pic.png'></a></td>
+                                    <td><a href='profile?type=uid&uid=$uid'><img class='log-pfp circle' src='$avatar' onerror=this.src='img/pic.png'></a></td>
                                 </table>
                             </div>");
                         }   

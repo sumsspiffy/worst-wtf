@@ -1,32 +1,3 @@
-# Powered by Website Builder
-
-<IfModule mod_expires.c>
-	ExpiresActive On
-	ExpiresDefault A0
-	ExpiresByType image/gif A691200
-	ExpiresByType image/png A691200
-	ExpiresByType image/jpeg A691200
-	ExpiresByType text/css A691200
-	ExpiresByType text/javascript A691200
-	ExpiresByType application/javascript A691200
-</IfModule>
-
-<IfModule mod_negotiation.c>
-	#Options -MultiViews
-</IfModule>
-RewriteEngine On
-RewriteBase /
-
-#### PERSISTENT CONTENT ####
-
-# DirectoryIndex index.php index.cgi index.html
-# RewriteCond %{REQUEST_FILENAME} !-f [OR]
-# RewriteCond %{REQUEST_URI} ^\/(js\/main\.js|css\/(\d+|common|site)\.css)$
-# RewriteCond %{REQUEST_FILENAME} !-d
-# RewriteRule ^(.*)$ ncsitebuilder/$1 [L,QSA]
-
-#### PERSISTENT CONTENT END ####
-
 ## Set timezone
 php_value date.timezone 'America/Los_Angeles'
 
@@ -35,9 +6,8 @@ ErrorDocument 401 https://w0rst.xyz/error?reason=Unauthorized
 ErrorDocument 403 https://w0rst.xyz/error?reason=Forbidden
 ErrorDocument 404 https://w0rst.xyz/error?reason=404%20Error
 
-IndexIgnore * # prevent directory listing
-Order deny,allow
-Allow from *
+## Prevents all indexes
+Options -Indexes
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f

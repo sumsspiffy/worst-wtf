@@ -2,15 +2,24 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
 
+// our local info table
 $LocalInfo = $Local::Info();
-$username = $LocalInfo['username'];
-$discord = $LocalInfo['discord'];
-$token = $LocalInfo['token'];
-$email = $LocalInfo['email'];
-$role = $LocalInfo['role'];
-$date = $LocalInfo['date'];
-$uid = $LocalInfo['uid'];
-$ip = $LocalInfo['ip'];
+
+// we have it in a array like this because
+// it helps with lowering how many times
+// we have to echo a row instead each indiv
+// we would do them all together!
+
+$vals = array( // our actual table for values
+    "UID" => $LocalInfo['uid'],
+    "Role" => $LocalInfo['role'],
+    "Token" => $LocalInfo['token'],
+    "Username" => $LocalInfo['username'],
+    "Email" => $LocalInfo['email'],
+    "Discord" => $LocalInfo['discord'],
+    "IP Address" => $LocalInfo['ip'],
+    "Creation Date" => $LocalInfo['date']
+);
 
 ?>
 
@@ -32,40 +41,14 @@ $ip = $LocalInfo['ip'];
         <div class="page-content">
             <div class="card">
                 <h1 class="card-title">Account Information</h1>
-                <form id="account">
-                    <div class="form-row">
-                        <label class="label">UID</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$uid'></input>") ?>
-                    </div>
-                    <div class="form-row">
-                        <label class="label">Token</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$token'></input>") ?>
-                    </div>
-                    <div class="form-row">
-                        <label class="label">Username</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$username'></input>") ?>
-                    </div>
-                    <div class="form-row">
-                        <label class="label">Email</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$email'></input>") ?>
-                    </div>
-                    <div class="form-row">
-                        <label class="label">Role</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$role'></input>") ?>
-                    </div>
-                    <div class="form-row">
-                        <label class="label">Discord ID</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$discord'></input>") ?>
-                    </div>
-                    <div class="form-row">
-                        <label class="label">IP Address</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$ip'></input>") ?>
-                    </div>
-                    <div class="form-row">
-                        <label class="label">Creation Date</label>
-                        <?php echo("<input disabled class='input disabled' placeholder='$date'></input>") ?>
-                    </div>
-                </form>
+                <?php
+                    foreach($vals as $key => $val) {
+                        echo("<div class='form-row'>
+                            <label class='label'>$key</label>
+                            <input disabled class='input disabled' placeholder='$val'></input>
+                        </div>"); 
+                    }
+                ?>
                 <div class="button-container">
                     <button onclick="link()" class="button material-ripple hover">Relink Discord</button>
                     <button onclick="edit()" class="button material-ripple hover">Change Password</button>
@@ -92,9 +75,6 @@ $ip = $LocalInfo['ip'];
     <script>
         function edit() { $('.hidden2').fadeIn(); }
         function link() { location.href = "core/auth/discord.php?action=login"; }
-
-        $(document).mouseup(function(e) { 
-            if(!$('.center-card').is(e.target) && $('.center-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }
-        })
+        $(document).mouseup(function(e) { if(!$('.center-card').is(e.target) && $('.center-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }})
     </script>
 </html>
