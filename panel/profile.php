@@ -39,6 +39,7 @@ if(!$type || !$AccountInfo) { $Local::Redirect("404 Error"); }
                     $verified = $AccountInfo['verified'];
                     $discord = $AccountInfo['discord'];
                     $avatar = $AccountInfo['avatar'];
+                    $token = $AccountInfo['token'];
                     $email = $AccountInfo['email'];
                     $date = $AccountInfo['date'];
                     $role = $AccountInfo['role'];
@@ -46,9 +47,10 @@ if(!$type || !$AccountInfo) { $Local::Redirect("404 Error"); }
                     $ip = $AccountInfo['ip'];
                     
                     if($Local::IsAdmin()) {
-                        $IPInfo = "<td class='profile-text'><strong>IP Address: <span>$ip</span></strong></td>";
-                        $EmailInfo = "<td class='profile-text'><strong>Email: <span>$email</span></strong></td>";
-                        $Button = "<div class='button-container' style='padding-top:20px;padding-bottom:10px;'><button class='button material-ripple hover'>Blacklist</button></div>";
+                        $AdminInfo = "<td class='profile-text'><strong>Email: <span>$email</span></strong></td>
+                        <td class='profile-text'><strong>IP Address: <span>$ip</span></strong></td>
+                        <td class='profile-text'><strong>Token: <span>$token</span></strong></td>";
+                        $AdminButton = "<div class='button-container' style='padding-top:20px;padding-bottom:10px;'><button class='button material-ripple hover'>Blacklist</button></div>";
                     }
 
                     echo("<img class='profile-pfp circle' src='$avatar' onerror=this.src='img/pic.png'>
@@ -60,11 +62,10 @@ if(!$type || !$AccountInfo) { $Local::Redirect("404 Error"); }
                             <td class='profile-text'><strong>Verified: <span>$verified</span></strong></td>
                             <td class='profile-text'><strong>Blacklisted: <span>$blacklist</span></strong></td>
                             <td class='profile-text'><strong>Creation: <span>$date</span></strong></td>
-                            <td class='profile-text'><strong>Discord ID: <span>$discord</span></strong></td>
-                            $EmailInfo
-                            $IPInfo
+                            <td class='profile-text'><strong>Discord: <span>$discord</span></strong></td>
+                            $AdminInfo
                         </table>
-                    </div>$Button<br>");
+                    </div>$AdminButton<br>");
                 ?>
             </div>
         </div>
