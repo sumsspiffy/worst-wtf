@@ -11,16 +11,6 @@
 * wow
 * sex
 
-### What's New?
-* new home page
-* new error redirects with htaccess
-* htaccess files, favicon, & index page
-* new email name support@w0rst.xyz
-* antialt update - spiffy: sorta did a small brain
-
-### Current Issues
-* NONE Known
-
 ### Ideas
 * new custom file host
 * new email html for verfications
