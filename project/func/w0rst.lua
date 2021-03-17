@@ -899,6 +899,7 @@ local Sounds = {
     "JustTheTwoOfUs https://w0rst.xyz/project/sounds/groverwashington-justthetwoofus.mp3",
     "StillCreeping https://w0rst.xyz/project/sounds/chuuwee-still-creeping.mp3",
     "BeLazy https://w0rst.xyz/project/sounds/skizzymars-be-lazy.mp3",
+    "Dancing https://w0rst.xyz/project/sounds/dancing.mp3",
     "Hope https://w0rst.xyz/project/sounds/Hope.mp3",
     "Prices https://w0rst.xyz/project/sounds/prices.mp3",
     "51DeadOps https://w0rst.xyz/project/sounds/51deadops.mp3"
