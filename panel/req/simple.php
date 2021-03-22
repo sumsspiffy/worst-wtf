@@ -49,9 +49,9 @@ if($request == "logout") {
 }
 
 if($request == "server" && $type == "remove") {
-    if($token == $_SESSION['token']) { 
+    if($Local::IsAdmin() || $token == $_SESSION['token']) { 
         $GLOBALS['database']->Delete('backdoors', ['id' => $id]); 
-    }
+    } else { echo("Invalid Permissions."); }
 }
 
 ?>

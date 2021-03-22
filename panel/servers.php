@@ -79,7 +79,12 @@ $i = 0; // this will be used for displaying the server tab
                                         <button class='button material-ripple hover' id='R$id' style='margin-top:5px;'>Remove</button>
                                         <script>
                                             $('#C$id').click(function() { location.href = 'steam://connect/$ip'; });
-                                            $('#R$id').click(function() { $.post('req/simple.php?request=server&token=$token', { type: 'remove', id: '$id' }); location.reload(); });
+                                            // send request and wait for response ;0
+                                            $('#R$id').click(function() { $.post('req/simple.php?request=server&token=$token', { type: 'remove', id: '$id' }, function(response) {
+                                                    if(!response) { alert('Removed') }
+                                                    else { alert(response) }
+                                                }); 
+                                            });
                                         </script>
                                     </div></td> 
                                 </table>

