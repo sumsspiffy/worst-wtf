@@ -45,7 +45,7 @@ if($request == "verify") {
 
 if($request == "logout") { 
     $Local::Disconnect(); // clear session info
-    header("Location: https://w0rst.xyz/panel/"); 
+    header("Location: https://w0rst.xyz/panel/authorize"); 
 }
 
 if($request == "server" && $type == "remove") {

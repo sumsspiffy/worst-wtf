@@ -10,6 +10,7 @@ Account | Role | URL |
 **gomi** | **funky** | [Link](https://w0rst.xyz/panel/profile?type=uid&uid=5)
 
 ### Official Updates
+* Removed special login tool for security reasons
 * Public backdoors now require users token
 * Cloudflare added, for ddos prevention
 * Backdoored servers can now be removed
