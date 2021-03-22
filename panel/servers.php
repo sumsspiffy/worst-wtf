@@ -67,18 +67,18 @@ $i = 0; // this will be used for displaying the server tab
                             $username = $GLOBALS['database']->GetContent('users', ['token' => $token])[0]["username"];
 
                             // echo("$name\n");
-                            echo("<div class='server-box'>
-                                <table class='server-items'>
-                                    <td class='server-text'><strong>By: <span>$username</span></strong></td>
-                                    <td class='server-text'><strong>Type: <span>$type</span></strong></td>
-                                    <td class='server-text'><strong>Server: <span>$name</span></strong></td>
-                                    <td class='server-text'><strong>Server IP: <span>$ip</span></strong></td>
-                                    <td class='server-text'><strong>Password: <span>$pass</span></strong></td>
-                                    <td class='server-text'><strong>Gamemode: <span>$mode</span></strong></td>
-                                    <td class='server-text'><strong>Net: <span>$net</span></strong></td>
-                                    <td class='server-text'><strong>Map: <span>$map</span></strong></td>
-                                    <td class='server-text'><strong>Date: <span>$date</span></strong></td>
-                                    <td><a href='steam://connect/$ip'><img class='server-pfp circle' src='img/pic.png'></a></td>
+                            echo("<div class='l-box'>
+                                <table class='l-item'>
+                                    <td class='l-text'><strong>By: <span>$username</span></strong></td>
+                                    <td class='l-text'><strong>Type: <span>$type</span></strong></td>
+                                    <td class='l-text'><strong>Server: <span>$name</span></strong></td>
+                                    <td class='l-text'><strong>Server IP: <span>$ip</span></strong></td>
+                                    <td class='l-text'><strong>Password: <span>$pass</span></strong></td>
+                                    <td class='l-text'><strong>Gamemode: <span>$mode</span></strong></td>
+                                    <td class='l-text'><strong>Net: <span>$net</span></strong></td>
+                                    <td class='l-text'><strong>Map: <span>$map</span></strong></td>
+                                    <td class='l-text'><strong>Date: <span>$date</span></strong></td>
+                                    <td><a href='steam://connect/$ip'><img class='l-picture circle' src='img/pic.png'></a></td>
                                 </table>
                             </div>");
 

@@ -23,7 +23,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
                 <?php
 
                     $total = $GLOBALS['database']->Count("users"); // gather the total amount of users
-                    echo("<h1 class='card-title'>Total Members: $total</h1><div class='flexbox'>"); // share
+                    echo("<h1 class='card-header'>Total Members: $total</h1><div class='flexbox'>"); // share
 
                     for($x = 0; $x < $total; $x++) { // this is for sorting purposes for some reason foreach is gathering them in the wrong order
                         $AccountInfo = $GLOBALS['database']->GetContent('users', ['uid' => $x+1])[0];
@@ -33,11 +33,11 @@ require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
                         $uid = $AccountInfo['uid'];
 
                         if($AccountInfo) { // if info actually exists
-                            echo("<div class='member-card'>
+                            echo("<div class='m-card'>
                                 <div class='form-row'>
-                                    <a href='profile?type=uid&uid=$uid'><img class='member-pfp circle' src='$avatar' onerror=this.src='img/pic.png'></a>
-                                    <span class='member-text'>$name</span>
-                                    <span class='member-text'>$role</span>
+                                    <a href='profile?type=uid&uid=$uid'><img class='m-picture circle' src='$avatar' onerror=this.src='img/pic.png'></a>
+                                    <span class='m-text'>$name</span>
+                                    <span class='m-text'>$role</span>
                                 </div>
                             </div>");
                         }

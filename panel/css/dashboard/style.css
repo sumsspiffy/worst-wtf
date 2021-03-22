@@ -146,11 +146,12 @@ a { color: #fff; text-decoration: none; }
 
 .flexbox {
     display: flex;
+    overflow: hidden;
     flex-wrap: wrap;
     padding:10px;
 }
 
-.center-card {
+.c-card {
     width: 40rem;
     height:fit-content;
     position:absolute;
@@ -159,10 +160,9 @@ a { color: #fff; text-decoration: none; }
     right:0;left:0;
     margin: auto;
     background: #131313;
-    
 }
 
-.card-title {
+.card-header {
     font-size: 26px;
     margin-top: 14px;
 }
@@ -356,7 +356,7 @@ a { color: #fff; text-decoration: none; }
     outline: 0;
 }
 
-.member-card {
+.m-card {
     background-color:#222;
     max-width: 30%;
     min-width:9rem;
@@ -371,7 +371,7 @@ a { color: #fff; text-decoration: none; }
     overflow:hidden;
 }
 
-.member-pfp {
+.m-picture {
     background-color: #ffffff38;
     padding: 4px;
     vertical-align: middle;
@@ -381,7 +381,7 @@ a { color: #fff; text-decoration: none; }
     float:left;
 }
 
-.member-text {
+.m-text {
     padding:5px;
     padding-top:10px;
     padding-left:10px;
@@ -395,87 +395,9 @@ a { color: #fff; text-decoration: none; }
     white-space: nowrap;
 }
 
-.member-text:nth-child(3) {
+.m-text:nth-child(3) {
     font-size: 1.2em;
-    color: #a2a2a2bb;
-}
-
-.profile-pfp {
-    background-color: #ffffff6e;
-    border-style: none;
-    padding: 5px;
-    width:20rem;
-    right:0;left:0;
-    margin:auto;
-}
-
-.profile-header {
-    position: relative;
-    text-align:center;
-    font-size:3rem;
-}
-
-.profile-box {
-    background-color:#1a1a1a;
-    border-radius:5px;
-    display:block;
-    margin:auto;
-    width:auto;
-    height:auto;
-    padding-right:40px;
-    padding-left:40px;
-}
-
-.profile-items {
-    position:relative;
-    margin-right:auto;
-    margin-left:auto;
-    padding:15px;
-}
-
-.profile-text {
-    display: table-row;
-    position: relative;
-    font-size: 25px;
-    position: relative;
-    text-align: center;
-}
-
-.server-box {
-    background-color:#1a1a1a;
-    border-radius:5px;
-    margin:auto;
-    height:auto;
-    margin-top:10px;
-    padding:10px;
-    padding-right:40px;
-    padding-left:40px;
-    min-width:max-content;
-}
-
-.server-items {
-    float:left;
-    width:auto;
-}
-
-.server-text {
-    display:block;
-    text-align: left;
-    font-size: 14px;
-    padding-right:20px;
-    max-width: fit-content;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.server-pfp {
-    background-color: #ffffff6e;
-    padding: 3px;
-    width:8rem;
-    position:relative;
-    top:0;bottom:0;
-    margin: 0 auto;
+    color: #a2a2a2bb; 
 }
 
 .transparent {
@@ -485,28 +407,36 @@ a { color: #fff; text-decoration: none; }
     opacity:0.55;
 }
 
-.log-box {
+/* effects */
+
+.hover:hover {
+    -webkit-transform: scale(1.01);
+    border-color: white;
+}
+
+/* tables */
+
+.l-box {
     background-color:#1a1a1a;
     border-radius:5px;
     margin:auto;
     height:auto;
     width: auto;
-    min-width:max-content;
     margin-top:10px;
     padding:10px;
     padding-right:40px;
     padding-left:40px;
 }
 
-.log-items {
+.l-item {
     float:left;
     width:auto;
 }
 
-.log-text {
+.l-text {
     display:block;
     text-align: left;
-    font-size: 14px;
+    font-size: 12px;
     padding-right:20px;
     max-width: fit-content;
     overflow: hidden;
@@ -514,10 +444,10 @@ a { color: #fff; text-decoration: none; }
     white-space: nowrap;
 }
 
-.log-pfp {
+.l-picture {
     background-color: #ffffff6e;
-    padding: 3px;
-    width:10rem;
+    padding:3px;
+    width:max-content;
     position:relative;
     top:0;bottom:0;
     margin-top:auto;
@@ -525,9 +455,43 @@ a { color: #fff; text-decoration: none; }
     float:right;
 }
 
-/* effects */
+.p-picture {
+    background-color: #ffffff6e;
+    border-style: none;
+    padding: 5px;
+    width:20rem;
+    right:0;left:0;
+    margin:auto;
+}
 
-.hover:hover {
-    -webkit-transform: scale(1.01);
-    border-color: white;
+.p-header {
+    position: relative;
+    text-align:center;
+    font-size:3rem;
+}
+
+.p-box {
+    background-color:#1a1a1a;
+    border-radius:5px;
+    display:block;
+    margin:auto;
+    width:auto;
+    height:auto;
+    padding-right:40px;
+    padding-left:40px;
+}
+
+.p-item {
+    position:relative;
+    margin-right:auto;
+    margin-left:auto;
+    padding:15px;
+}
+
+.p-text {
+    display: table-row;
+    position: relative;
+    font-size: 25px;
+    position: relative;
+    text-align: center;
 }

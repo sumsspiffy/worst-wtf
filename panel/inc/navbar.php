@@ -52,7 +52,7 @@ if($Local::IsAdmin()) {
     </div>
 </div><br><br><br>
 <div class="hidden1">
-    <div class="center-card">
+    <div class="c-card">
         <h1 class="card-title">Script Information</h1>
         <div class="form-row">
             <label class="label">Public</label>

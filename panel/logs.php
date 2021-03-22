@@ -28,6 +28,8 @@ if(!$Local::IsAdmin()) {
                 <?php
                     $total = $GLOBALS['database']->Count("logs");  // total amount of logs
 
+                    echo("<div class='flexbox'>");
+
                     for($x = 0; $x < $total; $x++) {
                         $LogInfo = $GLOBALS['database']->GetContent('logs', ['id' => $x+1])[0];
                         
@@ -45,22 +47,25 @@ if(!$Local::IsAdmin()) {
                         $avatar = $AccountInfo['avatar'];
 
                         if($LogInfo) { // if info actually exists
-                            echo("<div class='log-box'>
-                                <table class='log-items'>
-                                    <td class='log-text'><strong>UID: <span>$uid</span></strong></td>
-                                    <td class='log-text'><strong>Username: <span>$username</span></strong></td>
-                                    <td class='log-text'><strong>IP Address: <span>$ip</span></strong></td>
-                                    <td class='log-text'><strong>Steam: <span>$steam</span></strong></td>
-                                    <td class='log-text'><strong>Steam ID: <span>$steamid</span></strong></td>
-                                    <td class='log-text'><strong>Steam ID64: <span>$steamid64</span></strong></td>
-                                    <td class='log-text'><strong>Server: <span>$server</span></strong></td>
-                                    <td class='log-text'><strong>Server IP: <span>$serverip</span></strong></td>
-                                    <td class='log-text'><strong>Date: <span>$date</span></strong></td>
-                                    <td><a href='profile?type=username&username=$username'><img class='log-pfp circle' src='$avatar' onerror=this.src='img/pic.png'></a></td>
+                            echo("<div class='l-box'>
+                                <table class='l-item'>
+                                    <td class='l-text'><strong>UID: <span>$uid</span></strong></td>
+                                    <td class='l-text'><strong>Username: <span>$username</span></strong></td>
+                                    <td class='l-text'><strong>IP Address: <span>$ip</span></strong></td>
+                                    <td class='l-text'><strong>Steam: <span>$steam</span></strong></td>
+                                    <td class='l-text'><strong>Steam ID: <span>$steamid</span></strong></td>
+                                    <td class='l-text'><strong>Steam ID64: <span>$steamid64</span></strong></td>
+                                    <td class='l-text'><strong>Server: <span>$server</span></strong></td>
+                                    <td class='l-text'><strong>Server IP: <span>$serverip</span></strong></td>
+                                    <td class='l-text'><strong>Date: <span>$date</span></strong></td>
+                                    <td><a href='profile?type=username&username=$username'><img class='l-picture circle' src='$avatar' onerror=this.src='img/pic.png'></a></td>
                                 </table>
                             </div>");
                         }   
                     }
+
+                    echo("</div>");
+                    
                 ?>
             <br></div>
         </div>
