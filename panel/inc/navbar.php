@@ -30,6 +30,12 @@ if($Local::IsAdmin()) {
 }
 
 ?>
+
+<head>
+    <!-- head is for the snow effect -->
+    <script src="js/snowstorm.js"></script>
+</head>
+
 <div class="nav-container"> 
     <div class="navbar">
         <div class="nav-tab">
