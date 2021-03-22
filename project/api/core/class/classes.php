@@ -85,7 +85,7 @@ class Account {
         if(empty($user)) { $Error[] = "Invalid username"; }
         if(empty($pass)) { $Error[] = "Invalid password"; }
         if(empty($mail)) { $Error[] = "Invalid email"; }
-        if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
+        // if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; } | needs to be fixed
         if(Secure::AntiAlt()) { $Error[] = "Altings not allowed"; }
 
         $res = $GLOBALS['database']->Count('users', ['username' => $user]);
@@ -144,7 +144,7 @@ class Account {
     public function Login($user, $pass, $captcha) {
         if(empty($user)) { $Error[] = "Invalid username"; }
         if(empty($pass)) { $Error[] = "Invalid password"; }
-        if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
+        // if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
 
         $AccountInfo = Account::Info($user);
         $IpAddress = $_SERVER['REMOTE_ADDR'];
@@ -164,7 +164,7 @@ class Account {
         if($AccountInfo['verified'] == "false") { 
             $Error[] = "Awaiting Email Verification";
         }
-
+        
         if($IpAddress != $AccountInfo['ip']) {
             Account::Edit($user, "ip", $IpAddress);
         }
@@ -228,8 +228,8 @@ class Log {
     public function Server($method) {
         switch($method) {
             case "all": return $GLOBALS['database']->GetContent('backdoors');
-            case "public": return $GLOBALS['database']->GetContent('backdoors', ['token' => 'none']);
-            case "private": return $GLOBALS['database']->GetContent('backdoors', ['token' => $_SESSION['token']]);
+            case "public": return $GLOBALS['database']->GetContent('backdoors', ['type' => 'public']);
+            case "private": return $GLOBALS['database']->GetContent('backdoors', ['type' => 'private', 'token' => $_SESSION['token']]);
         }
     }
 }

@@ -4,15 +4,16 @@
         <link rel="stylesheet" media="screen" href="home/css/style.css">
         <meta name="theme-color" content="#86ffba">
         <meta property="og:title" content="w0rst.xyz">
+        <meta property="og:description" content="web panel/script">
     </head>
     <body>
         <?php
             $files = glob('project/sounds/*');
             $file = array_rand($files);
             
-            $song = file_get_contents($files[$file]);
+            $song = "https://w0rst.xyz/$files[$file]";
             
-            echo("<embed id='music' src='$song' loop='true' hidden='true' autostart='true'>");
+            echo("<embed src='$song' volume='25' hidden='true' autostart='true' loop='true'>");
         ?>
         <div id="center">
             <img class="image" src="favicon.ico">

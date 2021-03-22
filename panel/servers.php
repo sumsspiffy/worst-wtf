@@ -57,29 +57,19 @@ $i = 0; // this will be used for displaying the server tab
                             $pass = $row['password'];
                             $mode = $row['gamemode'];
                             $name = $row['server'];
+                            $type = $row['type'];
                             $date = $row['date'];
                             $map = $row['map'];
                             $net = $row['net'];
                             $ip = $row['ip'];
 
-                            $token = $row['token']; // this is for getting the tpye of server as well the users info
-                            if($token != "NONE") { 
-                                // this is an admin tool only for all servers
-                                // i1 is actually i0 because its in a array so i2 is what all servers is
-                                if($i == 2) { // i being 2 only happens if the users has an admin type role
-                                    $AccountInfo = $GLOBALS['database']->GetContent('users', ['token' => $token])[0];
-                                    $AccountName = $AccountInfo['username'];
-    
-                                    $By = "<td class='server-text'><strong>By: <span>$AccountName</span></strong></td>";
-                                }
-
-                                $type = "private";
-                            } else { $type = "public"; }              
+                            $token = $row['token']; // this is for getting the tpye of server as well the users info             
+                            $username = $GLOBALS['database']->GetContent('users', ['token' => $token])[0]["username"];
 
                             // echo("$name\n");
                             echo("<div class='server-box'>
                                 <table class='server-items'>
-                                    $By
+                                    <td class='server-text'><strong>By: <span>$username</span></strong></td>
                                     <td class='server-text'><strong>Type: <span>$type</span></strong></td>
                                     <td class='server-text'><strong>Server: <span>$name</span></strong></td>
                                     <td class='server-text'><strong>Server IP: <span>$ip</span></strong></td>

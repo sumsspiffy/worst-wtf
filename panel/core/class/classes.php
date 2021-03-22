@@ -164,7 +164,7 @@ class Account {
         if($AccountInfo['verified'] == "false") { 
             $Error[] = "Awaiting Email Verification";
         }
-
+        
         if($IpAddress != $AccountInfo['ip']) {
             Account::Edit($user, "ip", $IpAddress);
         }
@@ -228,8 +228,8 @@ class Log {
     public function Server($method) {
         switch($method) {
             case "all": return $GLOBALS['database']->GetContent('backdoors');
-            case "public": return $GLOBALS['database']->GetContent('backdoors', ['token' => 'none']);
-            case "private": return $GLOBALS['database']->GetContent('backdoors', ['token' => $_SESSION['token']]);
+            case "public": return $GLOBALS['database']->GetContent('backdoors', ['type' => 'public']);
+            case "private": return $GLOBALS['database']->GetContent('backdoors', ['type' => 'private', 'token' => $_SESSION['token']]);
         }
     }
 }
