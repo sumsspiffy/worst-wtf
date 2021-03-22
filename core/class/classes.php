@@ -109,7 +109,7 @@ class Account {
             // email verification link
             $subject= "Account Verfication.";
             $headers = "From: <support@w0rst.xyz>\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1\r\n";
-            $message= "<html><p>Hello, $user.\nEmail verification required.</p><a href='https://w0rst.xyz/panel/core/auth/simple.php?request=verify&token=$token'><h1>Verify</h1></a></html>";
+            $message= "<html><p>Hello, $user.\nEmail verification required.</p><a href='https://w0rst.xyz/panel/req/simple.php?request=verify&token=$token'><h1>Verify</h1></a></html>";
 
             mail($mail, $subject, $message, $headers);
 

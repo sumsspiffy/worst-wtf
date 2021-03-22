@@ -70,7 +70,8 @@
         const hidden = $('.hidden');
         const card = $('.card');
 
-        popup.click(function() { hidden.fadeIn(450); });
+        popup.click(function() { hidden.fadeIn(450); $('body').css("overflow-y", "hidden"); });
+
         login_tab.click(function() {
             register_tab.fadeTo(50, 0.55);
             login_tab.fadeTo(50, 1);
@@ -84,7 +85,7 @@
         })
 
         $(document).mouseup(function(e) { 
-            if(!card.is(e.target) && card.has(e.target).length === 0 && hidden.css('display') != 'none') { hidden.fadeOut(450); }
+            if(!card.is(e.target) && card.has(e.target).length === 0 && hidden.css('display') != 'none') { hidden.fadeOut(450); $('body').css("overflow-y", "auto"); }
         })
 
         $('#login').submit(function() {
