@@ -81,7 +81,7 @@ $i = 0; // this will be used for displaying the server tab
                                             $('#C$id').click(function() { location.href = 'steam://connect/$ip'; });
                                             // send request and wait for response ;0
                                             $('#R$id').click(function() { $.post('req/simple.php?request=server&token=$token', { type: 'remove', id: '$id' }, function(response) {
-                                                    if(!response) { alert('Removed') }
+                                                    if(!response) { if(!alert('Removed')) {  window.location.reload(); } }
                                                     else { alert(response) }
                                                 }); 
                                             });

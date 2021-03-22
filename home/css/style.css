@@ -4,5 +4,5 @@ html, body { background: rgb(17, 17, 17); font-family: monospace; align-content:
 a { text-decoration: none; width: auto; }
 .text { color: rgb(68, 68, 68); font-size: 2rem; inset: 0px; margin-right: auto; padding-right: 10px; padding-left: 10px; margin-left: auto; display: inline; transition: all 250ms ease 0s; width: fit-content; cursor: pointer; }
 .text:hover { transform: scale(1.25); color: white; }
-.image { padding-top: 15px; padding-bottom: 15px; right: 0px; left: 0px; display: block; margin: 40px auto auto; width: 20%; }
+.image {padding-top: 15px;padding-bottom: 15px;right: 0px;left: 0px;display: block;margin: 30px auto auto;width: 20%;}
 #particles-js { background-image: url(""); background-size: cover; background-repeat: no-repeat; pointer-events: none; position: absolute; inset: 0px; z-index: 1; }

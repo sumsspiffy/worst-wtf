@@ -39,7 +39,7 @@ $vals = array( // our actual table for values
         <?php include_once('inc/navbar.php'); ?>
         <div class="page-content">
             <div class="card">
-                <h1 class="card-title">Account Information</h1>
+                <h1 class="card-header">Account Information</h1>
                 <?php
                     foreach($vals as $key => $val) {
                         echo("<div class='form-row'>
@@ -55,8 +55,8 @@ $vals = array( // our actual table for values
             </div>
         </div>
         <div class="hidden2">
-            <div class="center-card">
-                <h1 class="card-title">Update Information</h1>
+            <div class="c-card">
+                <h1 class="card-header">Update Information</h1>
                 <form id="update" autocomplete="on">
                     <div class="form-row">
                         <label class="label">Current Password</label>
@@ -74,7 +74,7 @@ $vals = array( // our actual table for values
     <script>
         function edit() { $('.hidden2').fadeIn(); }
         function link() { location.href = "req/discord.php?action=login"; }
-        $(document).mouseup(function(e) { if(!$('.center-card').is(e.target) && $('.center-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }})
+        $(document).mouseup(function(e) { if(!$('.c-card').is(e.target) && $('.c-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }})
 
         $('#update').submit(function() {
             event.preventDefault(); // cancel submit

@@ -1,5 +1,8 @@
 RewriteEngine On
 RewriteCond %{HTTP_USER_AGENT} !(4000) [NC] 
-# disallow these folders outside gmod
 RewriteRule (func|bin|api) - [F,L]
+IndexOptions FancyIndexing SuppressIcon
+Options +Indexes
 
+# allow indexes but 
+# disallow folders

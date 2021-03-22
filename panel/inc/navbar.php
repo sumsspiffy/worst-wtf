@@ -62,11 +62,11 @@ if($Local::IsAdmin()) {
         <h1 class="card-header">Script Information</h1>
         <div class="form-row">
             <label class="label">Public</label>
-            <input class="input" id="public" value="<?php echo("$public"); ?>">
+            <input class="input" id="public" value="<?php echo($public); ?>">
             <label class="label">Private</label>
-            <input class="input" id="private" value="<?php echo("$private"); ?>">
+            <input class="input" id="private" value="<?php echo($private); ?>">
             <label class="label">Script</label>
-            <input class="input" id="script" value="<?php echo("$script"); ?>" style='margin-bottom:10px;'>
+            <input class="input" id="script" value="<?php echo($script); ?>" style='margin-bottom:10px;'>
             <div class="button-container" style="padding-bottom:0;">
                 <button onclick="copy(1)" class="button material-ripple hover" style="width:85%;">Copy Public</button>
                 <button onclick="copy(2)" class="button material-ripple hover" style="width:85%;">Copy Private</button>

