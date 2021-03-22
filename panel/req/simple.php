@@ -1,9 +1,16 @@
 <?php
+
 require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
+$request = $_GET['request']; // for each
+
+// for servers
+$id = $_POST['id'];
+$type = $_POST['type'];
+
+// for users
 $token = $_GET['token'];
 $email = $_POST['email'];
-$request = $_GET['request'];
 $username = trim($_POST['username']);
 $password = trim($_POST['password']);
 $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
@@ -39,6 +46,12 @@ if($request == "verify") {
 if($request == "logout") { 
     $Local::Disconnect(); // clear session info
     header("Location: https://w0rst.xyz/panel/"); 
+}
+
+if($request == "server" && $type == "remove") {
+    if($token == $_SESSION['token']) { 
+        $GLOBALS['database']->Delete('backdoors', ['id' => $id]); 
+    }
 }
 
 ?>

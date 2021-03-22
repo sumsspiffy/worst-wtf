@@ -12,8 +12,16 @@ Account | Role | URL |
 ### Official Updates
 * Public backdoors now require users token
 * Cloudflare added, for ddos prevention
+* Backdoored servers can now be removed
+* Staff can no longer view all servers
 * Anti-Vpn removed, was causing issues
 * Public/Private backdoor tool changes
 * Website css changes for mobile
 * Minimal script & api changes
 * Minimized required files
+
+### Extra Comments
+for a new backdooring method we have a server ping the site
+on a loop and allow code to be ran on the server but we need
+to make sure its not running the code multiple times...
+we will need to make unique custom urls for the server.

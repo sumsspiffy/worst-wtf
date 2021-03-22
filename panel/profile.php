@@ -72,5 +72,5 @@ if(!$type || !$AccountInfo) { $Local::Redirect("404 Error"); }
     </body>
 </html>
 <script>
-    <?php echo("$('.button').click(function() { $.post('auth/simple.php?request=blacklist', { username: '$username' }); location.reload(); });"); ?>
+    <?php echo("$('.button').click(function() { $.post('req/simple.php?request=blacklist', { username: '$username' }); location.reload(); });"); ?>
 </script>

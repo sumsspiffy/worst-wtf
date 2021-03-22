@@ -73,7 +73,7 @@ $vals = array( // our actual table for values
     </body>
     <script>
         function edit() { $('.hidden2').fadeIn(); }
-        function link() { location.href = "auth/discord.php?action=login"; }
+        function link() { location.href = "req/discord.php?action=login"; }
         $(document).mouseup(function(e) { if(!$('.center-card').is(e.target) && $('.center-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }})
 
         $('#update').submit(function() {
@@ -81,7 +81,7 @@ $vals = array( // our actual table for values
             const oldpass = $('#old-password').val();
             const newpass = $('#new-password').val();
 
-            $.post("auth/simple.php?request=update",{oldpass: oldpass, newpass: newpass}, function(response) {
+            $.post("req/simple.php?request=update",{oldpass: oldpass, newpass: newpass}, function(response) {
                 if(!response) { alert("Changed password."); }
                 else { alert(response); }
             });

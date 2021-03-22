@@ -98,7 +98,7 @@ if($Local::IsActive()) { header("Location: dashboard"); }
                 // do request for recaptcha token
                 // response is promise with passed token
                 grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
-                    $.post("auth/simple.php?request=login",{username: username, password: password, captcha: token}, function(response) {
+                    $.post("req/simple.php?request=login",{username: username, password: password, captcha: token}, function(response) {
                         if(!response) { window.location.replace("dashboard")  }
                         else { alert(response) }
                     });
@@ -118,7 +118,7 @@ if($Local::IsActive()) { header("Location: dashboard"); }
                 // do request for recaptcha token
                 // response is promise with passed token
                 grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
-                    $.post("auth/simple.php?request=register",{email: email, username: username, password: password, captcha: token}, function(response) {
+                    $.post("req/simple.php?request=register",{email: email, username: username, password: password, captcha: token}, function(response) {
                         if(!response) { alert("Check email for verification.") }
                         else { alert(response) }
                     });
