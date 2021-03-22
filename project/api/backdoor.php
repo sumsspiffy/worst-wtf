@@ -1,6 +1,6 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT']."/project/api/core/config.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 error_reporting(0);
 ini_set('display_errors', 0);

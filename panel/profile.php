@@ -1,6 +1,6 @@
 <?php 
 
-require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 // handler
 $type = $_GET['type'];
@@ -72,5 +72,5 @@ if(!$type || !$AccountInfo) { $Local::Redirect("404 Error"); }
     </body>
 </html>
 <script>
-    <?php echo("$('.button').click(function() { $.post('core/auth/simple.php?request=blacklist', { username: '$username' }); location.reload(); });"); ?>
+    <?php echo("$('.button').click(function() { $.post('auth/simple.php?request=blacklist', { username: '$username' }); location.reload(); });"); ?>
 </script>

@@ -1,6 +1,6 @@
 <?php 
 
-require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 // our local info table
 $LocalInfo = $Local::Info();
@@ -31,7 +31,6 @@ $vals = array( // our actual table for values
         <meta property="og:title" content="w0rst.xyz">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <script src="js/jquery.min.js"></script>
-        <script src="core/js/update.js"></script>
         <link rel='stylesheet' href='css/dashboard/style.css'>
         <link rel='stylesheet' href='css/ripple.css'>
         <script src="js/ripple.js"></script>
@@ -74,7 +73,18 @@ $vals = array( // our actual table for values
     </body>
     <script>
         function edit() { $('.hidden2').fadeIn(); }
-        function link() { location.href = "core/auth/discord.php?action=login"; }
+        function link() { location.href = "auth/discord.php?action=login"; }
         $(document).mouseup(function(e) { if(!$('.center-card').is(e.target) && $('.center-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }})
+
+        $('#update').submit(function() {
+            event.preventDefault(); // cancel submit
+            const oldpass = $('#old-password').val();
+            const newpass = $('#new-password').val();
+
+            $.post("auth/simple.php?request=update",{oldpass: oldpass, newpass: newpass}, function(response) {
+                if(!response) { alert("Changed password."); }
+                else { alert(response); }
+            });
+        });
     </script>
 </html>

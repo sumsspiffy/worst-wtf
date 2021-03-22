@@ -1,6 +1,6 @@
 <?php 
 
-require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 $all = $Log::Server("all");
 $public = $Log::Server("public");

@@ -1,5 +1,5 @@
 <?php
-require_once("../config.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 $token = $_GET['token'];
 $email = $_POST['email'];

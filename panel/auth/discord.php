@@ -8,6 +8,9 @@ error_reporting(E_ALL);
 define('OAUTH2_CLIENT_ID', '808574107058569216');
 define('OAUTH2_CLIENT_SECRET', 'JKmuW0a680cNdH1ROVXMVn7u5Msjc3rK');
 
+// config file for adding to database & classes
+require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
+
 $authorizeURL = 'https://discord.com/api/oauth2/authorize?client_id=808574107058569216&redirect_uri=https%3A%2F%2Fw0rst.xyz%2Fpanel%2Flogin.php&response_type=code&scope=identify';
 $tokenURL = 'https://discord.com/api/oauth2/token';
 $apiURLBase = 'https://discord.com/api/users/@me';
@@ -19,7 +22,7 @@ if(get('action') == 'login') {
 
   $params = array(
     'client_id' => OAUTH2_CLIENT_ID,
-    'redirect_uri' => 'https://w0rst.xyz/panel/core/auth/discord.php',
+    'redirect_uri' => 'https://w0rst.xyz/panel/auth/discord.php',
     'response_type' => 'code',
     'scope' => 'identify guilds'
   );
@@ -37,13 +40,12 @@ if(get('code')) {
     "grant_type" => "authorization_code",
     'client_id' => OAUTH2_CLIENT_ID,
     'client_secret' => OAUTH2_CLIENT_SECRET,
-    'redirect_uri' => 'https://w0rst.xyz/panel/core/auth/discord.php',
+    'redirect_uri' => 'https://w0rst.xyz/panel/auth/discord.php',
     'code' => get('code')
   ));
   $logout_token = $token->access_token;
   $_SESSION['access_token'] = $token->access_token;
   
-  require_once('../config.php'); // link
   $user = apiRequest($apiURLBase); // request info
   
   $id = $user->id;

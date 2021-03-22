@@ -1,6 +1,6 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 $LocalInfo = $Local::Info();
 $username = $LocalInfo['username'];
@@ -74,7 +74,7 @@ if($Local::IsAdmin()) {
     function dropdown() { $(".dropdown").fadeToggle(250); }
     function script() {  $(".hidden1").fadeToggle(250); $('body').css("overflow-y", "hidden"); }
     function account() { location.href = "account"; }
-    function logout() { location.href = "core/auth/simple.php?request=logout"; }
+    function logout() { location.href = "auth/simple.php?request=logout"; }
     function redirect(type) {
         if(type == 1) { location.href = "dashboard"; }
         if(type == 2) { location.href = "members"; }

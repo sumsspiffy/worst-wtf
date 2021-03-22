@@ -1,6 +1,6 @@
 <?php 
 
-require_once($_SERVER['DOCUMENT_ROOT']."/panel/core/config.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 if($Local::IsBlacklisted()) { $Local::Redirect("blacklisted"); }
 
@@ -17,7 +17,6 @@ if($Local::IsActive()) { header("Location: dashboard"); }
         <script src="https://www.google.com/recaptcha/api.js"></script>
         <script src="js/jquery.min.js"></script>
         <script src="js/ripple.js"></script>
-        <script src="core/js/login.js"></script>
         <meta name="theme-color" content="#86ffba">
         <meta property="og:title" content="w0rst.xyz">
         <meta property="og:image" content="img/logo.png">
@@ -87,6 +86,45 @@ if($Local::IsActive()) { header("Location: dashboard"); }
         $(document).mouseup(function(e) { 
             if(!card.is(e.target) && card.has(e.target).length === 0 && hidden.css('display') != 'none') { hidden.fadeOut(450); }
         })
+
+        $('#login').submit(function() {
+            event.preventDefault(); // cancel submit
+            const username = $('#l-username').val();
+            const password = $('#l-password').val();
+
+            // this is only ran on click
+            // so not like uper fucky        
+            grecaptcha.ready(function() {
+                // do request for recaptcha token
+                // response is promise with passed token
+                grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
+                    $.post("auth/simple.php?request=login",{username: username, password: password, captcha: token}, function(response) {
+                        if(!response) { window.location.replace("dashboard")  }
+                        else { alert(response) }
+                    });
+                });
+            });
+        });
+
+        $('#register').submit(function() {
+            event.preventDefault(); // cancel submit
+            const email = $('#r-email').val();
+            const username = $('#r-username').val();
+            const password = $('#r-password').val();
+
+            // this is only ran on click
+            // so not like uper fucky
+            grecaptcha.ready(function() {
+                // do request for recaptcha token
+                // response is promise with passed token
+                grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
+                    $.post("auth/simple.php?request=register",{email: email, username: username, password: password, captcha: token}, function(response) {
+                        if(!response) { alert("Check email for verification.") }
+                        else { alert(response) }
+                    });
+                });
+            });
+        });
     </script>
 </html>
 
