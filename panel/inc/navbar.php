@@ -88,7 +88,7 @@ if($Local::IsAdmin()) {
     }
 
     $(document).mouseup(function(e) { 
-        if(!$(".center-card").is(e.target) && $(".center-card").has(e.target).length === 0 &&  $(".hidden1").css('display') != 'none') {  
+        if(!$(".c-card").is(e.target) && $(".c-card").has(e.target).length === 0 &&  $(".hidden1").css('display') != 'none') {  
             $('body').css("overflow-y", "auto");
             $(".hidden1").fadeOut(450); 
         }
