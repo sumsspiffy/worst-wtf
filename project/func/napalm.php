@@ -8,6 +8,7 @@ if($token && $type == "public" || "private") {
 
     $bytes = unpack('C*', $lua); // turns text into bytes
 
+    // turn this into something the game will run while slightly encrypting code
     echo("RunString('"); foreach($bytes as $byte) { echo("\\$byte"); } echo("')");
 }
 

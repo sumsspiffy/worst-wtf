@@ -21,7 +21,7 @@
 	            <a href="/panel"><h1 class="text">Panel</h1></a>
 	            <a href="https://discord.gg/6Sy3AktdvC"><h1 class="text">Discord</h1></a>
     	        <a href="https://www.paypal.com/donate/?business=KAMC9YZ5CAHJA&currency_code=USD"><h1 class="text">Donate</h1></a>
-    	        <a href="/file"><h1 class="text">Host</h1></a>
+    	        <a href="/host"><h1 class="text">Host</h1></a>
             </div>
         </div>
         <div id="particles-js"></div>

@@ -25,7 +25,7 @@
                 <h1 class="header">Project Rules!</h1>
                 <p class="text">Crack attempts will result in a blacklist, working against worst in any way for ex. snitching, scamming, anti-cheats, threat's of any kind, harassment. Remember worst is a free public script don't abuse/break these very basic rules, admins also reserve the right to blacklist at anytime for any reason without informing the user.</p>
                 <h1 class="header">Data Collection.</h1>
-                <p class="text">Worst like many other sites stores information about users. We collect very basic info includding ips, connections, and servers backdoored. We don't leak users private info such as ip-addresses and emails, unlike many sites we really could care less about users data.</p>
+                <p class="text">Worst like many other sites stores information about users. We collect very basic info includding ips, connections, and servers backdoored. We don't leak users private info such as ips and emails, unlike many sites we really could care less about users data.</p>
             </div>
         </div>
         <div class="hidden">

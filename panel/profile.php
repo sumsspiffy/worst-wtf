@@ -34,38 +34,38 @@ if(!$type || !$AccountInfo) { $Local::Redirect("404 Error"); }
         <div class="page-content">
             <div class="card"><br>
                 <?php
-                    $blacklist =$AccountInfo['blacklist'];
-                    $username = $AccountInfo['username'];
-                    $verified = $AccountInfo['verified'];
-                    $discord = $AccountInfo['discord'];
-                    $avatar = $AccountInfo['avatar'];
-                    $token = $AccountInfo['token'];
-                    $email = $AccountInfo['email'];
-                    $date = $AccountInfo['date'];
-                    $role = $AccountInfo['role'];
-                    $uid = $AccountInfo['uid'];
-                    $ip = $AccountInfo['ip'];
-                    
-                    if($Local::IsAdmin()) {
-                        $AdminInfo = "<td class='p-text'><strong>Email: <span>$email</span></strong></td>
-                        <td class='p-text'><strong>IP Address: <span>$ip</span></strong></td>
-                        <td class='p-text'><strong>Token: <span>$token</span></strong></td>";
-                        $AdminButton = "<div class='button-container' style='padding-top:20px;padding-bottom:10px;'><button class='button material-ripple hover'>Blacklist</button></div>";
-                    }
+                $blacklist =$AccountInfo['blacklist'];
+                $username = $AccountInfo['username'];
+                $verified = $AccountInfo['verified'];
+                $discord = $AccountInfo['discord'];
+                $avatar = $AccountInfo['avatar'];
+                $token = $AccountInfo['token'];
+                $email = $AccountInfo['email'];
+                $date = $AccountInfo['date'];
+                $role = $AccountInfo['role'];
+                $uid = $AccountInfo['uid'];
+                $ip = $AccountInfo['ip'];
+                
+                if($Local::IsAdmin()) {
+                    $AdminInfo = "<td class='p-text'><strong>Email: <span>$email</span></strong></td>
+                    <td class='p-text'><strong>IP Address: <span>$ip</span></strong></td>
+                    <td class='p-text'><strong>Token: <span>$token</span></strong></td>";
+                    $AdminButton = "<div class='button-container' style='padding-top:20px;padding-bottom:10px;'><button class='button material-ripple hover'>Blacklist</button></div>";
+                }
 
-                    echo("<img class='p-picture circle' src='$avatar' onerror=this.src='img/pic.png'>
-                    <h1 class='p-header'>$username</h1>
-                    <div class='p-box'>
-                        <table class='p-item'>
-                            <td class='p-text'><strong>UID: <span>$uid</span></strong></td>
-                            <td class='p-text'><strong>Role: <span>$role</span></strong></td>
-                            <td class='p-text'><strong>Verified: <span>$verified</span></strong></td>
-                            <td class='p-text'><strong>Blacklisted: <span>$blacklist</span></strong></td>
-                            <td class='p-text'><strong>Creation: <span>$date</span></strong></td>
-                            <td class='p-text'><strong>Discord: <span>$discord</span></strong></td>
-                            $AdminInfo
-                        </table>
-                    </div>$AdminButton<br>");
+                echo("<img class='p-picture circle' src='$avatar' onerror=this.src='img/pic.png'>
+                <h1 class='p-header'>$username</h1>
+                <div class='p-box'>
+                    <table class='p-item'>
+                        <td class='p-text'><strong>UID: <span>$uid</span></strong></td>
+                        <td class='p-text'><strong>Role: <span>$role</span></strong></td>
+                        <td class='p-text'><strong>Verified: <span>$verified</span></strong></td>
+                        <td class='p-text'><strong>Blacklisted: <span>$blacklist</span></strong></td>
+                        <td class='p-text'><strong>Creation: <span>$date</span></strong></td>
+                        <td class='p-text'><strong>Discord: <span>$discord</span></strong></td>
+                        $AdminInfo
+                    </table>
+                </div>$AdminButton<br>");
                 ?>
             </div>
         </div>

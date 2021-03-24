@@ -37,66 +37,65 @@ $i = 0; // this will be used for displaying the server tab
                     <?php echo($All); ?>
                 </div>
                 <?php
-                    // Im using for each for the servers because idgaf about the order they are
-                    // if this were a list or something it would be diffrent, but its whatever
-                    // if you want to know how to order it properly check out members or logs
+                // Im using for each for the servers because idgaf about the order they are
+                // if this were a list or something it would be diffrent, but its whatever
+                // if you want to know how to order it properly check out members or logs
 
-                    // for each server then for each row
-                    foreach($Servers as $row) {
+                // for each server then for each row
+                foreach($Servers as $row) {
 
-                        // 0 - public | 1 - private
-                        echo("<div class='flexbox S$i'>"); // setting the class as i for hiding
+                    // 0 - public | 1 - private
+                    echo("<div class='flexbox S$i'>"); // setting the class as i for hiding
 
-                        foreach($row as $row) {
-                            $pass = $row['password'];
-                            $mode = $row['gamemode'];
-                            $token = $row['token'];
-                            $name = $row['server'];
-                            $type = $row['type'];
-                            $date = $row['date'];
-                            $map = $row['map'];
-                            $net = $row['net'];
-                            $id = $row['id'];
-                            $ip = $row['ip'];
+                    foreach($row as $row) {
+                        $pass = $row['password'];
+                        $mode = $row['gamemode'];
+                        $name = $row['server'];
+                        $type = $row['type'];
+                        $date = $row['date'];
+                        $map = $row['map'];
+                        $net = $row['net'];
+                        $id = $row['id'];
+                        $ip = $row['ip'];
 
-                            $token = $row['token']; // this is for getting the tpye of server as well the users info             
-                            $username = $GLOBALS['database']->GetContent('users', ['token' => $token])[0]["username"];
+                        $token = $row['token']; // this is for getting the tpye of server as well the users info             
+                        $username = $GLOBALS['database']->GetContent('users', ['token' => $token])[0]["username"];
 
-                            // echo("$name\n");
-                            echo("<div class='l-box'>
-                                <table class='l-item'>
-                                    <td class='l-text'><strong>By: <span>$username</span></strong></td>
-                                    <td class='l-text'><strong>Type: <span>$type</span></strong></td>
-                                    <td class='l-text'><strong>Server: <span>$name</span></strong></td>
-                                    <td class='l-text'><strong>Server IP: <span>$ip</span></strong></td>
-                                    <td class='l-text'><strong>Password: <span>$pass</span></strong></td>
-                                    <td class='l-text'><strong>Gamemode: <span>$mode</span></strong></td>
-                                    <td class='l-text'><strong>Net: <span>$net</span></strong></td>
-                                    <td class='l-text'><strong>Map: <span>$map</span></strong></td>
-                                    <td class='l-text'><strong>Date: <span>$date</span></strong></td>
-                                    <td><div class='button-container' style='display:block;padding:0;margin:0;'>
-                                        <button class='button material-ripple hover' id='C$id' style='margin-bottom:5px;'>Connect</button>
-                                        <button class='button material-ripple hover' id='R$id' style='margin-top:5px;'>Remove</button>
-                                        <script>
-                                            $('#C$id').click(function() { location.href = 'steam://connect/$ip'; });
-                                            // send request and wait for response ;0
-                                            $('#R$id').click(function() { $.post('req/simple.php?request=server&token=$token', { type: 'remove', id: '$id' }, function(response) {
-                                                    if(!response) { if(!alert('Removed')) {  window.location.reload(); } }
-                                                    else { alert(response) }
-                                                }); 
-                                            });
-                                        </script>
-                                    </div></td> 
-                                </table>
-                            </div>");
+                        // echo("$name\n");
+                        echo("<div class='l-box'>
+                            <table class='l-item'>
+                                <td class='l-text'><strong>By: <span>$username</span></strong></td>
+                                <td class='l-text'><strong>Type: <span>$type</span></strong></td>
+                                <td class='l-text'><strong>Server: <span>$name</span></strong></td>
+                                <td class='l-text'><strong>Server IP: <span>$ip</span></strong></td>
+                                <td class='l-text'><strong>Password: <span>$pass</span></strong></td>
+                                <td class='l-text'><strong>Gamemode: <span>$mode</span></strong></td>
+                                <td class='l-text'><strong>Net: <span>$net</span></strong></td>
+                                <td class='l-text'><strong>Map: <span>$map</span></strong></td>
+                                <td class='l-text'><strong>Date: <span>$date</span></strong></td>
+                                <td><div class='button-container' style='display:block;padding:0;margin:0;'>
+                                    <button class='button material-ripple hover' id='C$id' style='margin-bottom:5px;'>Connect</button>
+                                    <button class='button material-ripple hover' id='R$id' style='margin-top:5px;'>Remove</button>
+                                    <script>
+                                        $('#C$id').click(function() { location.href = 'steam://connect/$ip'; });
+                                        // send request and wait for response ;0
+                                        $('#R$id').click(function() { $.post('req/simple.php?request=server&token=$token', { type: 'remove', id: '$id' }, function(response) {
+                                                // this is a basic if clicked then refresh...
+                                                if(!response) { if(!alert('Removed')) {  window.location.reload(); } } else { alert(response) }
+                                            }); 
+                                        });
+                                    </script>
+                                </div></td> 
+                            </table>
+                        </div>");
 
-                            unset($By); // by needs to be reset every loop
-                        }
-
-                        echo("</div>");
-
-                        $i++;
+                        unset($By); // by needs to be reset every loop
                     }
+
+                    echo("</div>");
+
+                    $i++;
+                }
                 ?>
             <br></div>
         </div>

@@ -45,7 +45,7 @@ if($Local::IsAdmin()) {
             <?php echo($Logs); ?>
         </div>
         <div class="dropdown-holder">
-            <div class="button-drop material-ripple" onclick="dropdown()">
+            <div class="button-drop">
                 <?php echo("<img class='circle pfp' src='$avatar' onerror=this.src='img/pic.png'>"); ?>
                 <?php echo("<span class='name'>$username</span>"); ?>
             </div>
@@ -77,7 +77,17 @@ if($Local::IsAdmin()) {
 </div>
 
 <script>
-    function dropdown() { $(".dropdown").fadeToggle(250); }
+
+    $(".dropdown-holder").mouseenter(function() {
+        $('.button-drop').css("border-radius", "3px 3px 0px 0px");
+        $(".dropdown").fadeIn(150); 
+    });
+
+    $(".dropdown-holder").mouseleave(function() {
+        $('.button-drop').css("border-radius", "3px");
+        $(".dropdown").fadeOut(150); 
+    });
+    
     function script() {  $(".hidden1").fadeToggle(250); $('body').css("overflow-y", "hidden"); }
     function account() { location.href = "account"; }
     function logout() { location.href = "req/simple.php?request=logout"; }

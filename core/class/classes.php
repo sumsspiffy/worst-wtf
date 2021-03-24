@@ -195,6 +195,8 @@ class Secure {
     public function AntiAlt() {
         // if the users ip is found in the database
         $res = $GLOBALS['database']->GetContent('users', ['ip' => $_SERVER['REMOTE_ADDR']]);
+
+	if($_SESSION['active'] = true) { return false; } // if the sessions active
         
         if($res) { return true; } // return the response
 
