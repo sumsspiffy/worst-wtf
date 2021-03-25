@@ -49,7 +49,7 @@ $vals = array( // our actual table for values
                 }
                 ?>
                 <div class="button-container">
-                    <button onclick="link()" class="button material-ripple hover">Relink Discord</button>
+                    <button onclick="link('req/discord.php?action=login')" class="button material-ripple hover">Relink Discord</button>
                     <button onclick="edit()" class="button material-ripple hover">Change Password</button>
                 </div>
             </div>
@@ -73,7 +73,6 @@ $vals = array( // our actual table for values
     </body>
     <script>
         function edit() { $('.hidden2').fadeIn(); }
-        function link() { location.href = "req/discord.php?action=login"; }
         $(document).mouseup(function(e) { if(!$('.c-card').is(e.target) && $('.c-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }})
 
         $('#update').submit(function() {

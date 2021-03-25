@@ -375,6 +375,7 @@ a { color: #fff; text-decoration: none; }
 }
 
 .m-picture {
+    cursor:pointer;
     background-color: #ffffff38;
     padding: 4px;
     vertical-align: middle;
@@ -448,6 +449,7 @@ a { color: #fff; text-decoration: none; }
 }
 
 .l-picture {
+    cursor: pointer;
     background-color: #ffffff6e;
     padding:3px;
     width:max-content;
@@ -464,7 +466,9 @@ a { color: #fff; text-decoration: none; }
     padding: 5px;
     width:20rem;
     right:0;left:0;
-    margin:auto;
+    top:0;bottom:0;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 .p-header {

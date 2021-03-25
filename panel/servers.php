@@ -74,10 +74,9 @@ $i = 0; // this will be used for displaying the server tab
                                 <td class='l-text'><strong>Map: <span>$map</span></strong></td>
                                 <td class='l-text'><strong>Date: <span>$date</span></strong></td>
                                 <td><div class='button-container' style='display:block;padding:0;margin:0;'>
-                                    <button class='button material-ripple hover' id='C$id' style='margin-bottom:5px;'>Connect</button>
+                                    <button class='button material-ripple hover' id='C$id' onclick='link(`steam://connect/$ip`)' style='margin-bottom:5px;'>Connect</button>
                                     <button class='button material-ripple hover' id='R$id' style='margin-top:5px;'>Remove</button>
                                     <script>
-                                        $('#C$id').click(function() { location.href = 'steam://connect/$ip'; });
                                         // send request and wait for response ;0
                                         $('#R$id').click(function() { $.post('req/simple.php?request=server&token=$token', { type: 'remove', id: '$id' }, function(response) {
                                                 // this is a basic if clicked then refresh...

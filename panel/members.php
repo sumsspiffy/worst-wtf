@@ -35,7 +35,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
                         if($AccountInfo) { // if info actually exists
                             echo("<div class='m-card'>
                                 <div class='form-row'>
-                                    <a href='profile?type=uid&uid=$uid'><img class='m-picture circle' src='$avatar' onerror=this.src='img/pic.png'></a>
+                                    <a onclick='profile(`uid`, `$uid`)'><img class='m-picture circle' src='$avatar' onerror=this.src='img/pic.png'></a>
                                     <span class='m-text'>$name</span>
                                     <span class='m-text'>$role</span>
                                 </div>

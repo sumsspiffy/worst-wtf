@@ -100,7 +100,7 @@
                 // response is promise with passed token
                 grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
                     $.post("req/simple.php?request=login",{username: username, password: password, captcha: token}, function(response) {
-                        if(!response) { window.location.replace("dashboard")  }
+                        if(!response) { if(!alert("Login successful.")) { setTimeout( function() { location.href = `dashboard`; }, 150); } }
                         else { alert(response) }
                     });
                 });
@@ -120,7 +120,7 @@
                 // response is promise with passed token
                 grecaptcha.execute('6Lc3-FwaAAAAALDqnzCWitheTuvILjwsLyAfVijf', {action: 'verify'}).then(function(token) {
                     $.post("req/simple.php?request=register",{email: email, username: username, password: password, captcha: token}, function(response) {
-                        if(!response) { alert("Check email for verification.") }
+                        if(!response) { alert("Registration successful, check email for verification.") }
                         else { alert(response) }
                     });
                 });
