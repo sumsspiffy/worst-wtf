@@ -11,6 +11,9 @@ $i = 0; // this will be used for displaying the server tab
 
 ?>
 
+<!-- this is for knowing what page is open -->
+<div class="webpage" id="servers"></div>
+
 <html>
     <head>
         <title>Worst</title>

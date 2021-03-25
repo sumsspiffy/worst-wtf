@@ -18,10 +18,10 @@
         <div id="center">
             <img class="image" src="favicon.ico">
 	        <div class="holder">
-	            <a href="/panel"><h1 class="text">Panel</h1></a>
-	            <a href="https://discord.gg/6Sy3AktdvC"><h1 class="text">Discord</h1></a>
-    	        <a href="https://www.paypal.com/donate/?business=KAMC9YZ5CAHJA&currency_code=USD"><h1 class="text">Donate</h1></a>
-    	        <a href="/host"><h1 class="text">Host</h1></a>
+	            <a onclick="link('https://w0rst.xyz/panel')"><h1 class="text">Panel</h1></a>
+	            <a onclick="link('https://discord.gg/6Sy3AktdvC')"><h1 class="text">Discord</h1></a>
+    	        <a onclick="link('https://www.paypal.com/donate/?business=KAMC9YZ5CAHJA&currency_code=USD')"><h1 class="text">Donate</h1></a>
+    	        <a onclick="link('https://w0rst.xyz/host')"><h1 class="text">Host</h1></a>
             </div>
         </div>
         <div id="particles-js"></div>
@@ -29,3 +29,8 @@
         <script src="home/js/app.js"></script>
     </body>
 </html>
+<script>
+// dumbed down link system for the home page
+// unlike the panel account redirects arent needed
+function link(url) { setTimeout( function() { location.href = url; }, 150); }
+</script>

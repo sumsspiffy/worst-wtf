@@ -4,6 +4,9 @@ require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 ?>
 
+<!-- this is for knowing what page is open -->
+<div class="webpage" id="home"></div>
+
 <html>
     <head>
         <title>Worst</title>

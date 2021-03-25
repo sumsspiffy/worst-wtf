@@ -17,7 +17,14 @@ $apiURLBase = 'https://discord.com/api/users/@me';
 
 session_start();
 
-// Start the login process by sending the user to Discord's authorization page
+if(!get('error') || !get('code') || !get('action')) {
+  header("Location: https://w0rst.xyz/error?reason=Forbidden");
+}
+
+if(get('error')) {
+  header("Location: https://w0rst.xyz/error?reason=".get('error')." ".get('error_description'));
+}
+
 if(get('action') == 'login') {
 
   $params = array(
@@ -29,7 +36,6 @@ if(get('action') == 'login') {
 
   // Redirect the user to Discord's authorization page
   header('Location: https://discordapp.com/api/oauth2/authorize' . '?' . http_build_query($params));
-  die();
 }
 
 // When Discord redirects the user back here, there will be a "code" and "state" parameter in the query string
@@ -65,7 +71,6 @@ if(get('action') == 'logout') {
 
   // Redirect the user to Discord's revoke page
   header('Location: https://discordapp.com/api/oauth2/token/revoke' . '?' . http_build_query($params));
-  die();
 }
 
 function apiRequest($url, $post=FALSE, $headers=array()) {

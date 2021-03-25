@@ -8,6 +8,9 @@ if(!$Local::IsAdmin()) {
 
 ?>
 
+<!-- this is for knowing what page is open -->
+<div class="webpage" id="logging"></div>
+
 <html>
     <head>
         <title>Worst</title>

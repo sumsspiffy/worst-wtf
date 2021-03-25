@@ -21,7 +21,7 @@ body {
     position:relative;
     display:block;
     left:0;right:0;
-    margin-top:5%;
+    margin-top:2.5%;
     margin-left:auto;
     margin-right:auto;
     width: 65%;
@@ -502,3 +502,5 @@ a { color: #fff; text-decoration: none; }
     position: relative;
     text-align: center;
 }
+
+.snowflake {pointer-events: none;}
