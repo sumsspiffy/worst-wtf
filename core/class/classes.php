@@ -85,7 +85,7 @@ class Local {
     public function Redirect($reason) {
         // if theres a reason then add that 
         if($reason) { $extra = "?reason=$reason"; }
-        header("Location: https://w0rst.xyz/error.php$extra");
+        header("Location: https://w0rst.xyz/error$extra");
     }
 }
 
@@ -190,6 +190,25 @@ class Account {
         }
     }
 
+    public function IsAdmin($user) {
+        $role  = Account::Info($user)['role'];
+        $roles = array('admin', 'funky', 'sex', 'monkey', 'wow');
+        if(in_array($role, $roles)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function IsBlacklisted($user) {
+        $blacklist = Local::Info($user)['blacklist'];
+        if($blacklist == "true") {
+            return true;
+        }
+
+        return false;
+    }
+
     public function Info($user) {
         return $GLOBALS['database']->GetContent('users', ['username' => $user])[0];
     }
@@ -197,7 +216,7 @@ class Account {
 
 class Secure {
     public function IpAddress() { 
-        // this should stop the errors !!!!
+        // this should stop the php errors !!!!
         if (isset($_SERVER['REMOTE_ADDR'])) {
             return $_SERVER['REMOTE_ADDR'];
         }
@@ -212,7 +231,7 @@ class Secure {
         $IpAddress = Secure::IpAddress(); // get the ipaddress for 
         $res = $GLOBALS['database']->GetContent('users', ['ip' => $IpAddress]);
 
-	    if($_SESSION['active'] = true) { return true; } // if the sessions active
+	    if($_SESSION['active'] == true) { return true; } // if the sessions active
         
         if($res) { return true; } // return the response
 
@@ -229,7 +248,7 @@ class Secure {
         $response = curl_exec($curl);
         $response = json_decode($response, true);
 
-        if($response['status'] == "error") { return false; } // there was a error with the response
+        if($response['status'] == "error") { return false; } // there was a error with the response so cancel
         if($response['result'] > 0.85) { return true; } // if the result is more then 85% its likely a vpn
 
         curl_close($curl); // close curl

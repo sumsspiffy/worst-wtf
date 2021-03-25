@@ -18,15 +18,27 @@ $recaptcha_secret = '6Lc3-FwaAAAAAGTJV3fJ_mzE5kU_1H8mj7sVqh6a';
 $recaptcha_response = $_POST['captcha'];
 $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response);
 $recaptcha = json_decode($recaptcha);
+$oldpass = $_POST['oldpass'];
+$newpass = $_POST['newpass'];
 
 if($request == "update") { 
-    $Local::ChangePassword($_POST['oldpass'], $_POST['newpass']);
+    $Local::ChangePassword($oldpass, $newpass);
 }
 
 if($request == "blacklist") {
+    $LocalInfo = $Local::Info(); // yes you!!
     $AccountInfo = $Account::Info($username);
-    if($AccountInfo['blacklist'] == "true") { $Account::Edit($username, "blacklist", "false"); }
-    else { $Account::Edit($username, "blacklist", "true"); }
+
+    // security flaw avoided omegalul
+    if($LocalInfo['blacklist'] == "false") {
+        if($AccountInfo['blacklist'] == "true") { 
+            // remove the blacklist if its been added
+            $Account::Edit($username, "blacklist", "false"); 
+        } else { 
+            // add the blacklist if they weren't before
+            $Account::Edit($username, "blacklist", "true"); 
+        }
+    }
 }
 
 if($request == "login") { 

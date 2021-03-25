@@ -12,7 +12,7 @@ if($type == "discord") { $discord= $_GET['discord']; $AccountInfo = $GLOBALS['da
 if($type == "token") { $token = $_GET['token']; $AccountInfo = $GLOBALS['database']->GetContent('users', ['token' => $token])[0]; }
 
 // if no type, or the request was invalid
-if(!$type || !$AccountInfo) { $Local::Redirect("404 Error"); }
+if(!$type || !$AccountInfo) { $Local::Redirect("404 error"); }
 
 ?>
 

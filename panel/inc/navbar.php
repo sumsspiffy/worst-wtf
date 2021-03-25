@@ -9,13 +9,19 @@ $avatar = $LocalInfo['avatar'];
 $token = $LocalInfo['token'];
 $uid = $LocalInfo['uid'];
 
-if(!$Local::IsVerified()) { $Local::Redirect("awaiting email activation"); }
-
 if(!$Local::IsActive()) { $Local::Redirect("invalid session"); }
+
+// if not verified & active was having issues with it redirecting for this while its not an issue
+if(!$Local::IsVerified() && $Local::IsActive()) { $Local::Redirect("awaiting email activation"); }
 
 if($Local::IsBlacklisted()) { $Local::Redirect("blacklisted"); }
 
 $Local::UpdateIp(); // updates ip if it has changed at all
+
+// check if the user isn't using vpn or proxy
+if($Secure::AntiVpn() || $Secure::AntiProxy()) {
+    $Local::Redirect("vpn/proxy detected");
+}
 
 // if discords null & localinfo exists
 // just a dumb error ez fix ;0 ;0 ;0
@@ -82,13 +88,7 @@ $private = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?type=private&t
         $(".dropdown").fadeOut(150); 
     });
 
-    // if page is a nav tab
-    var isvalid = false;
-
-    // the hidden webpage div
-    if($(".webpage")) { isvalid=true; }
-
-    if(isvalid == true) {
+    if($(".webpage")) {
         switch($(".webpage").attr('id')) {
             case "home": $('#1').css("opacity", "85%"); break;
             case "members": $('#2').css("opacity", "85%"); break;
