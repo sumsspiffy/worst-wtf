@@ -228,12 +228,12 @@ class Secure {
 
     public function AntiAlt() {
         // if the users ip is found in the database
-        $IpAddress = Secure::IpAddress(); // get the ipaddress for 
-        $res = $GLOBALS['database']->GetContent('users', ['ip' => $IpAddress]);
+        $IpAddress = Secure::IpAddress(); // get the ipaddress for checking the db
+        $response = $GLOBALS['database']->GetContent('users', ['ip' => $IpAddress]);
 
 	    if($_SESSION['active'] == true) { return true; } // if the sessions active
         
-        if($res) { return true; } // return the response
+        if($response) { return true; } // on reg if there associated by ip then they alting!>!>!
 
         return false;
     }
@@ -246,12 +246,12 @@ class Secure {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 
         $response = curl_exec($curl);
-        $response = json_decode($response, true);
+        curl_close($curl); // close curl after getting response
+        $response = json_decode($response, true); // decode json
 
-        if($response['status'] == "error") { return false; } // there was a error with the response so cancel
-        if($response['result'] > 0.85) { return true; } // if the result is more then 85% its likely a vpn
+        if($response['status'] == "error") { return false; } // there was an error with the response so cancel
+        if($response['result'] > 0.75) { return true; } // if the result is more then its likely a vpn
 
-        curl_close($curl); // close curl
         return false;
     }
 
