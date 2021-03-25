@@ -8,9 +8,6 @@ if(!$Local::IsAdmin()) {
 
 ?>
 
-<!-- this is for knowing what page is open -->
-<div class="webpage" id="logging"></div>
-
 <html>
     <head>
         <title>Worst</title>
@@ -25,6 +22,9 @@ if(!$Local::IsAdmin()) {
         <style>span {color: #ccccccbb;}</style>
     </head>
     <body>
+        <!-- this is for knowing what page is open -->
+        <div class="webpage" id="logging"></div>
+        <!-- and here is the navbar that needs ^ -->
         <?php include_once('inc/navbar.php'); ?>
         <div class="page-content">
             <div class="card">

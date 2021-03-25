@@ -1,5 +1,5 @@
 html,body{background:#111;font-family:monospace;align-content:center;overflow:auto}.center{inset:0;margin-right:auto;margin-left:auto;z-index:2}
-.holder{margin-top:20px;width:fit-content;inset:0;margin-right:auto;margin-left:auto}
+.holder{cursor:default;margin-top:20px;width:fit-content;inset:0;margin-right:auto;margin-left:auto}
 a{text-decoration:none;width:auto}.text{color:#444;font-size:2rem;inset:0;margin-right:auto;padding-right:10px;padding-left:10px;margin-left:auto;display:inline;transition:all 250ms ease 0s;width:fit-content;cursor:pointer}
 .text:hover{transform:scale(1.25);color:#fff}
 .image{padding-top:15px;padding-bottom:15px;right:0;left:0;display:block;margin:30px auto auto;width: 23%;}

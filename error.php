@@ -1,5 +1,3 @@
-<?php $error = $_GET['reason']; ?>
-
 <html>
     <head>
         <title>Worst</title>
@@ -18,7 +16,7 @@
     </head>
     <body>
         <div class="content">
-            <?php if($error) { echo("<h1>$error</h1>"); } ?>  
+            <?php echo("<h1>".$_GET['reason']."</h1>"); ?>         
             <div class="center">
                 <a href="https://w0rst.xyz/"><h2 class="hover">Home</h2></a>
             </div>

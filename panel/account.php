@@ -72,18 +72,17 @@ $vals = array( // our actual table for values
         </div>
     </body>
     <script>
-        function edit() { $('.hidden2').fadeIn(); }
-        $(document).mouseup(function(e) { if(!$('.c-card').is(e.target) && $('.c-card').has(e.target).length === 0 && $('.hidden2').css('display') != 'none') { $('.hidden2').fadeOut(450); }})
-
         $('#update').submit(function() {
             event.preventDefault(); // cancel submit
             const oldpass = $('#old-password').val();
             const newpass = $('#new-password').val();
 
-            $.post("req/simple.php?request=update",{oldpass: oldpass, newpass: newpass}, function(response) {
-                if(!response) { alert("Changed password."); }
-                else { alert(response); }
-            });
+            if(confirm("Are you sure you want to change your password?")) {
+                $.post("req/simple.php?request=update",{oldpass: oldpass, newpass: newpass}, function(response) {
+                    if(!response) { alert("Changed password."); }
+                    else { alert(response); }
+                });
+            }
         });
     </script>
 </html>

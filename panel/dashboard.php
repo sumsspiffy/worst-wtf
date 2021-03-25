@@ -4,9 +4,6 @@ require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 ?>
 
-<!-- this is for knowing what page is open -->
-<div class="webpage" id="home"></div>
-
 <html>
     <head>
         <title>Worst</title>
@@ -20,6 +17,9 @@ require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
         <script src="js/ripple.js"></script>
     </head>
     <body>
+        <!-- this is for knowing what page is open -->
+        <div class="webpage" id="home"></div>
+        <!-- and here is the navbar that needs ^ -->
         <?php include_once('inc/navbar.php'); ?>
         <div class="page-content">
             <img class='background-image' src='img/logo.png'>

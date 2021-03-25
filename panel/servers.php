@@ -11,9 +11,6 @@ $i = 0; // this will be used for displaying the server tab
 
 ?>
 
-<!-- this is for knowing what page is open -->
-<div class="webpage" id="servers"></div>
-
 <html>
     <head>
         <title>Worst</title>
@@ -31,6 +28,9 @@ $i = 0; // this will be used for displaying the server tab
         </style>
     </head>
     <body>
+        <!-- this is for knowing what page is open -->
+        <div class="webpage" id="servers"></div>
+        <!-- and here is the navbar that needs ^ -->
         <?php include_once('inc/navbar.php'); ?>
         <div class="page-content">
             <div class="card">
@@ -67,7 +67,7 @@ $i = 0; // this will be used for displaying the server tab
                         // echo("$name\n");
                         echo("<div class='l-box'>
                             <table class='l-item'>
-                                <td class='l-text'><strong>By: <span>$username</span></strong></td>
+                                <td class='l-text'><a onclick='profile(`username`, `$username`)' style='cursor:pointer;'><strong>By: <span>$username</span></strong></td></a>
                                 <td class='l-text'><strong>Type: <span>$type</span></strong></td>
                                 <td class='l-text'><strong>Server: <span>$name</span></strong></td>
                                 <td class='l-text'><strong>Server IP: <span>$ip</span></strong></td>
@@ -81,11 +81,14 @@ $i = 0; // this will be used for displaying the server tab
                                     <button class='button material-ripple hover' id='R$id' style='margin-top:5px;'>Remove</button>
                                     <script>
                                         // send request and wait for response ;0
-                                        $('#R$id').click(function() { $.post('req/simple.php?request=server&token=$token', { type: 'remove', id: '$id' }, function(response) {
-                                                // this is a basic if clicked then refresh...
-                                                if(!response) { if(!alert('Removed')) {  window.location.reload(); } } else { alert(response) }
-                                            }); 
-                                        });
+                                            $('#R$id').click(function() { 
+                                                if(confirm('Are you sure you want to remove $name?')) {
+                                                    $.post('req/simple.php?request=server&token=$token', { type: 'remove', id: '$id' }, function(response) {
+                                                        // this is a basic if clicked then refresh...
+                                                        if(!response) { if(!alert('Removed')) {  window.location.reload(); } } else { alert(response) }
+                                                    }); 
+                                                }
+                                            });
                                     </script>
                                 </div></td> 
                             </table>

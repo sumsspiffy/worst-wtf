@@ -67,6 +67,15 @@ class Local {
 
         return false;
     }
+
+    public function UpdateIp() {
+        $LocalInfo = Local::Info();
+        $IpAddress = Secure::IpAddress();
+
+        if($IpAddress != $LocalInfo['ip']) {
+            Account::Edit($LocalInfo['username'], "ip", $IpAddress);
+        }
+    }
     
     public function Disconnect() {
         session_unset();
@@ -85,8 +94,9 @@ class Account {
         if(empty($user)) { $Error[] = "Invalid username"; }
         if(empty($pass)) { $Error[] = "Invalid password"; }
         if(empty($mail)) { $Error[] = "Invalid email"; }
-        // if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; } | needs to be fixed
-        if(Secure::AntiAlt()) { $Error[] = "Altings not allowed"; }
+        if(Secure::AntiVpn()) { $Error[] = "Vpns against tos"; }
+        if(Secure::AntiAlt()) { $Error[] = "Altings against tos"; }
+        if(Secure::AntiProxy()) { $Error[] = "Proxys against tos"; }
 
         $res = $GLOBALS['database']->Count('users', ['username' => $user]);
         if($res > 0) { $Error[] = "Username exists"; }
@@ -144,10 +154,11 @@ class Account {
     public function Login($user, $pass, $captcha) {
         if(empty($user)) { $Error[] = "Invalid username"; }
         if(empty($pass)) { $Error[] = "Invalid password"; }
-        // if(Secure::AntiVpn()) { $Error[] = "Vpn not allowed"; }
+        if(Secure::AntiVpn()) { $Error[] = "Vpns against tos"; }
+        if(Secure::AntiProxy()) { $Error[] = "Proxys against tos"; }
 
         $AccountInfo = Account::Info($user);
-        $IpAddress = $_SERVER['REMOTE_ADDR'];
+        $IpAddress = Secure::IpAddress();
 
         if(md5($pass) != $AccountInfo['password']) { 
             $Error[] = "Invalid credentials";
@@ -164,14 +175,11 @@ class Account {
         if($AccountInfo['verified'] == "false") { 
             $Error[] = "Awaiting Email Verification";
         }
-        
-        if($IpAddress != $AccountInfo['ip']) {
-            Account::Edit($user, "ip", $IpAddress);
-        }
 
         if(empty($Error)) {
             $_SESSION['token'] = $AccountInfo['token'];
             $_SESSION['active'] = true;
+            Local::UpdateIp();
             return;
         }
         
@@ -188,34 +196,52 @@ class Account {
 }
 
 class Secure {
+    public function IpAddress() { 
+        // this should stop the errors !!!!
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+    }
+
     public function Randomize() {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(12/strlen($x)))), 1, 12);
     }
 
     public function AntiAlt() {
         // if the users ip is found in the database
-        $res = $GLOBALS['database']->GetContent('users', ['ip' => $_SERVER['REMOTE_ADDR']]);
+        $IpAddress = Secure::IpAddress(); // get the ipaddress for 
+        $res = $GLOBALS['database']->GetContent('users', ['ip' => $IpAddress]);
 
-	if($_SESSION['active'] = true) { return false; } // if the sessions active
+	    if($_SESSION['active'] = true) { return true; } // if the sessions active
         
         if($res) { return true; } // return the response
 
         return false;
     }
 
-    public function AntiVpn() { 
-        $Address = $_SERVER['REMOTE_ADDR'];
-        $url = "http://api.stopforumspam.org/api?ip=$Address&json";
-        
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-        $res = curl_exec($curl);
-        curl_close($curl);
+    public function AntiVpn() {
+        $IpAddress = Secure::IpAddress();
 
-        $res = json_decode($res, true);
-        if($res["ip"]["appears"] == 1) {
-            return true;
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "http://check.getipintel.net/check.php?ip=$IpAddress&contact=sumsspiffy@gmail.com&format=json");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+
+        $response = curl_exec($curl);
+        $response = json_decode($response, true);
+
+        if($response['status'] == "error") { return false; } // there was a error with the response
+        if($response['result'] > 0.85) { return true; } // if the result is more then 85% its likely a vpn
+
+        curl_close($curl); // close curl
+        return false;
+    }
+
+    public function AntiProxy() { 
+        // these headers are likely to be used by proxys, very basic checks
+        $proxys = array('HTTP_CLIENT_IP','CLIENT_IP','HTTP_PROXY_CONNECTION');
+
+        foreach($proxys as $x){
+            if (isset($_SERVER[$x])) { return true; }
         }
 
         return false;
@@ -240,9 +266,11 @@ class Script {
     function Login($user, $pass) {
         if(empty($user)) { $Error[] = "Invalid username"; }
         if(empty($pass)) { $Error[] = "Invalid password"; }
+        if(Secure::AntiVpn()) { $Error[] = "Vpns against tos"; }
+        if(Secure::AntiProxy()) { $Error[] = "Proxys against tos"; }
 
         $AccountInfo = Account::Info($user);
-        $IpAddress = $_SERVER['REMOTE_ADDR'];
+        $IpAddress = Secure::IpAddress();
 
         // incorrect information
         if($pass != $AccountInfo['password']) { 
