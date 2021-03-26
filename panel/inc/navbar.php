@@ -76,7 +76,6 @@ $private = "http.Fetch('https://w0rst.xyz/project/func/napalm.php?type=private&t
         </div>
     </div>
 </div>
-
 <script>
     $(".dropdown-holder").mouseenter(function() {
         $('.button-drop').css("border-radius", "3px 3px 0px 0px");

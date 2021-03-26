@@ -49,7 +49,7 @@ $json_data = json_encode([
     ]
 ]);
 
-$curl=curl_init("https://discord.com/api/webhooks/811023303861993513/sLpyMSf7o7VTuXhGAwPKK52EUIk9DQ02vD8nsoHBAYnaSOJG8T6LiZgcJUym8x-kUuM5");
+$curl=curl_init("webhook-url");
 curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
 curl_setopt($curl, CURLOPT_POST, 1);
 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);

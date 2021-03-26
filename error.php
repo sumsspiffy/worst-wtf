@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Worst</title>
+        <script src="js/custom.js"></script>
         <meta name="theme-color" content="#86ffba">
         <meta property="og:title" content="w0rst.xyz">
         <style>
@@ -18,7 +19,7 @@
         <div class="content">
             <?php echo("<h1>".$_GET['reason']."</h1>"); ?>         
             <div class="center">
-                <a href="https://w0rst.xyz/"><h2 class="hover">Home</h2></a>
+                <a onclick="link('https://w0rst.xyz/')"><h2 class="hover">Home</h2></a>
             </div>
         </div>
     </body>

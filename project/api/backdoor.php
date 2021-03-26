@@ -56,7 +56,7 @@ elseif($type == "public") {
     ]);
     
     // send the public info to our discord through a embed using the json data defined above
-    $curl=curl_init("https://discord.com/api/webhooks/786039265901543424/ZsmAQWutRytBPLI-peEoMz29FzAkGDRiBsxRclJ5kLBGjiA394TlinwJOU-uNym4TxrL");
+    $curl=curl_init("webhook-url");
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
