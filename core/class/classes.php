@@ -10,12 +10,17 @@ class Local {
         $username = $LocalInfo['username'];
         $password = $LocalInfo['password'];
 
-        if(md5($oldpass) != $password) {
+        // password salt encryption
+        $salt = $LocalInfo['salt'];
+        $oldpass = md5($salt.":".md5($oldpass));
+        $newpass = md5($salt.":".md5($newpass));
+
+        if($oldpass != $password) { 
             $Error[] = "Incorrect password";
         }
 
-        if(md5($oldpass) == md5($newpass)) {
-            $Error[] = "Passwords cannot be the same";
+        if($oldpass == $newpass) {
+            $Error[] = "Passwords cannot match";
         }
 
         if(empty($Error)) {
