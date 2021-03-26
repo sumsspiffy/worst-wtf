@@ -20,3 +20,5 @@ Account | Role | URL |
 * Website css changes for mobile
 * Minimal script & api changes
 * Minimized required files
+* Added salt hashing for passes
+* Some new page effects idk
