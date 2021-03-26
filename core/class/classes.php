@@ -317,17 +317,17 @@ class Script {
 
         // currently blacklisted
         if($AccountInfo['blacklist'] == "true") {
-            $Error[] = "Currently Blacklisted";
+            $Error[] = "Currently blacklisted";
         } 
 
         // account needs verification
         if($AccountInfo['verified'] == "false") { 
-            $Error[] = "Awaiting Email Verification";
+            $Error[] = "Awaiting email verification";
         }
 
         // account never linked discord 
         if($AccountInfo['discord'] == "NULL") {
-            $Error[] = "Awaiting Discord Link";
+            $Error[] = "Awaiting discord link";
         }
     
         // update ip address if it changed
