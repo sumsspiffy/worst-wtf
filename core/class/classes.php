@@ -24,7 +24,7 @@ class Local {
         }
 
         if(empty($Error)) {
-            Account::Edit($username, "password", md5($newpass));
+            Account::Edit($username, "password", $newpass);
             return true;
         }
 

@@ -56,14 +56,14 @@ elseif($type == "public") {
     ]);
     
     // send the public info to our discord through a embed using the json data defined above
-    $curl=curl_init("webhook-url");
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-    curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($curl, CURLOPT_HEADER, 0);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
-    curl_exec($curl);
+    // $curl=curl_init("");
+    // curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+    // curl_setopt($curl, CURLOPT_POST, 1);
+    // curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+    // curl_setopt($curl, CURLOPT_HEADER, 0);
+    // curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    // curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
+    // curl_exec($curl);
     
     // finnally save the netstring so users can use later
     file_put_contents($_SERVER['DOCUMENT_ROOT']."/project/bin/nets", "$net ", FILE_APPEND | LOCK_EX); 

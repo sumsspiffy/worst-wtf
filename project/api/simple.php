@@ -49,13 +49,13 @@ $json_data = json_encode([
     ]
 ]);
 
-$curl=curl_init("webhook-url");
-curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-curl_setopt($curl, CURLOPT_POST, 1);
-curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-curl_setopt($curl, CURLOPT_HEADER, 0);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
-curl_exec($curl);
+// $curl=curl_init("");
+// curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+// curl_setopt($curl, CURLOPT_POST, 1);
+// curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+// curl_setopt($curl, CURLOPT_HEADER, 0);
+// curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+// curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
+// curl_exec($curl);
 
 ?>
