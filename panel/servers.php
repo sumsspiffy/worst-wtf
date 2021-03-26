@@ -4,6 +4,8 @@ require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
 $Public = $Log::Server("public");
 $Private = $Log::Server("private");
+
+// sort numericly ;00000
 ksort($Public, SORT_NUMERIC);
 ksort($Private, SORT_NUMERIC);
 
@@ -46,13 +48,13 @@ $Servers = array($Public, $Private);
                     $loop = 0; // the loop for public/private servers
 
                     // for each server then for each row
-                    foreach($Servers as $row) {
+                    foreach ($Servers as $Server) {
 
                         // 0 - public | 1 - private
                         $loop++; // add one to the loop
-                        echo("<div class='flexbox S$i'>"); // setting the class as i for hiding
+                        echo("<div class='flexbox S$loop'>"); // setting the class as i for hiding
 
-                        foreach($row as $row) {
+                        foreach ($Server as $row) {
                             $pass = $row['password'];
                             $mode = $row['gamemode'];
                             $name = $row['server'];
@@ -108,7 +110,7 @@ $Servers = array($Public, $Private);
 </html>
 <script>
     function show(tab) {
-        if(tab == 0) { $('.S0').fadeIn(250).css({"display":"flex"}); $('.S1').fadeOut(0); $('.S2').fadeOut(0); $('#S0').fadeTo(50, 1); $('#S1').fadeTo(50, 0.55); }
-        if(tab == 1) { $('.S0').fadeOut(0); $('.S1').fadeIn(250).css({"display":"flex"}); $('.S2').fadeOut(0); $('#S0').fadeTo(50, 0.55); $('#S1').fadeTo(50, 1); }
+        if(tab == 0) { $('.S1').fadeIn(250).css({"display":"flex"}); $('.S2').fadeTo(50, 0.55);  }
+        if(tab == 1) { $('.S2').fadeIn(250).css({"display":"flex"}); $('.S1').fadeTo(50, 0.55); }
     }
 </script>

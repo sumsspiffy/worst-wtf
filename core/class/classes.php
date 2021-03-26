@@ -110,7 +110,11 @@ class Account {
 
         if(empty($Error)) {
             $token = Secure::Randomize();
+            $salt = Secure::Randomize();
             $date = date("y:m:d h:i:sa");
+
+            // password salt encryption
+            $pass = md5($salt.":".md5($pass));
 
             // activate the session
             $_SESSION['active'] = true;
@@ -123,7 +127,7 @@ class Account {
 
             mail($mail, $subject, $message, $headers);
 
-            $GLOBALS['database']->Insert('users', ['username' => $user, 'password' => md5($pass), 'email' => $mail, 'token' => $token, 'ip' => $_SERVER['REMOTE_ADDR'], 'date' => $date]);
+            $GLOBALS['database']->Insert('users', ['username' => $user, 'password' => $pass, 'salt' => $salt, 'email' => $mail, 'token' => $token, 'ip' => $_SERVER['REMOTE_ADDR'], 'date' => $date]);
             return;
         }
 
@@ -160,7 +164,11 @@ class Account {
         $AccountInfo = Account::Info($user);
         $IpAddress = Secure::IpAddress();
 
-        if(md5($pass) != $AccountInfo['password']) { 
+        // password salt encryption
+        $salt = $AccountInfo['salt'];
+        $pass = md5($salt.":".md5($pass));
+
+        if($pass != $AccountInfo['password']) { 
             $Error[] = "Invalid credentials";
         }
 
@@ -282,6 +290,8 @@ class Log {
 }
 
 class Script {
+    // this is the same as account:login() 
+    // but recaptcha isn't used because gmod
     function Login($user, $pass) {
         if(empty($user)) { $Error[] = "Invalid username"; }
         if(empty($pass)) { $Error[] = "Invalid password"; }
@@ -290,6 +300,10 @@ class Script {
 
         $AccountInfo = Account::Info($user);
         $IpAddress = Secure::IpAddress();
+
+        // password salt encryption
+        $salt = $AccountInfo['salt'];
+        $pass = md5($salt.":".$pass); // pass comes encrypted
 
         // incorrect information
         if($pass != $AccountInfo['password']) { 

@@ -41,12 +41,12 @@ $vals = array( // our actual table for values
             <div class="card">
                 <h1 class="card-header">Account Information</h1>
                 <?php
-                foreach($vals as $key => $val) {
-                    echo("<div class='form-row'>
-                        <label class='label'>$key</label>
-                        <input disabled class='input disabled' placeholder='$val'></input>
-                    </div>"); 
-                }
+                    foreach ($vals as $key => $val) {
+                        echo("<div class='form-row'>
+                            <label class='label'>$key</label>
+                            <input disabled class='input disabled' placeholder='$val'></input>
+                        </div>"); 
+                    }
                 ?>
                 <div class="button-container">
                     <button onclick="link('req/discord.php?action=login')" class="button material-ripple hover">Relink Discord</button>
