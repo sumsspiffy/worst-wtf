@@ -1,5 +1,7 @@
 # worst-wtf
 ## Project Information
+w0rst used to be a public panel/script before the website
+was shut down by our host after repeated ddosing...
 
 ### Staff Team
 Account | Role | URL |
