@@ -1,8 +1,8 @@
 <?php
 define('DB_SERVER', 'localhost');
-define('DB_USERNAME', 'armigkwd_project');
-define('DB_PASSWORD', '{M.V.-g*^lZ{');
-define('DB_NAME', 'armigkwd_project');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
+define('DB_NAME', 'project');
 
 // important includes
 include("class/database.php");

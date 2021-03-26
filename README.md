@@ -29,3 +29,5 @@ we will need to make unique custom urls for the server.
 note for later we need to salt hash our passwords
 we can do this by using secure::random() then 
 insert the string into the database and hash them together
+cloudflare firewall rules added because somebody sent the site 22m requests with 6k something bots ??wtf??
+PAGES NEED TO BE CHANGED: logs.php, servers.php, members.php | need to change foreach order with ksort

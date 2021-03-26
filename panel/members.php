@@ -2,6 +2,9 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
 
+$Members = $GLOBALS['database']->GetContent('users');
+ksort($Members, SORT_NUMERIC);
+
 ?>
 
 <html>
@@ -24,12 +27,11 @@ require_once($_SERVER['DOCUMENT_ROOT']."/core/config.php");
         <div class="page-content">
             <div class="card">
                 <?php
-
                     $total = $GLOBALS['database']->Count("users"); // gather the total amount of users
                     echo("<h1 class='card-header'>Total Members: $total</h1><div class='flexbox'>"); // share
 
-                    for($x = 0; $x < $total; $x++) { // this is for sorting purposes for some reason foreach is gathering them in the wrong order
-                        $AccountInfo = $GLOBALS['database']->GetContent('users', ['uid' => $x+1])[0];
+                    foreach($Members as $Member) { 
+                        $AccountInfo = $GLOBALS['database']->GetContent('users', ['uid' => $Member['uid'])[0];
                         $name = $AccountInfo['username'];
                         $avatar = $AccountInfo['avatar'];
                         $role = $AccountInfo['role'];
