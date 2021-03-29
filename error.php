@@ -17,8 +17,8 @@
     </head>
     <body>
         <div class="content">
-            <?php echo("<h1>".$_GET['reason']."</h1>"); ?>         
             <div class="center">
+                <?php echo("<h1>".$_GET['reason']."</h1>"); ?>         
                 <a onclick="link('https://w0rst.xyz/')"><h2 class="hover">Home</h2></a>
             </div>
         </div>
