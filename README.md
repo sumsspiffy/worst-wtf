@@ -1,15 +1,15 @@
 # worst-wtf
 ## Project Information
-w0rst used to be a public panel/script before the website
-was shut down by our host after repeated ddosing...
+w0rst has been shut down currently because our (webhost - namecheap)
+decided to shut our site down because people were ddosing it...
 
-### Staff Team
+### Support Team
 Account | Role | URL |
 ------- | ---- | --- |
-**spiffy** | **sex** | [Link](https://w0rst.xyz/panel/profile?type=uid&uid=1)
-**tomc** | **wow** | [Link](https://w0rst.xyz/panel/profile?type=uid&uid=11)
-**warped** | **monkey** | [Link](https://w0rst.xyz/panel/profile?type=uid&uid=4)
-**gomi** | **funky** | [Link](https://w0rst.xyz/panel/profile?type=uid&uid=5)
+**spiffy** | **sex** | *Removed*
+**tomc** | **wow** | *Removed*
+**warped** | **monkey** | *Removed*
+**gomi** | **funky** | *Removed*
 
 ### Official Updates
 * Removed special login tool for security reasons
